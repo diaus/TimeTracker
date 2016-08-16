@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Time Tracker</string>
+    <string name="start_button">Start</string>
+    <string name="stop_button">Stop</string>
+    <string name="clear_time_button">Clear Time</string>
+    <string name="menu_tab_tasks_create_task">Create Task</string>
+</resources>

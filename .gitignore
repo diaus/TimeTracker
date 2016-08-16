@@ -32,9 +32,22 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# Intellij
+# Idea config files
+.idea/
+*.ipr
+*.iws
 *.iml
-.idea/workspace.xml
 
 # Keystore files
 *.jks
+
+#Maven files
+target/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Other trash
+*~

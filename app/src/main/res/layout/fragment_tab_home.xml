@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools">
+
+    <View android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:id="@+id/fragment_tab_home_view_status"
+          android:layout_alignParentRight="true"
+          android:background="@drawable/stopped_circle"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="Time spent"
+        android:id="@+id/fragment_tab_home_spent_time_textView"
+        android:layout_toLeftOf="@id/fragment_tab_home_view_status"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_time_button"
+        android:id="@+id/fragment_tab_home_clear_button"
+        android:layout_below="@id/fragment_tab_home_spent_time_textView"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fragment_tab_home_clear_button"
+        >
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="start/stop"
+            android:id="@+id/fragment_tab_home_start_button"
+            android:background="@drawable/started_circle"
+            android:layout_gravity="center"
+            />
+
+    </FrameLayout>
+</RelativeLayout>
