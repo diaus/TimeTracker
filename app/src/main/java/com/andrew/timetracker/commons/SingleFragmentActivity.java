@@ -20,6 +20,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView();
 
 		FragmentManager fm = getSupportFragmentManager();
