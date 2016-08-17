@@ -6,4 +6,7 @@
     <string name="menu_tab_tasks_create_task">Create Task</string>
     <string name="menu_tab_tasks_cancel">Cancel</string>
     <string name="enter_task_title_edit_text">enter task title</string>
+    <string name="confirm_delete_task">Are you sure you want to delete task?</string>
+    <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
+    <string name="confirm_delete_task_title">Really?</string>
 </resources>

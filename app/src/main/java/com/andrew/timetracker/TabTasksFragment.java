@@ -1,13 +1,13 @@
 package com.andrew.timetracker;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,8 +75,8 @@ public class TabTasksFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Task task;
-				if (mIsEditing){
-					task = mAdapter.getItem(mSelectedTaskPosition);
+				if (mIsEditing) {
+					task = mAdapter.getTask(mSelectedTaskPosition);
 					task.setName(mPanelAddText.getText().toString());
 					taskDao.update(task);
 					mIsEditing = false;
@@ -127,14 +127,14 @@ public class TabTasksFragment extends Fragment {
 		switch (item.getItemId()) {
 			case R.id.menu_item_new_task:
 				setPanelAddVisibility(true);
-				if (mSelectedTaskPosition != -1){
+				if (mSelectedTaskPosition != -1) {
 					mAdapter.notifyItemChanged(mSelectedTaskPosition);
 				}
 				return true;
 			case R.id.menu_item_cancel:
 				setPanelAddVisibility(false);
 				mIsEditing = false;
-				if (mSelectedTaskPosition != -1){
+				if (mSelectedTaskPosition != -1) {
 					mAdapter.notifyItemChanged(mSelectedTaskPosition);
 				}
 				return true;
@@ -145,34 +145,35 @@ public class TabTasksFragment extends Fragment {
 
 	private void updateTasks() {
 		mSelectedTaskPosition = -1;
+		mIsEditing = false;
 		List<Task> tasks = tasksQuery.list();
 		mAdapter.setTasks(tasks);
 	}
 
-	private void onTaskSelected(int position){
+	private void onTaskSelected(int position) {
 		int prevPos = mSelectedTaskPosition;
 		mSelectedTaskPosition = position;
-		if (prevPos != -1){
+		if (prevPos != -1) {
 			mAdapter.notifyItemChanged(prevPos);
 		}
-		if (mPanelAdd.getVisibility() == View.VISIBLE){
-			mPanelAddText.setText(mAdapter.getItem(position).getName());
+		if (mPanelAdd.getVisibility() == View.VISIBLE) {
+			mPanelAddText.setText(mAdapter.getTask(position).getName());
 			mPanelAddText.requestFocus();
 			mPanelAddText.setSelection(mPanelAddText.getText().length());
 		}
 	}
 
-	void setPanelAddVisibility(boolean isVisible, String text){
+	void setPanelAddVisibility(boolean isVisible, String text) {
 		mPanelAddText.setText(text);
 		mPanelAdd.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-		if (isVisible){
+		if (isVisible) {
 			mPanelAddText.requestFocus();
 			mPanelAddText.setSelection(mPanelAddText.getText().length());
 		}
 		getActivity().invalidateOptionsMenu();
 	}
 
-	void setPanelAddVisibility(boolean isVisible){
+	void setPanelAddVisibility(boolean isVisible) {
 		setPanelAddVisibility(isVisible, "");
 	}
 
@@ -202,6 +203,13 @@ public class TabTasksFragment extends Fragment {
 					updateSelected();
 				}
 			});
+
+			mDeleteButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					deleteSelectedTask();
+				}
+			});
 		}
 
 		public void bindTask(Task task, boolean isLast, boolean isSelected) {
@@ -211,7 +219,7 @@ public class TabTasksFragment extends Fragment {
 			updateSelected();
 		}
 
-		private void updateSelected(){
+		private void updateSelected() {
 			mContainer.setBackgroundResource(mSelected ? R.drawable.task_selected_bg : 0);
 			boolean showButtons = mSelected && mPanelAdd.getVisibility() != View.VISIBLE;
 			mEditButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
@@ -225,6 +233,24 @@ public class TabTasksFragment extends Fragment {
 			updateSelected();
 			onTaskSelected(getAdapterPosition());
 		}
+	}
+
+	private void deleteSelectedTask() {
+		new AlertDialog.Builder(getContext())
+				  .setMessage(R.string.confirm_delete_task)
+				  .setTitle(R.string.confirm_delete_task_title)
+				  .setIcon(R.drawable.icon_alert)
+				  .setNegativeButton(android.R.string.cancel, null)
+				  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					  @Override
+					  public void onClick(DialogInterface dialog, int which) {
+						  Task task = mAdapter.getTask(mSelectedTaskPosition);
+						  taskDao.delete(task);
+						  updateTasks();
+						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), task.getName()), Toast.LENGTH_SHORT).show();
+					  }
+				  })
+				  .show();
 	}
 
 	private class TasksAdapter extends RecyclerView.Adapter<TaskHolder> {
@@ -258,18 +284,18 @@ public class TabTasksFragment extends Fragment {
 			return mTasks.size();
 		}
 
-		public Task getItem(int position) {
+		public Task getTask(int position) {
 			return mTasks.get(position);
 		}
 
-		public void selectTaskById(long id){
+		public void selectTaskById(long id) {
 			int prevPos = mSelectedTaskPosition;
 			mSelectedTaskPosition = -1;
-			if (prevPos != -1){
+			if (prevPos != -1) {
 				notifyItemChanged(prevPos);
 			}
 			for (int i = 0; i < mTasks.size(); i++) {
-				if (mTasks.get(i).getId() == id){
+				if (mTasks.get(i).getId() == id) {
 					mSelectedTaskPosition = i;
 					notifyItemChanged(mSelectedTaskPosition);
 					mTasksRecyclerView.scrollToPosition(mSelectedTaskPosition);
