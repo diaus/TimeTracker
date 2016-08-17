@@ -1,107 +1,123 @@
 package com.andrew.timetracker;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.andrew.timetracker.database.DaoSession;
+import com.andrew.timetracker.database.Task;
+import com.andrew.timetracker.database.TaskDao;
+import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.database.TimelineDao;
+
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by andrew on 15.08.2016.
  */
-public class TabHomeFragment extends Fragment {
+public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 
+	private TimelineDao timelineDao;
+	private TaskDao taskDao;
+
+	boolean mIsStarted;
 	Date mDateStarted;
-	int mSpentToday;
-	boolean mStarted;
+	Task mTask;
+	int mSpentToday = 0;
 
 	Button mStartButton;
-	Button mClearButton;
 	View mStatusView;
-	TextView mSpentTimeTextView;
+	TextView mSpentTimeTodayTextView;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_tab_home, container, false);
 
+		// DATABASE
+		DaoSession daoSession = ((App) getActivity().getApplication()).getDaoSession();
+		timelineDao = daoSession.getTimelineDao();
+		taskDao = daoSession.getTaskDao();
+
 		mStartButton = (Button) v.findViewById(R.id.fragment_tab_home_start_button);
-		mStatusView = (View) v.findViewById(R.id.fragment_tab_home_view_status);
-		mSpentTimeTextView = (TextView) v.findViewById(R.id.fragment_tab_home_spent_time_textView);
-		mClearButton = (Button) v.findViewById(R.id.fragment_tab_home_clear_button);
+		mStatusView = v.findViewById(R.id.fragment_tab_home_view_status);
+		mSpentTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_tab_home_spent_time_today);
 
 		mStartButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				mSpentToday += getStartedTaskTime();
-				mDateStarted = new Date();
-				mStarted = !mStarted;
-				updateStatus();
-				updateTime();
-				saveData();
+				if (mTask == null) return;
 			}
 		});
 
-		mClearButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				mSpentToday = 0;
-				updateStatus();
-				updateTime();
-				saveData();
-			}
-		});
+		// delete invalid timelines
+//		timelineDao.queryBuilder().where(new WhereCondition.StringCondition(TimelineDao.Properties.TaskId.columnName + " NOT IN (SELECT "
+//				  + TaskDao.Properties.Id.columnName + " FROM " + TaskDao.TABLENAME + ")")).buildDelete().executeDeleteWithoutDetachingEntities();
 
-		loadData();
-
-		updateStatus();
-		updateTime();
+		updateData();
 
 		return v;
 	}
 
+	private void updateData() {
+
+		Timeline timeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		mIsStarted = timeline != null;
+		if (mIsStarted){
+			mDateStarted = timeline.getStartTime();
+			mTask = taskDao.load(timeline.getTaskId());
+		} else {
+			timeline = timelineDao.queryBuilder().orderDesc(TimelineDao.Properties.StopTime).limit(1).unique();
+			mTask = timeline == null ? null : taskDao.load(timeline.getTaskId());
+		}
+
+		// spent today
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.MILLISECOND, 0);
+		today.set(Calendar.SECOND, 0);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.HOUR_OF_DAY, 0);
+		List<Timeline> tt = timelineDao.queryBuilder()
+				  .where(TimelineDao.Properties.StopTime.isNotNull())
+				  .where(TimelineDao.Properties.StopTime.gt(today.getTime())).list();
+		mSpentToday = 0;
+		for (Timeline tl : tt) {
+			mSpentToday += (tl.getStopTime().getTime() - tl.getStartTime().getTime())/1000;
+		}
+
+		updateUI();
+	}
+
+
+	private void updateUI() {
+		mStatusView.setBackgroundResource(mIsStarted ? R.drawable.started_circle : R.drawable.stopped_circle);
+
+		mStartButton.setText(mIsStarted ? R.string.stop_button : R.string.start_button);
+		mStartButton.setBackgroundResource(mTask == null ? R.drawable.inactive_circle : (mIsStarted ? R.drawable.stopped_circle : R.drawable.started_circle));
+
+		int time = (mSpentToday + getStartedTaskTime())/60;
+		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today), time / 60, time % 60));
+	}
+
+
 	private int getStartedTaskTime() {
-		if (!mStarted) return 0;
+		if (!mIsStarted) return 0;
 		return (int) ((System.currentTimeMillis() - mDateStarted.getTime())/1000);
 	}
 
-	private void loadData() {
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		mSpentToday = pref.getInt("spent", 0);
-		mStarted = pref.getBoolean("started", false);
-		if (mStarted) {
-			mDateStarted = new Date(pref.getLong("time_started", 0));
-		}
+	@Override
+	public void onTabSelected() {
+		updateData();
 	}
-
-	private void saveData() {
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		SharedPreferences.Editor edit = pref.edit();
-		edit.putInt("spent", mSpentToday);
-		edit.putBoolean("started", mStarted);
-		if (mStarted) {
-			edit.putLong("time_started", System.currentTimeMillis());
-		}
-		edit.commit();
-	}
-
-	private void updateTime() {
-		int time = mSpentToday;
-		time += getStartedTaskTime();
-		mSpentTimeTextView.setText(String.format("%1$d hrs %2$d min %3$d sec", time / 3600, (time % 3600)/60, time % 60));
-	}
-
-	private void updateStatus() {
-		mStatusView.setBackgroundResource(mStarted ? R.drawable.started_circle : R.drawable.stopped_circle);
-		mStartButton.setText(mStarted ? R.string.stop_button : R.string.start_button);
-		mStartButton.setBackgroundResource(mStarted ? R.drawable.stopped_circle : R.drawable.started_circle);
-	}
-
 }
