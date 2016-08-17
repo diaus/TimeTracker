@@ -41,13 +41,15 @@
                 android:layout_weight="1"/>
 
             <ImageButton
-                android:contentDescription="@string/edit_task_done_button_content_description"
+                android:contentDescription="Done"
+                tools:ignore="HardcodedText"
                 android:id="@+id/fragment_tab_tasks_list_panel_add_done"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="@null"
-                android:src="@drawable/done_button"/>
+                android:src="@drawable/done_button"
+                />
         </LinearLayout>
 
     </LinearLayout>

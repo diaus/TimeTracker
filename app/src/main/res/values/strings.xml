@@ -6,5 +6,4 @@
     <string name="menu_tab_tasks_create_task">Create Task</string>
     <string name="menu_tab_tasks_cancel">Cancel</string>
     <string name="enter_task_title_edit_text">enter task title</string>
-    <string name="edit_task_done_button_content_description">Done</string>
 </resources>
