@@ -47,6 +47,7 @@ public class TabTasksFragment extends Fragment {
 	ImageButton mPanelAddDoneButton;
 
 	int mSelectedTaskPosition;
+	boolean mIsEditing;
 
 	@Nullable
 	@Override
@@ -73,11 +74,17 @@ public class TabTasksFragment extends Fragment {
 		mPanelAddDoneButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Task task = new Task(null, mPanelAddText.getText().toString());
-				taskDao.insert(task);
-				mPanelAddText.setText("");
-				mPanelAdd.setVisibility(View.GONE);
-				getActivity().invalidateOptionsMenu();
+				Task task;
+				if (mIsEditing){
+					task = mAdapter.getItem(mSelectedTaskPosition);
+					task.setName(mPanelAddText.getText().toString());
+					taskDao.update(task);
+					mIsEditing = false;
+				} else {
+					task = new Task(null, mPanelAddText.getText().toString());
+					taskDao.insert(task);
+				}
+				setPanelAddVisibility(false);
 				updateTasks();
 				mAdapter.selectTaskById(task.getId());
 			}
@@ -119,14 +126,17 @@ public class TabTasksFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_new_task:
-				mPanelAdd.setVisibility(View.VISIBLE);
-				getActivity().invalidateOptionsMenu();
-				mPanelAddText.requestFocus();
+				setPanelAddVisibility(true);
+				if (mSelectedTaskPosition != -1){
+					mAdapter.notifyItemChanged(mSelectedTaskPosition);
+				}
 				return true;
 			case R.id.menu_item_cancel:
-				mPanelAddText.setText(null);
-				mPanelAdd.setVisibility(View.GONE);
-				getActivity().invalidateOptionsMenu();
+				setPanelAddVisibility(false);
+				mIsEditing = false;
+				if (mSelectedTaskPosition != -1){
+					mAdapter.notifyItemChanged(mSelectedTaskPosition);
+				}
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -152,11 +162,27 @@ public class TabTasksFragment extends Fragment {
 		}
 	}
 
+	void setPanelAddVisibility(boolean isVisible, String text){
+		mPanelAddText.setText(text);
+		mPanelAdd.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+		if (isVisible){
+			mPanelAddText.requestFocus();
+			mPanelAddText.setSelection(mPanelAddText.getText().length());
+		}
+		getActivity().invalidateOptionsMenu();
+	}
+
+	void setPanelAddVisibility(boolean isVisible){
+		setPanelAddVisibility(isVisible, "");
+	}
+
 	private class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		View mContainer;
 		TextView mTitleTextView;
 		View mDivider;
+		ImageButton mEditButton;
+		ImageButton mDeleteButton;
 		boolean mSelected;
 
 		public TaskHolder(View itemView) {
@@ -165,6 +191,17 @@ public class TabTasksFragment extends Fragment {
 			mContainer = itemView.findViewById(R.id.tab_tasks_item_container);
 			mTitleTextView = (TextView) itemView.findViewById(R.id.tab_tasks_item_title);
 			mDivider = itemView.findViewById(R.id.tab_tasks_item_divider);
+			mEditButton = (ImageButton) itemView.findViewById(R.id.tab_tasks_item_edit_button);
+			mDeleteButton = (ImageButton) itemView.findViewById(R.id.tab_tasks_item_delete_button);
+
+			mEditButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mIsEditing = true;
+					setPanelAddVisibility(true, mTitleTextView.getText().toString());
+					updateSelected();
+				}
+			});
 		}
 
 		public void bindTask(Task task, boolean isLast, boolean isSelected) {
@@ -176,11 +213,14 @@ public class TabTasksFragment extends Fragment {
 
 		private void updateSelected(){
 			mContainer.setBackgroundResource(mSelected ? R.drawable.task_selected_bg : 0);
+			boolean showButtons = mSelected && mPanelAdd.getVisibility() != View.VISIBLE;
+			mEditButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
+			mDeleteButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
 		}
 
 		@Override
 		public void onClick(View v) {
-			if (mSelected) return;
+			if (mSelected || mIsEditing) return;
 			mSelected = true;
 			updateSelected();
 			onTaskSelected(getAdapterPosition());
