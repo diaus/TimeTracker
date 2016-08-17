@@ -2,6 +2,7 @@ package com.andrew.timetracker.database;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 
@@ -19,14 +20,17 @@ public class Timeline {
 	private Long id;
 
 	@NotNull
+	@Index
 	private long taskId;
 
 	@ToOne(joinProperty = "taskId")
 	private Task task;
 
 	@NotNull
+	@Index
 	private Date startTime;
 
+	@Index
 	private Date stopTime;
 
 	/**

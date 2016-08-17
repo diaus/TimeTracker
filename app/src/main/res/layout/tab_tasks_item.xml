@@ -27,6 +27,18 @@
             android:background="@null"
             android:visibility="gone"
             tools:visibility="visible"
+            android:contentDescription="Start"
+            tools:ignore="HardcodedText"
+            android:src="@drawable/button_start_task_from_list"
+            android:id="@+id/tab_tasks_item_start_button"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:contentDescription="Edit"
             tools:ignore="HardcodedText"
             android:src="@drawable/edit_button"

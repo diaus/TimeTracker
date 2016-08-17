@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
 	private static final String TAG = "tt: MainActivity";
 
 	public interface ITab {
-		//void onTabSelected();
+		void onTabSelected();
 	}
 
 	private ViewPager mViewPager;
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onPageSelected(int position) {
 				Log.d(TAG, "tab selected " + position);
+				getTab(position).onTabSelected();
 			}
 		});
 
@@ -57,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
+	private ITab getTab(int position){
+		return (ITab) mAdapter.instantiateItem(mViewPager, position);
+	}
+
 	private ITab getCurrentTab(){
-		return (ITab) mAdapter.instantiateItem(mViewPager, mViewPager.getCurrentItem());
+		return getTab(mViewPager.getCurrentItem());
 	}
 
 }

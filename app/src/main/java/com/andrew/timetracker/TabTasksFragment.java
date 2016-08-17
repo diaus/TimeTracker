@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,20 +25,25 @@ import com.andrew.timetracker.commons.SimpleTextWatcher;
 import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
+import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.database.TimelineDao;
 
 import org.greenrobot.greendao.query.Query;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by andrew on 15.08.2016.
  */
-public class TabTasksFragment extends Fragment {
+public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 
 	private static final String TAG = "tt: TabTasksFragment";
 
 	private TaskDao taskDao;
+	private TimelineDao timelineDao;
 	private Query<Task> tasksQuery;
 
 	RecyclerView mTasksRecyclerView;
@@ -46,8 +52,9 @@ public class TabTasksFragment extends Fragment {
 	EditText mPanelAddText;
 	ImageButton mPanelAddDoneButton;
 
-	int mSelectedTaskPosition;
-	boolean mIsEditing;
+	int mSelectedTaskPosition = -1;
+	long mStartedTaskId = -1;
+	boolean mIsEditing = false;
 
 	@Nullable
 	@Override
@@ -59,6 +66,7 @@ public class TabTasksFragment extends Fragment {
 		DaoSession daoSession = ((App) getActivity().getApplication()).getDaoSession();
 		taskDao = daoSession.getTaskDao();
 		tasksQuery = taskDao.queryBuilder().orderAsc(TaskDao.Properties.Name).build();
+		timelineDao = daoSession.getTimelineDao();
 
 		mPanelAdd = v.findViewById(R.id.fragment_tab_tasks_list_panel_add);
 
@@ -174,10 +182,22 @@ public class TabTasksFragment extends Fragment {
 	}
 
 	private void updateTasks() {
+		updateStartedTask();
 		mSelectedTaskPosition = -1;
 		mIsEditing = false;
 		List<Task> tasks = tasksQuery.list();
 		mAdapter.setTasks(tasks);
+	}
+
+	private void updateStartedTask() {
+		Timeline timeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		long taskId = timeline == null ? -1 : timeline.getTaskId();
+		if (taskId != mStartedTaskId){
+			long prevTaskId = mStartedTaskId;
+			mStartedTaskId = taskId;
+			mAdapter.updateTaskById(prevTaskId);
+			mAdapter.updateTaskById(taskId);
+		}
 	}
 
 	private void onTaskSelected(int position) {
@@ -207,14 +227,64 @@ public class TabTasksFragment extends Fragment {
 		setPanelAddVisibility(isVisible, "");
 	}
 
+	private void deleteSelectedTask() {
+		Task task = mAdapter.getTask(mSelectedTaskPosition);
+		boolean isTimelines = timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).limit(1).unique() != null;
+
+		new AlertDialog.Builder(getContext())
+				  .setMessage(isTimelines ? R.string.confirm_delete_task_with_timelines : R.string.confirm_delete_task)
+				  .setTitle(R.string.confirm_delete_task_title)
+				  .setIcon(R.drawable.icon_alert)
+				  .setNegativeButton(android.R.string.cancel, null)
+				  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					  @Override
+					  public void onClick(DialogInterface dialog, int which) {
+						  Task task = mAdapter.getTask(mSelectedTaskPosition);
+						  timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).buildDelete().executeDeleteWithoutDetachingEntities();
+						  taskDao.delete(task);
+						  updateTasks();
+						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), task.getName()), Toast.LENGTH_SHORT).show();
+					  }
+				  })
+				  .show();
+	}
+
+	void stopCurrentTask() {
+		long prevTaskId = mStartedTaskId;
+		Timeline timeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		if (timeline == null) return;
+		timeline.setStopTime(new Date());
+		timeline.update();
+		mStartedTaskId = -1;
+		if (prevTaskId != -1){
+			mAdapter.updateTaskById(timeline.getTaskId());
+		}
+	}
+
+	void startSelectedTask() {
+		stopCurrentTask();
+		long taskId = mAdapter.getTask(mSelectedTaskPosition).getId();
+		Timeline timeline = new Timeline(null, taskId, new Date(), null);
+		timelineDao.insert(timeline);
+		mStartedTaskId = taskId;
+		mAdapter.updateTaskById(taskId);
+	}
+
+	@Override
+	public void onTabSelected() {
+		updateStartedTask();
+	}
+
 	private class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		View mContainer;
 		TextView mTitleTextView;
 		View mDivider;
+		ImageButton mStartButton;
 		ImageButton mEditButton;
 		ImageButton mDeleteButton;
 		boolean mSelected;
+		boolean mIsStarted;
 
 		public TaskHolder(View itemView) {
 			super(itemView);
@@ -224,6 +294,14 @@ public class TabTasksFragment extends Fragment {
 			mDivider = itemView.findViewById(R.id.tab_tasks_item_divider);
 			mEditButton = (ImageButton) itemView.findViewById(R.id.tab_tasks_item_edit_button);
 			mDeleteButton = (ImageButton) itemView.findViewById(R.id.tab_tasks_item_delete_button);
+			mStartButton = (ImageButton) itemView.findViewById(R.id.tab_tasks_item_start_button);
+
+			mStartButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					startSelectedTask();
+				}
+			});
 
 			mEditButton.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -244,7 +322,11 @@ public class TabTasksFragment extends Fragment {
 
 		public void bindTask(Task task, boolean isLast, boolean isSelected) {
 			mSelected = isSelected;
+			mIsStarted = task.getId().equals(mStartedTaskId);
 			mTitleTextView.setText(task.getName());
+
+			mTitleTextView.setTextColor(ContextCompat.getColor(getContext(),
+					  mIsStarted ? R.color.colorTaskTitleStartedInList : android.R.color.primary_text_light));
 			mDivider.setVisibility(isLast ? View.INVISIBLE : View.VISIBLE);
 			updateSelected();
 		}
@@ -254,6 +336,7 @@ public class TabTasksFragment extends Fragment {
 			boolean showButtons = mSelected && mPanelAdd.getVisibility() != View.VISIBLE;
 			mEditButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
 			mDeleteButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
+			mStartButton.setVisibility(showButtons && !mIsStarted ? View.VISIBLE : View.GONE);
 		}
 
 		@Override
@@ -263,24 +346,6 @@ public class TabTasksFragment extends Fragment {
 			updateSelected();
 			onTaskSelected(getAdapterPosition());
 		}
-	}
-
-	private void deleteSelectedTask() {
-		new AlertDialog.Builder(getContext())
-				  .setMessage(R.string.confirm_delete_task)
-				  .setTitle(R.string.confirm_delete_task_title)
-				  .setIcon(R.drawable.icon_alert)
-				  .setNegativeButton(android.R.string.cancel, null)
-				  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					  @Override
-					  public void onClick(DialogInterface dialog, int which) {
-						  Task task = mAdapter.getTask(mSelectedTaskPosition);
-						  taskDao.delete(task);
-						  updateTasks();
-						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), task.getName()), Toast.LENGTH_SHORT).show();
-					  }
-				  })
-				  .show();
 	}
 
 	private class TasksAdapter extends RecyclerView.Adapter<TaskHolder> {
@@ -318,6 +383,16 @@ public class TabTasksFragment extends Fragment {
 			return mTasks.get(position);
 		}
 
+		public void updateTaskById(long id){
+			if (id == -1) return;
+			for (int i = 0; i < mTasks.size(); i++) {
+				if (mTasks.get(i).getId() == id) {
+					notifyItemChanged(i);
+					break;
+				}
+			}
+		}
+
 		public void selectTaskById(long id) {
 			int prevPos = mSelectedTaskPosition;
 			mSelectedTaskPosition = -1;
@@ -327,8 +402,8 @@ public class TabTasksFragment extends Fragment {
 			for (int i = 0; i < mTasks.size(); i++) {
 				if (mTasks.get(i).getId() == id) {
 					mSelectedTaskPosition = i;
-					notifyItemChanged(mSelectedTaskPosition);
-					mTasksRecyclerView.scrollToPosition(mSelectedTaskPosition);
+					notifyItemChanged(i);
+					mTasksRecyclerView.scrollToPosition(i);
 					break;
 				}
 			}
