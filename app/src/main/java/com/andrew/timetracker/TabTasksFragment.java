@@ -74,19 +74,47 @@ public class TabTasksFragment extends Fragment {
 		mPanelAddDoneButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
+				String newName = mPanelAddText.getText().toString();
+
+				// check unique name
+				Task exTask = taskDao.queryBuilder().where(TaskDao.Properties.Name.eq(newName)).unique();
+				boolean isDuplicated = false;
+
 				Task task;
+				long taskId = -1;
 				if (mIsEditing) {
 					task = mAdapter.getTask(mSelectedTaskPosition);
-					task.setName(mPanelAddText.getText().toString());
-					taskDao.update(task);
-					mIsEditing = false;
+					taskId = task.getId();
+					if (exTask != null){
+						isDuplicated = exTask.getId().equals(task.getId());
+					}
+					if (!isDuplicated){
+						task.setName(newName);
+						taskDao.update(task);
+						mIsEditing = false;
+					}
 				} else {
-					task = new Task(null, mPanelAddText.getText().toString());
-					taskDao.insert(task);
+					isDuplicated = exTask != null;
+					if (!isDuplicated){
+						task = new Task(null, newName);
+						taskDao.insert(task);
+						taskId = task.getId();
+					}
 				}
-				setPanelAddVisibility(false);
-				updateTasks();
-				mAdapter.selectTaskById(task.getId());
+				if (isDuplicated){
+					new AlertDialog.Builder(getContext())
+							  .setMessage(R.string.alert_task_name_exists)
+							  .setTitle(R.string.alert_task_name_exists_title)
+							  .setIcon(R.drawable.icon_alert)
+							  .setPositiveButton(android.R.string.ok, null)
+							  .show();
+
+				} else {
+					setPanelAddVisibility(false);
+					updateTasks();
+					mAdapter.selectTaskById(taskId);
+				}
 			}
 		});
 		mPanelAddDoneButton.setEnabled(false);
@@ -128,7 +156,9 @@ public class TabTasksFragment extends Fragment {
 			case R.id.menu_item_new_task:
 				setPanelAddVisibility(true);
 				if (mSelectedTaskPosition != -1) {
-					mAdapter.notifyItemChanged(mSelectedTaskPosition);
+					int pos = mSelectedTaskPosition;
+					mSelectedTaskPosition = -1;
+					mAdapter.notifyItemChanged(pos);
 				}
 				return true;
 			case R.id.menu_item_cancel:
