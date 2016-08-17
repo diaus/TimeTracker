@@ -36,6 +36,10 @@ public class Task {
 		this.id = id;
 	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	@Generated(hash = 207136854)
 	public Task(Long id, @NotNull String name) {
 		this.id = id;

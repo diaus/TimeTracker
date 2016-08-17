@@ -9,4 +9,6 @@
     <string name="confirm_delete_task">Are you sure you want to delete task?</string>
     <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
     <string name="confirm_delete_task_title">Really?</string>
+    <string name="alert_task_name_exists">Task with this name already exists!</string>
+    <string name="alert_task_name_exists_title">Error</string>
 </resources>
