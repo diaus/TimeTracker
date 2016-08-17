@@ -58,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private ITab getCurrentTab(){
-		ITab tab = (ITab) mAdapter.instantiateItem(mViewPager, mViewPager.getCurrentItem());
-		return tab;
+		return (ITab) mAdapter.instantiateItem(mViewPager, mViewPager.getCurrentItem());
 	}
 
 }
