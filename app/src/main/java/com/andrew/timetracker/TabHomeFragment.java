@@ -64,7 +64,7 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	Runnable timerMinute = new Runnable() {
 		@Override
 		public void run() {
-			updateUI_current();
+			updateUI();
 			timerHandler.postDelayed(this, 60000);
 		}
 	};
@@ -120,6 +120,7 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		ensureTimer();
 		timerHandler.removeCallbacks(timerMinute);
 		timerHandler.postDelayed(timerMinute, 60000);
+		updateUI();
 	}
 
 	private void ensureTimer(){
@@ -147,7 +148,7 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	private void onStartStop() {
 		if (mTask == null) return;
 
-		((Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(400);
+		((Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(200);
 
 		if (mIsStarted) {
 			mTimeline.setStopTime(new Date());
@@ -226,6 +227,8 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 
 
 	private void updateUI() {
+		Log.d(TAG, "updateUI");
+
 		mStatusView.setBackgroundResource(mIsStarted ? R.drawable.started_circle : R.drawable.stopped_circle);
 
 		mStartButton.setText(mIsStarted ? R.string.stop_button : R.string.start_button);
