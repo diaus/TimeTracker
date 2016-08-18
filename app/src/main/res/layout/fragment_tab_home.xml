@@ -18,10 +18,19 @@
         android:id="@+id/fragment_tab_home_spent_time_today"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_tab_home_spent_time_today"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="Current task title"
+        android:id="@+id/fragment_tab_home_current_task"
+        />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/fragment_tab_home_spent_time_today"
+        android:layout_below="@id/fragment_tab_home_current_task"
         >
 
         <Button

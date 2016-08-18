@@ -4,6 +4,8 @@
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
     <string name="home_tab_spent_time_today">Spent today: %1$d hrs %2$d min</string>
+    <string name="home_tab_task_not_selected">task not selected</string>
+    <string name="home_tab_task_title">Current task: %1$s</string>
 
     <!-- tasks tab -->
     <string name="menu_tab_tasks_create_task">Create Task</string>
