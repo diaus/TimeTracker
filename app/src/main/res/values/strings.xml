@@ -4,8 +4,13 @@
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
     <string name="home_tab_spent_time_today">Spent today: %1$d hrs %2$d min</string>
-    <string name="home_tab_task_not_selected">task not selected</string>
-    <string name="home_tab_task_title">Current task: %1$s</string>
+    <string name="home_tab_start_working">Start working at %1$tH : %1$tM</string>
+    <string name="home_tab_task_not_selected"><i>task not selected</i></string>
+    <string name="home_tab_task_time_info_started">Today: %1$d hrs %2$d min, Current: %3$d hrs %4$d min %5$d sec</string>
+    <string name="home_tab_task_time_info_stopped">Today: %1$d hrs %2$d min</string>
+    <string name="home_tab_task_started_info">Last started on %1$s</string>
+    <string name="home_tab_inactive_total">Total inactivity: %1$d hrs %2$d min</string>
+    <string name="home_tab_inactive_current">Inactive for: %1$d hrs %2$d min</string>
 
     <!-- tasks tab -->
     <string name="menu_tab_tasks_create_task">Create Task</string>
