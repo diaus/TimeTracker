@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -31,11 +30,9 @@ import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
-import com.andrew.timetracker.settings.IMainActivity;
 
 import org.greenrobot.greendao.query.Query;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,6 +103,7 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 						task.setName(newName);
 						taskDao.update(task);
 						mIsEditing = false;
+						getHostingActivity().invalidateTask();
 					}
 				} else {
 					isDuplicated = exTask != null;
@@ -240,7 +238,7 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 
 	private void deleteSelectedTask() {
 		Task task = mAdapter.getTask(mSelectedTaskPosition);
-		boolean isTimelines = timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).limit(1).unique() != null;
+		final boolean isTimelines = timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).limit(1).unique() != null;
 
 		new AlertDialog.Builder(getContext())
 				  .setMessage(isTimelines ? R.string.confirm_delete_task_with_timelines : R.string.confirm_delete_task)
@@ -253,6 +251,7 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 						  Task task = mAdapter.getTask(mSelectedTaskPosition);
 						  timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).buildDelete().executeDeleteWithoutDetachingEntities();
 						  taskDao.delete(task);
+						  if (isTimelines) getHostingActivity().invalidateTimelines();
 						  updateTasks();
 						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), task.getName()), Toast.LENGTH_SHORT).show();
 					  }
@@ -279,6 +278,7 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 		timelineDao.insert(timeline);
 		mStartedTaskId = taskId;
 		mAdapter.updateTaskById(taskId);
+		getHostingActivity().invalidateTimelines();
 		getHostingActivity().switchToHomeTab();
 	}
 
