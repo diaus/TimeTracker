@@ -9,8 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.andrew.timetracker.settings.IMainActivity;
-
 
 public class MainActivity extends AppCompatActivity implements IMainActivity {
 	private static final String TAG = "tt: MainActivity";
@@ -50,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 			public void onPageSelected(int position) {
 				Log.d(TAG, "tab selected " + position);
 				getTab(position).onTabSelected();
+				clearInvalidations();
 			}
 		});
 		mViewPager.setAdapter(mAdapter);
@@ -69,6 +68,34 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 	@Override
 	public void switchToHomeTab() {
 		mViewPager.setCurrentItem(0);
+	}
+
+	private boolean _isInvalidatedTask;
+	private boolean _isInvalidatedTimelines;
+
+	private void clearInvalidations(){
+		_isInvalidatedTimelines = false;
+		_isInvalidatedTask = false;
+	}
+
+	@Override
+	public void invalidateTask() {
+		_isInvalidatedTask = true;
+	}
+
+	@Override
+	public void invalidateTimelines() {
+		_isInvalidatedTimelines = true;
+	}
+
+	@Override
+	public boolean isInvalidatedTask() {
+		return _isInvalidatedTask;
+	}
+
+	@Override
+	public boolean isInvalidatedTimelines() {
+		return _isInvalidatedTimelines;
 	}
 
 }

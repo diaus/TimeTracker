@@ -1,11 +1,14 @@
 package com.andrew.timetracker;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
-import android.text.format.DateUtils;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +22,6 @@ import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
 
-import org.greenrobot.greendao.query.QueryBuilder;
-import org.greenrobot.greendao.query.WhereCondition;
-
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +30,7 @@ import java.util.List;
  */
 public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 
+	private static final String TAG = "tt: TabHomeFragment";
 	private TimelineDao timelineDao;
 	private TaskDao taskDao;
 
@@ -51,6 +51,23 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	TextView mCurrentTaskTimeCurrentTextView;
 	TextView mInactiveTotalTextView;
 	TextView mInactiveCurrentTextView;
+
+	Handler timerHandler = new Handler();
+	boolean isTimerSecondStarted = false;
+	Runnable timerSecond = new Runnable() {
+		@Override
+		public void run() {
+			updateUI_current();
+			timerHandler.postDelayed(this, 1000);
+		}
+	};
+	Runnable timerMinute = new Runnable() {
+		@Override
+		public void run() {
+			updateUI_current();
+			timerHandler.postDelayed(this, 60000);
+		}
+	};
 
 	@Nullable
 	@Override
@@ -88,18 +105,71 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		return v;
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.d(TAG, "onPause");
+		stopTimer();
+		timerHandler.removeCallbacks(timerMinute);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, "onResume");
+		ensureTimer();
+		timerHandler.removeCallbacks(timerMinute);
+		timerHandler.postDelayed(timerMinute, 60000);
+	}
+
+	private void ensureTimer(){
+		if (mIsStarted){
+			startTimer();
+		} else {
+			stopTimer();
+		}
+	}
+
+	private void startTimer() {
+		if (!isTimerSecondStarted){
+			timerHandler.postDelayed(timerSecond, 1000);
+			isTimerSecondStarted = true;
+		}
+	}
+
+	private void stopTimer() {
+		if (isTimerSecondStarted){
+			timerHandler.removeCallbacks(timerSecond);
+			isTimerSecondStarted = false;
+		}
+	}
+
 	private void onStartStop() {
 		if (mTask == null) return;
+
+		((Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(400);
 
 		if (mIsStarted) {
 			mTimeline.setStopTime(new Date());
 			mTimeline.update();
+			int time = mTimeline.getSpentSeconds();
+			mSpentToday += time;
+			mTaskSpentToday += time;
 		} else {
-			Timeline timeline = new Timeline(null, mTask.getId(), new Date(), null);
-			timelineDao.insert(timeline);
+			if (mTimeline != null && mTimeline.getStopTime().after(helper.getToday().getTime())){
+				mInactiveTotal += helper.diffDates(mTimeline.getStopTime(), null);
+			}
+			mTimeline = new Timeline(null, mTask.getId(), new Date(), null);
+			timelineDao.insert(mTimeline);
+			if (mDateWorkStarted == null){
+				mDateWorkStarted = mTimeline.getStartTime();
+			}
 		}
 
-		updateData();
+		mIsStarted = !mIsStarted;
+
+		updateUI();
+		ensureTimer();
 	}
 
 	private void updateData() {
@@ -150,6 +220,8 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		}
 
 		updateUI();
+
+		ensureTimer();
 	}
 
 
@@ -178,7 +250,6 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current), inactiveCurrent / 60, inactiveCurrent % 60));
 
 		mCurrentTaskTimeTodayTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
-		mCurrentTaskTimeCurrentTextView.setVisibility(!mIsStarted ? View.GONE : View.VISIBLE);
 		if (mTask == null) {
 			mCurrentTaskTextView.setText(R.string.home_tab_task_not_selected);
 		} else {
@@ -186,27 +257,40 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 			mCurrentTaskTextView.setText(content);
 
-			if (mIsStarted) {
-				int current = getStartedTaskTime();
-				mCurrentTaskTimeCurrentTextView.setText(String.format(getString(R.string.home_tab_task_time_current),
-						  current / 3600, (current / 60) % 60, current % 60));
-			}
-
 			int today = (mTaskSpentToday + getStartedTaskTime()) / 60;
 			mCurrentTaskTimeTodayTextView.setText(String.format(getString(R.string.home_tab_task_time_today),
 					  today / 60, today % 60));
 
 		}
+
+		updateUI_current();
 	}
 
+	private void updateUI_current() {
+		mCurrentTaskTimeCurrentTextView.setVisibility(!mIsStarted ? View.GONE : View.VISIBLE);
+		if (mIsStarted){
+			int current = getStartedTaskTime();
+			mCurrentTaskTimeCurrentTextView.setText(String.format(getString(R.string.home_tab_task_time_current),
+					  current / 3600, (current / 60) % 60, current % 60));
+		}
+	}
 
 	private int getStartedTaskTime() {
 		if (!mIsStarted) return 0;
 		return mTimeline.getSpentSeconds();
 	}
 
+	private IMainActivity getHostingActivity(){
+		return (IMainActivity) getActivity();
+	}
+
 	@Override
 	public void onTabSelected() {
-		updateData();
+		if (getHostingActivity().isInvalidatedTimelines()){
+			updateData();
+		} else if (getHostingActivity().isInvalidatedTask()){
+			taskDao.refresh(mTask);
+			updateUI();
+		}
 	}
 }
