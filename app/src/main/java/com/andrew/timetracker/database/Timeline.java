@@ -171,4 +171,8 @@ public class Timeline {
 	@Generated(hash = 1903543528)
 	public Timeline() {
 	}
+
+	public int getSpentSeconds() {
+		return (int) (((getStopTime() != null ? getStopTime().getTime() : new Date().getTime()) - getStartTime().getTime()) / 1000);
+	}
 }
