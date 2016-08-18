@@ -1,5 +1,6 @@
 package com.andrew.timetracker;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,19 +15,23 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andrew.timetracker.commons.OnDoubleTouchListener;
 import com.andrew.timetracker.commons.SimpleTextWatcher;
 import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
+import com.andrew.timetracker.settings.IMainActivity;
 
 import org.greenrobot.greendao.query.Query;
 
@@ -138,6 +143,10 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 		return v;
 	}
 
+	private IMainActivity getHostingActivity(){
+		return (IMainActivity) getActivity();
+	}
+
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -207,18 +216,20 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 			mAdapter.notifyItemChanged(prevPos);
 		}
 		if (mPanelAdd.getVisibility() == View.VISIBLE) {
-			mPanelAddText.setText(mAdapter.getTask(position).getName());
-			mPanelAddText.requestFocus();
-			mPanelAddText.setSelection(mPanelAddText.getText().length());
+			setPanelAddVisibility(true, mAdapter.getTask(position).getName());
 		}
 	}
 
 	void setPanelAddVisibility(boolean isVisible, String text) {
 		mPanelAddText.setText(text);
 		mPanelAdd.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+		final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (isVisible) {
 			mPanelAddText.requestFocus();
 			mPanelAddText.setSelection(mPanelAddText.getText().length());
+			imm.showSoftInput(mPanelAddText, InputMethodManager.SHOW_IMPLICIT);
+		} else {
+			imm.hideSoftInputFromWindow(mPanelAddText.getWindowToken(), 0);
 		}
 		getActivity().invalidateOptionsMenu();
 	}
@@ -268,6 +279,7 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 		timelineDao.insert(timeline);
 		mStartedTaskId = taskId;
 		mAdapter.updateTaskById(taskId);
+		getHostingActivity().switchToHomeTab();
 	}
 
 	@Override
@@ -336,7 +348,18 @@ public class TabTasksFragment extends Fragment implements MainActivity.ITab {
 			boolean showButtons = mSelected && mPanelAdd.getVisibility() != View.VISIBLE;
 			mEditButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
 			mDeleteButton.setVisibility(showButtons ? View.VISIBLE : View.GONE);
-			mStartButton.setVisibility(showButtons && !mIsStarted ? View.VISIBLE : View.GONE);
+			boolean showStartButton = showButtons && !mIsStarted;
+			int visibilityStartButton = showStartButton ? View.VISIBLE : View.GONE;
+			if (mStartButton.getVisibility() != visibilityStartButton){
+				mStartButton.setVisibility(visibilityStartButton);
+				mContainer.setOnTouchListener(!showStartButton ? null : new OnDoubleTouchListener(getContext()) {
+					@Override
+					protected boolean onDoubleTab() {
+						startSelectedTask();
+						return true;
+					}
+				});
+			}
 		}
 
 		@Override

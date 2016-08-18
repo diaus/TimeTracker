@@ -34,11 +34,13 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	boolean mIsStarted;
 	Date mDateStarted;
 	Task mTask;
+	Timeline mTimeline;
 	int mSpentToday = 0;
 
 	Button mStartButton;
 	View mStatusView;
 	TextView mSpentTimeTodayTextView;
+	TextView mCurrentTaskTextView;
 
 	@Nullable
 	@Override
@@ -53,11 +55,12 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		mStartButton = (Button) v.findViewById(R.id.fragment_tab_home_start_button);
 		mStatusView = v.findViewById(R.id.fragment_tab_home_view_status);
 		mSpentTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_tab_home_spent_time_today);
+		mCurrentTaskTextView = (TextView) v.findViewById(R.id.fragment_tab_home_current_task);
 
 		mStartButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (mTask == null) return;
+				onStartStop();
 			}
 		});
 
@@ -70,15 +73,29 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		return v;
 	}
 
+	private void onStartStop() {
+		if (mTask == null) return;
+
+		if (mIsStarted){
+			mTimeline.setStopTime(new Date());
+			mTimeline.update();
+		} else {
+			Timeline timeline = new Timeline(null, mTask.getId(), new Date(), null);
+			timelineDao.insert(timeline);
+		}
+
+		updateData();
+	}
+
 	private void updateData() {
 
-		Timeline timeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
-		mIsStarted = timeline != null;
+		mTimeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		mIsStarted = mTimeline != null;
 		if (mIsStarted){
-			mDateStarted = timeline.getStartTime();
-			mTask = taskDao.load(timeline.getTaskId());
+			mDateStarted = mTimeline.getStartTime();
+			mTask = taskDao.load(mTimeline.getTaskId());
 		} else {
-			timeline = timelineDao.queryBuilder().orderDesc(TimelineDao.Properties.StopTime).limit(1).unique();
+			Timeline timeline = timelineDao.queryBuilder().orderDesc(TimelineDao.Properties.StopTime).limit(1).unique();
 			mTask = timeline == null ? null : taskDao.load(timeline.getTaskId());
 		}
 
@@ -108,6 +125,12 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 
 		int time = (mSpentToday + getStartedTaskTime())/60;
 		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today), time / 60, time % 60));
+
+		if (mTask == null){
+			mCurrentTaskTextView.setText(R.string.home_tab_task_not_selected);
+		} else {
+			mCurrentTaskTextView.setText(String.format(getString(R.string.home_tab_task_title), mTask.getName()));
+		}
 	}
 
 

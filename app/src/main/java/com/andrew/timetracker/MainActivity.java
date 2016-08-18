@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.andrew.timetracker.settings.IMainActivity;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements IMainActivity {
 	private static final String TAG = "tt: MainActivity";
 
 	public interface ITab {
@@ -26,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		mViewPager = (ViewPager) findViewById(R.id.activity_main_tabs_pager);
-
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		mAdapter = new FragmentStatePagerAdapter(fragmentManager) {
 			@Override
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 				getTab(position).onTabSelected();
 			}
 		});
-
 		mViewPager.setAdapter(mAdapter);
 
 		Log.d(TAG, "end of onCreate in main activity");
@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
 	private ITab getCurrentTab(){
 		return getTab(mViewPager.getCurrentItem());
+	}
+
+	@Override
+	public void switchToHomeTab() {
+		mViewPager.setCurrentItem(0);
 	}
 
 }
