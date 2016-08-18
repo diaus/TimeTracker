@@ -35,9 +35,9 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	private TaskDao taskDao;
 
 	boolean mIsStarted;
-	Date mDateStarted;
 	Task mTask;
 	Timeline mTimeline;
+	Date mDateWorkStarted;
 	int mSpentToday = 0; // seconds, without current
 	int mTaskSpentToday = 0; // seconds, without current
 	int mInactiveTotal = 0; // seconds, without current
@@ -47,8 +47,8 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 	TextView mSpentTimeTodayTextView;
 	TextView mStartWorkingTextView;
 	TextView mCurrentTaskTextView;
-	TextView mCurrentTaskTimeInfoTextView;
-	TextView mCurrentTaskStartedInfoTextView;
+	TextView mCurrentTaskTimeTodayTextView;
+	TextView mCurrentTaskTimeCurrentTextView;
 	TextView mInactiveTotalTextView;
 	TextView mInactiveCurrentTextView;
 
@@ -66,8 +66,8 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		mStatusView = v.findViewById(R.id.fragment_tab_home_view_status);
 		mSpentTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_tab_home_spent_time_today);
 		mCurrentTaskTextView = (TextView) v.findViewById(R.id.fragment_tab_home_current_task);
-		mCurrentTaskTimeInfoTextView = (TextView) v.findViewById(R.id.fragment_tab_home_task_time_info);
-		mCurrentTaskStartedInfoTextView = (TextView) v.findViewById(R.id.fragment_tab_home_task_started_info);
+		mCurrentTaskTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_tab_home_task_time_today);
+		mCurrentTaskTimeCurrentTextView = (TextView) v.findViewById(R.id.fragment_tab_home_task_time_current);
 		mInactiveTotalTextView = (TextView) v.findViewById(R.id.fragment_tab_home_inactive_total);
 		mInactiveCurrentTextView = (TextView) v.findViewById(R.id.fragment_tab_home_inactive_current);
 		mStartWorkingTextView = (TextView) v.findViewById(R.id.fragment_tab_home_start_work);
@@ -107,7 +107,6 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		mTimeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
 		mIsStarted = mTimeline != null;
 		if (mIsStarted) {
-			mDateStarted = mTimeline.getStartTime();
 			mTask = taskDao.load(mTimeline.getTaskId());
 		} else {
 			mTimeline = timelineDao.queryBuilder()
@@ -123,6 +122,7 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		mSpentToday = 0;
 		mTaskSpentToday = 0;
 		mInactiveTotal = 0;
+		mDateWorkStarted = null;
 		List<Timeline> tt = timelineDao.queryBuilder()
 				  .where(TimelineDao.Properties.StopTime.isNotNull())
 				  .where(TimelineDao.Properties.StopTime.gt(today))
@@ -134,13 +134,19 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 			if (tl.getTaskId() == mTask.getId()) {
 				mTaskSpentToday += time;
 			}
-			if (lastStopped != null){
+			if (lastStopped != null) {
 				mInactiveTotal += helper.diffDates(lastStopped, tl.getStartTime());
+			} else {
+				mDateWorkStarted = tl.getStartTime();
 			}
 			lastStopped = tl.getStopTime();
 		}
-		if (mIsStarted){
+		if (mIsStarted) {
 			mInactiveTotal += helper.diffDates(lastStopped, mTimeline.getStartTime());
+		}
+
+		if (mDateWorkStarted == null && mIsStarted) {
+			mDateWorkStarted = mTimeline.getStartTime();
 		}
 
 		updateUI();
@@ -159,16 +165,20 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 		int inactiveCurrent = mIsStarted || mTimeline == null || mTimeline.getStopTime().before(helper.getToday().getTime())
 				  ? 0 : helper.diffDates(mTimeline.getStopTime(), null) / 60;
 
-		time = (mInactiveTotal / 60 ) + inactiveCurrent;
+		time = (mInactiveTotal / 60) + inactiveCurrent;
 		mInactiveTotalTextView.setVisibility(time == 0 ? View.GONE : View.VISIBLE);
 		mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total), time / 60, time % 60));
+
+		mStartWorkingTextView.setVisibility(mDateWorkStarted == null ? View.GONE : View.VISIBLE);
+		if (mDateWorkStarted != null){
+			mStartWorkingTextView.setText(String.format(getString(R.string.home_tab_start_working), mDateWorkStarted));
+		}
 
 		mInactiveCurrentTextView.setVisibility(inactiveCurrent == 0 ? View.GONE : View.VISIBLE);
 		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current), inactiveCurrent / 60, inactiveCurrent % 60));
 
-		mCurrentTaskTimeInfoTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
-		mCurrentTaskStartedInfoTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
-		mStartWorkingTextView.setVisibility(!mIsStarted && mSpentToday == 0 ? View.GONE : View.VISIBLE);
+		mCurrentTaskTimeTodayTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
+		mCurrentTaskTimeCurrentTextView.setVisibility(!mIsStarted ? View.GONE : View.VISIBLE);
 		if (mTask == null) {
 			mCurrentTaskTextView.setText(R.string.home_tab_task_not_selected);
 		} else {
@@ -176,32 +186,23 @@ public class TabHomeFragment extends Fragment implements MainActivity.ITab {
 			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 			mCurrentTaskTextView.setText(content);
 
+			if (mIsStarted) {
+				int current = getStartedTaskTime();
+				mCurrentTaskTimeCurrentTextView.setText(String.format(getString(R.string.home_tab_task_time_current),
+						  current / 3600, (current / 60) % 60, current % 60));
+			}
+
 			int today = (mTaskSpentToday + getStartedTaskTime()) / 60;
-			int current = getStartedTaskTime();
-			if (mIsStarted){
-				mCurrentTaskTimeInfoTextView.setText(String.format(getString(R.string.home_tab_task_time_info_started),
-						  today / 60, today % 60, current / 3600, (current / 60) % 60, current % 60));
-			} else {
-				mCurrentTaskTimeInfoTextView.setText(String.format(getString(R.string.home_tab_task_time_info_stopped),
-						  today / 60, today % 60));
-			}
+			mCurrentTaskTimeTodayTextView.setText(String.format(getString(R.string.home_tab_task_time_today),
+					  today / 60, today % 60));
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(mTimeline.getStartTime());
-			String lastTime = String.format("%1$tH:%1$tM:%1$tS", cal);
-			if (helper.getToday().after(cal)) {
-				lastTime = String.format("%1$ta,%1$tb,%1$td ", cal) + lastTime;
-			}
-			mCurrentTaskStartedInfoTextView.setText(String.format(getString(R.string.home_tab_task_started_info), lastTime));
-
-			mStartWorkingTextView.setText(String.format(getString(R.string.home_tab_start_working), mTimeline.getStartTime()));
 		}
 	}
 
 
 	private int getStartedTaskTime() {
 		if (!mIsStarted) return 0;
-		return helper.diffDates(mDateStarted, null);
+		return mTimeline.getSpentSeconds();
 	}
 
 	@Override

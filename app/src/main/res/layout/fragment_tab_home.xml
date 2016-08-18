@@ -70,15 +70,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:text="Task time info"
-                android:id="@+id/fragment_tab_home_task_time_info"/>
+                tools:text="Task spent today"
+                android:id="@+id/fragment_tab_home_task_time_today"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:text="Started time info"
-                android:id="@+id/fragment_tab_home_task_started_info"/>
+                tools:text="Task spent current"
+                android:id="@+id/fragment_tab_home_task_time_current"/>
 
             <Button
                 android:layout_width="100dp"
