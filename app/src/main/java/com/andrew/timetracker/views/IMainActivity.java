@@ -1,4 +1,4 @@
-package com.andrew.timetracker;
+package com.andrew.timetracker.views;
 
 /**
  * Created by andrew on 18.08.2016.
