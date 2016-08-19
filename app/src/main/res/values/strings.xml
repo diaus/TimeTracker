@@ -23,4 +23,5 @@ Are you sure you still want to delete task?</string>
     <string name="confirm_delete_task_title">Really?</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
+    <string name="home_tab_open_tasks_button">Open Tasks</string>
 </resources>
