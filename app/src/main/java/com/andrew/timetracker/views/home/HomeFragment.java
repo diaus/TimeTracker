@@ -1,6 +1,7 @@
 package com.andrew.timetracker.views.home;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -274,7 +275,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		int inactiveCurrent = mIsStarted || mTimeline == null || mTimeline.getStopTime().before(helper.getToday().getTime())
 				  ? 0 : helper.diffDates(mTimeline.getStopTime(), null) / 60;
 
-		time = (mInactiveTotal / 60) + inactiveCurrent;
+		time = (mInactiveTotal / 60); // + inactiveCurrent;
 		mInactiveTotalTextView.setVisibility(time == 0 ? View.GONE : View.VISIBLE);
 		mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total), time / 60, time % 60));
 
@@ -293,6 +294,8 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			SpannableString content = new SpannableString(mTask.getName());
 			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 			mCurrentTaskTextView.setText(content);
+			mCurrentTaskTextView.setTypeface(null, Typeface.BOLD);
+
 
 			int today = (mTaskSpentToday + getStartedTaskTime()) / 60;
 			mCurrentTaskTimeTodayTextView.setText(String.format(getString(R.string.home_tab_task_time_today),
