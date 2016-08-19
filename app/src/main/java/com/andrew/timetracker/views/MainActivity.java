@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.andrew.timetracker.R;
-import com.andrew.timetracker.views.tasks.TasksFragment;
 import com.andrew.timetracker.views.home.HomeFragment;
+import com.andrew.timetracker.views.time.TimeFragment;
 
 
 public class MainActivity extends AppCompatActivity implements IMainActivity {
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 				Log.d(TAG, "create tab fragment " + position);
 				switch (position){
 					case 0: return new HomeFragment();
-					case 1: return new TasksFragment();
+					case 1: return new TimeFragment();
 				}
 				return null;
 			}

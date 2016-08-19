@@ -1,5 +1,6 @@
 package com.andrew.timetracker.views.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
+import com.andrew.timetracker.views.tasks.TasksActivity;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,9 @@ import java.util.List;
 public class HomeFragment extends Fragment implements MainActivity.ITab {
 
 	private static final String TAG = "tt: HomeFragment";
+
+	private static final int REQUEST_TASKS = 1;
+
 	private TimelineDao timelineDao;
 	private TaskDao taskDao;
 
@@ -54,6 +59,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	TextView mCurrentTaskTimeCurrentTextView;
 	TextView mInactiveTotalTextView;
 	TextView mInactiveCurrentTextView;
+	Button mOpenTasksButton;
 
 	Handler timerHandler = new Handler();
 	boolean isTimerSecondStarted = false;
@@ -91,11 +97,19 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		mInactiveTotalTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_total);
 		mInactiveCurrentTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_current);
 		mStartWorkingTextView = (TextView) v.findViewById(R.id.fragment_home_start_work);
+		mOpenTasksButton = (Button) v.findViewById(R.id.fragment_home_open_tasks_button);
 
 		mStartStopButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				onStartStop();
+			}
+		});
+
+		mOpenTasksButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				openTasks();
 			}
 		});
 
@@ -124,6 +138,21 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		timerHandler.removeCallbacks(timerMinute);
 		timerHandler.postDelayed(timerMinute, 60000);
 		updateUI();
+	}
+
+	private void openTasks() {
+		Intent intent = new Intent(getContext(), TasksActivity.class);
+		startActivityForResult(intent, REQUEST_TASKS);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == REQUEST_TASKS){
+			updateData();
+		}
+
+		//super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private void ensureTimer(){
@@ -178,6 +207,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	}
 
 	private void updateData() {
+		Log.d(TAG, "updateData");
 
 		mTimeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
 		mIsStarted = mTimeline != null;
@@ -216,7 +246,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			}
 			lastStopped = tl.getStopTime();
 		}
-		if (mIsStarted) {
+		if (mIsStarted && lastStopped != null) {
 			mInactiveTotal += helper.diffDates(lastStopped, mTimeline.getStartTime());
 		}
 

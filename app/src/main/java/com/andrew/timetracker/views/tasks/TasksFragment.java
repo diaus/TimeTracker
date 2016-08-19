@@ -32,8 +32,6 @@ import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
-import com.andrew.timetracker.views.IMainActivity;
-import com.andrew.timetracker.views.MainActivity;
 
 import org.greenrobot.greendao.query.Query;
 
@@ -44,7 +42,7 @@ import java.util.List;
 /**
  * Created by andrew on 15.08.2016.
  */
-public class TasksFragment extends Fragment implements MainActivity.ITab {
+public class TasksFragment extends Fragment {
 
 	private static final String TAG = "tt: TasksFragment";
 
@@ -107,7 +105,7 @@ public class TasksFragment extends Fragment implements MainActivity.ITab {
 						task.setName(newName);
 						taskDao.update(task);
 						mIsEditing = false;
-						getHostingActivity().invalidateTask();
+						//getHostingActivity().invalidateTask();
 					}
 				} else {
 					isDuplicated = exTask != null;
@@ -145,9 +143,9 @@ public class TasksFragment extends Fragment implements MainActivity.ITab {
 		return v;
 	}
 
-	private IMainActivity getHostingActivity(){
-		return (IMainActivity) getActivity();
-	}
+//	private IMainActivity getHostingActivity(){
+//		return (IMainActivity) getActivity();
+//	}
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -255,7 +253,7 @@ public class TasksFragment extends Fragment implements MainActivity.ITab {
 						  Task task = mAdapter.getTask(mSelectedTaskPosition);
 						  timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(task.getId())).buildDelete().executeDeleteWithoutDetachingEntities();
 						  taskDao.delete(task);
-						  if (isTimelines) getHostingActivity().invalidateTimelines();
+						  //if (isTimelines) getHostingActivity().invalidateTimelines();
 						  updateTasks();
 						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), task.getName()), Toast.LENGTH_SHORT).show();
 					  }
@@ -282,13 +280,9 @@ public class TasksFragment extends Fragment implements MainActivity.ITab {
 		timelineDao.insert(timeline);
 		mStartedTaskId = taskId;
 		mAdapter.updateTaskById(taskId);
-		getHostingActivity().invalidateTimelines();
-		getHostingActivity().switchToHomeTab();
-	}
-
-	@Override
-	public void onTabSelected() {
-		updateStartedTask();
+		//getHostingActivity().invalidateTimelines();
+		//getHostingActivity().switchToHomeTab();
+		getActivity().finish();
 	}
 
 	private class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
