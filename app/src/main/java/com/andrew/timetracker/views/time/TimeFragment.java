@@ -46,6 +46,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		timelineDao = daoSession.getTimelineDao();
 
 		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
+		mTasksList.initControl(true, taskDao, timelineDao);
 
 		updateData();
 
@@ -63,7 +64,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 				  .orderAsc(TimelineDao.Properties.StartTime)
 				  .list();
 
-		mTasksList.setData(TasksList.PeriodType.DAY, timelines, taskDao, timelineDao);
+		mTasksList.setData(timelines, TasksList.PeriodType.DAY);
 
 	}
 }

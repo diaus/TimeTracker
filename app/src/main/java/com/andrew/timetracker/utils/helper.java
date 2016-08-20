@@ -1,6 +1,8 @@
 package com.andrew.timetracker.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.TypedValue;
 
 import com.andrew.timetracker.R;
 
@@ -25,7 +27,11 @@ public class helper {
 		return (int) ((dateTo.getTime() - dateFrom.getTime())/1000);
 	}
 
-	public static String formatShortTime(Context context, int seconds, boolean showMinutes, boolean showSeconds) {
+	public static String formatShortTime(Date d, boolean showSeconds) {
+		return String.format(showSeconds ? "%1$tH:%1$tM" : "%1$tH:%1$tM:%1$tS", d);
+	}
+
+	public static String formatShortSpentTime(Context context, int seconds, boolean showMinutes, boolean showSeconds) {
 		int minutes = seconds / 60;
 		seconds %= 60;
 		int hours = minutes / 60;
@@ -61,11 +67,18 @@ public class helper {
 		return s;
 	}
 
-	public static String formatShortTime(Context context, int seconds, boolean showSeconds) {
-		return formatShortTime(context, seconds, true, showSeconds);
+
+	public static String formatShortSpentTime(Context context, int seconds, boolean showSeconds) {
+		return formatShortSpentTime(context, seconds, true, showSeconds);
 	}
 
-	public static String formatShortTime(Context context, int seconds) {
-		return formatShortTime(context, seconds, true, true);
+	public static String formatShortSpentTime(Context context, int seconds) {
+		return formatShortSpentTime(context, seconds, true, true);
+	}
+
+	public static int convertDipToPx(int dp, Context context) {
+		Resources r = context.getResources();
+		float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, r.getDisplayMetrics());
+		return (int) px;
 	}
 }

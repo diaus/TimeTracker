@@ -3,14 +3,12 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:id="@+id/time_list_container"
-    >
+              android:layout_height="match_parent">
 
     <View
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:background="#CCCCCC"
         />
 
@@ -25,16 +23,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:text="Task title N"
-            android:id="@+id/time_tasks_item_title"/>
+            tools:text="13:00 - 15:15"
+            android:id="@+id/time_timelines_item_period"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:text="1h 2m"
-            android:id="@+id/time_tasks_item_time"/>
+            tools:text="2h 15m"
+            android:id="@+id/time_timelines_item_time"/>
 
     </LinearLayout>
 
