@@ -33,9 +33,9 @@ public class TimelinesList extends TimeListBase<TimelinesList.ItemHolder> {
 			TextView period = (TextView) v.findViewById(R.id.time_timelines_item_period);
 			TextView time = (TextView) v.findViewById(R.id.time_timelines_item_time);
 
-			period.setText(helper.formatShortTime(tl.getStartTime(), true) + " - " + (tl.getStopTime() == null ? "now" : helper.formatShortTime(tl.getStopTime(), true)));
+			period.setText(helper.formatShortTime(tl.getStartTime(), false) + " - " + (tl.getStopTime() == null ? "now" : helper.formatShortTime(tl.getStopTime(), false)));
 
-			time.setText(helper.formatShortSpentTime(context, tl.getSpentSeconds()));
+			time.setText(helper.formatShortSpentTime(context, tl.getSpentSeconds(), true, true));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
 			this.addView(v);

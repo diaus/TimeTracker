@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.utils.helper;
 
@@ -42,66 +43,6 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 
 	@Override
 	protected void createViews() {
-		switch (mPeriodType) {
-			case DAY:
-				initDay();
-				break;
-		}
-	}
-
-	@Override
-	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		Log.d(TAG, "clicked on " + (holder.taskId == -1 ? "Total" : getTask(holder.taskId).getName()));
-		if (holder.childList == null){
-			holder.childList = createChildTimelines(holder.taskId);
-			v.addView(holder.childList);
-		} else {
-			v.removeView(holder.childList);
-			holder.childList = null;
-		}
-	}
-
-	private TimelinesList createChildTimelines(Long taskId) {
-		TimelinesList c = new TimelinesList(getContext());
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks);
-		if (taskId == -1){
-			c.setData(mTimelines);
-		} else {
-			List<Timeline> timelines = new ArrayList<>();
-			for (Timeline tl : mTimelines){
-				if (tl.getTaskId() == taskId){
-					timelines.add(tl);
-				}
-			}
-			c.setData(timelines);
-		}
-
-		return c;
-	}
-
-	class ItemHolder implements Comparable<ItemHolder> {
-		public Long taskId;
-		public int timeSpent;
-
-		public View childList;
-
-		public ItemHolder(Long taskId) {
-			this.taskId = taskId;
-			timeSpent = 0;
-		}
-
-		public ItemHolder(Long taskId, int timeSpent) {
-			this.taskId = taskId;
-			this.timeSpent = timeSpent;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return timeSpent > another.timeSpent ? 1 : (timeSpent < another.timeSpent ? -1 : 0);
-		}
-	}
-
-	private void initDay() {
 		Context context = getContext();
 
 		Map<Long, ItemHolder> mapInfo = new HashMap<>();
@@ -141,7 +82,8 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 				title.setText(getTask(info.taskId).getName());
 			}
 
-			time.setText(helper.formatShortSpentTime(context, info.timeSpent));
+			time.setText(helper.formatShortSpentTime(context, info.timeSpent, true, false));
+			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
 			this.addView(v);
 
@@ -155,7 +97,68 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 			params.width = maxTitleWidth;
 			titleView.setLayoutParams(params);
 		}
+	}
 
+	@Override
+	protected void onItemClick(ViewGroup v, ItemHolder holder) {
+		Log.d(TAG, "clicked on " + (holder.taskId == -1 ? "Total" : getTask(holder.taskId).getName()));
+		if (holder.childList == null){
+			holder.childList = createChild(holder.taskId);
+			v.addView(holder.childList);
+		} else {
+			v.removeView(holder.childList);
+			holder.childList = null;
+		}
+	}
+
+	private TimeListBase createChild(Long taskId) {
+		TimeListBase c = null;
+		switch (mPeriodType){
+			case DAY: c = new TimelinesList(getContext()); break;
+			case WEEK: c = new WeekdaysList(getContext()); break;
+			case MONTH: c = new WeeksList(getContext()); break;
+		}
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks);
+
+		List<Timeline> timelines;
+		Task task = null;
+		if (taskId == -1){
+			timelines = mTimelines;
+		} else {
+			timelines = new ArrayList<>();
+			for (Timeline tl : mTimelines){
+				if (tl.getTaskId() == taskId){
+					timelines.add(tl);
+				}
+			}
+			task = getTask(taskId);
+		}
+		c.setData(timelines, task);
+
+		return c;
+	}
+
+
+	class ItemHolder implements Comparable<ItemHolder> {
+		public Long taskId;
+		public int timeSpent;
+
+		public TimeListBase childList;
+
+		public ItemHolder(Long taskId) {
+			this.taskId = taskId;
+			timeSpent = 0;
+		}
+
+		public ItemHolder(Long taskId, int timeSpent) {
+			this.taskId = taskId;
+			this.timeSpent = timeSpent;
+		}
+
+		@Override
+		public int compareTo(ItemHolder another) {
+			return timeSpent > another.timeSpent ? 1 : (timeSpent < another.timeSpent ? -1 : 0);
+		}
 	}
 
 	public TasksList(Context context) {

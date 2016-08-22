@@ -8,7 +8,7 @@
     <string name="second_short">s</string>
     <string name="time_total">Total</string>
 
-    <!-- home tab -->
+    <!-- home view -->
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
     <string name="home_tab_spent_time_today">Spent today: %1$d hrs %2$d min</string>
@@ -19,7 +19,7 @@
     <string name="home_tab_task_time_today">Today: %1$d hrs %2$d min</string>
     <string name="home_tab_task_time_current">Current: %1$d hrs %2$d min %3$d sec</string>
 
-    <!-- tasks tab -->
+    <!-- tasks view -->
     <string name="menu_tab_tasks_create_task">Create Task</string>
     <string name="menu_tab_tasks_cancel">Cancel</string>
     <string name="enter_task_title_edit_text">enter task title</string>
@@ -32,4 +32,10 @@ Are you sure you still want to delete task?</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
     <string name="home_tab_open_tasks_button">Open Tasks</string>
+
+    <!-- spent time view -->
+    <string name="fragment_time_day_button">Day</string>
+    <string name="fragment_time_week_button">Week</string>
+    <string name="fragment_time_month_button">Month</string>
+
 </resources>

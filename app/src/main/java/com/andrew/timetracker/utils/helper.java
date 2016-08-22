@@ -13,13 +13,24 @@ import java.util.Date;
  * Created by andrew on 18.08.2016.
  */
 public class helper {
-	public  static Calendar getToday() {
+	public static Calendar getToday(){
 		Calendar today = Calendar.getInstance();
-		today.set(Calendar.MILLISECOND, 0);
-		today.set(Calendar.SECOND, 0);
-		today.set(Calendar.MINUTE, 0);
-		today.set(Calendar.HOUR_OF_DAY, 0);
+		truncateCalendar(today);
 		return today;
+	}
+
+	public static void truncateCalendar(Calendar cal){
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+	}
+
+	public static Date getTruncatedDate(Date date){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		truncateCalendar(cal);
+		return cal.getTime();
 	}
 
 	public static int diffDates(Date dateFrom, Date dateTo){
@@ -28,7 +39,7 @@ public class helper {
 	}
 
 	public static String formatShortTime(Date d, boolean showSeconds) {
-		return String.format(showSeconds ? "%1$tH:%1$tM" : "%1$tH:%1$tM:%1$tS", d);
+		return String.format(showSeconds ? "%1$tH:%1$tM:%1$tS" : "%1$tH:%1$tM", d);
 	}
 
 	public static String formatShortSpentTime(Context context, int seconds, boolean showMinutes, boolean showSeconds) {
@@ -48,18 +59,19 @@ public class helper {
 			if (s.length() > 0) s += " ";
 			s += hours + context.getString(R.string.hour_short);
 		}
-		if (!showMinutes) return s;
-
-		if (!showSeconds && seconds >= 30) minutes += 1;
-		if (minutes > 0){
-			if (s.length() > 0) s += " ";
-			s += minutes + context.getString(R.string.minute_short);
-		}
-		if (!showSeconds) return s;
-
-		if (seconds > 0){
-			if (s.length() > 0) s += " ";
-			s += seconds + context.getString(R.string.second_short);
+		if (showMinutes)
+		{
+			if (!showSeconds && seconds >= 30) minutes += 1;
+			if (minutes > 0){
+				if (s.length() > 0) s += " ";
+				s += minutes + context.getString(R.string.minute_short);
+			}
+			if (showSeconds){
+				if (seconds > 0){
+					if (s.length() > 0) s += " ";
+					s += seconds + context.getString(R.string.second_short);
+				}
+			}
 		}
 
 		if (s.length() == 0) s = "0";
@@ -67,18 +79,41 @@ public class helper {
 		return s;
 	}
 
-
-	public static String formatShortSpentTime(Context context, int seconds, boolean showSeconds) {
-		return formatShortSpentTime(context, seconds, true, showSeconds);
-	}
-
-	public static String formatShortSpentTime(Context context, int seconds) {
-		return formatShortSpentTime(context, seconds, true, true);
-	}
-
 	public static int convertDipToPx(int dp, Context context) {
 		Resources r = context.getResources();
-		float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, r.getDisplayMetrics());
+		float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
 		return (int) px;
+	}
+
+	public static void toStartOfWeek(Calendar cal) {
+		switch (cal.get(Calendar.DAY_OF_WEEK)){
+			case Calendar.TUESDAY: cal.add(Calendar.DAY_OF_MONTH, -1); break;
+			case Calendar.WEDNESDAY: cal.add(Calendar.DAY_OF_MONTH, -2); break;
+			case Calendar.THURSDAY: cal.add(Calendar.DAY_OF_MONTH, -3); break;
+			case Calendar.FRIDAY: cal.add(Calendar.DAY_OF_MONTH, -4); break;
+			case Calendar.SATURDAY: cal.add(Calendar.DAY_OF_MONTH, -5); break;
+			case Calendar.SUNDAY: cal.add(Calendar.DAY_OF_MONTH, -6); break;
+		}
+	}
+
+	public static void toEndOfWeek(Calendar cal) {
+		switch (cal.get(Calendar.DAY_OF_WEEK)){
+			case Calendar.MONDAY: cal.add(Calendar.DAY_OF_MONTH, 6); break;
+			case Calendar.TUESDAY: cal.add(Calendar.DAY_OF_MONTH, 5); break;
+			case Calendar.WEDNESDAY: cal.add(Calendar.DAY_OF_MONTH, 4); break;
+			case Calendar.THURSDAY: cal.add(Calendar.DAY_OF_MONTH, 3); break;
+			case Calendar.FRIDAY: cal.add(Calendar.DAY_OF_MONTH, 2); break;
+			case Calendar.SATURDAY: cal.add(Calendar.DAY_OF_MONTH, 1); break;
+		}
+	}
+
+	public static void toStartOfMonth(Calendar cal){
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+	}
+
+	public static void toEndOfMonth(Calendar cal){
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.add(Calendar.MONTH, 1);
+		cal.add(Calendar.DAY_OF_MONTH, -1);
 	}
 }
