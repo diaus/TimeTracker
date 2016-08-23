@@ -17,11 +17,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:id="@+id/time_timelines_item_container"
         >
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:contentDescription="Delete"
+            tools:ignore="HardcodedText"
+            android:src="@drawable/delete_button"
+            android:id="@+id/time_timelines_item_delete_button"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             tools:text="13:00 - 15:15"
             android:id="@+id/time_timelines_item_period"/>
@@ -29,10 +46,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             tools:text="2h 15m"
             android:id="@+id/time_timelines_item_time"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:contentDescription="Edit"
+            tools:ignore="HardcodedText"
+            android:src="@drawable/edit_button"
+            android:id="@+id/time_timelines_item_edit_button"/>
 
     </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
+import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
 
 import java.util.Calendar;
@@ -48,6 +50,10 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		updateData();
 	}
 
+	private IMainActivity getHostingActivity(){
+		return (IMainActivity) getActivity();
+	}
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -63,7 +69,15 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		mPeriodType = TasksList.PeriodType.DAY;
 
 		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
-		mTasksList.initControl(true, taskDao, timelineDao);
+		mTasksList.initControl(true, taskDao, timelineDao, new TimeListBase.IEventHandler() {
+			@Override
+			public void invalidate() {
+				Object state = mTasksList.getOpenedState();
+				updateData();
+				mTasksList.restoreOpenedState(state);
+				getHostingActivity().invalidateTimelines();
+			}
+		});
 
 		mPrevButton = (ImageButton) v.findViewById(R.id.fragment_time_prev_button);
 		mNextButton = (ImageButton) v.findViewById(R.id.fragment_time_next_button);
@@ -112,6 +126,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 	}
 
 	private void changeDate(boolean isPrev) {
+		(isPrev ? mPrevButton : mNextButton).performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
 		switch (mPeriodType){
 			case DAY: mCurrentDay.add(Calendar.DAY_OF_MONTH, isPrev ? -1 : 1); break;
 			case WEEK: mCurrentDay.add(Calendar.WEEK_OF_MONTH, isPrev ? -1 : 1); break;

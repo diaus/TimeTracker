@@ -50,6 +50,8 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="Prev"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             tools:ignore="HardcodedText"
             android:src="@drawable/prev_button"
             android:id="@+id/fragment_time_prev_button"/>
@@ -87,6 +89,8 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="Prev"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             tools:ignore="HardcodedText"
             android:src="@drawable/next_button"
             android:id="@+id/fragment_time_next_button"/>

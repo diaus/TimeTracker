@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Created by andrew on 19.08.2016.
  */
-public class TasksList extends TimeListBase<TasksList.ItemHolder> {
+public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 
 	private static final String TAG = "tt: TasksList";
 
@@ -45,7 +45,7 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 	protected void createViews() {
 		Context context = getContext();
 
-		Map<Long, ItemHolder> mapInfo = new HashMap<>();
+		mItemHolders = new HashMap<>();
 		List<ItemHolder> infos = new ArrayList<>();
 
 		int timeSpentTotal = 0;
@@ -54,23 +54,26 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 			Long taskId = tl.getTaskId();
 			timeSpentTotal += tl.getSpentSeconds();
 			ItemHolder info;
-			if (mapInfo.containsKey(taskId)) {
-				info = mapInfo.get(taskId);
+			if (mItemHolders.containsKey(taskId)) {
+				info = mItemHolders.get(taskId);
 			} else {
 				info = new ItemHolder(taskId);
-				mapInfo.put(taskId, info);
+				mItemHolders.put(taskId, info);
 				infos.add(info);
 			}
 			info.timeSpent += tl.getSpentSeconds();
 		}
 
 		Collections.sort(infos, Collections.reverseOrder());
-		infos.add(0, new ItemHolder((long) -1, timeSpentTotal));
+		ItemHolder totalHolder = new ItemHolder((long) -1, timeSpentTotal);
+		infos.add(0, totalHolder);
+		mItemHolders.put((long) -1, totalHolder);
 
 		List<View> titles = new ArrayList<>();
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_tasks_item, info);
+			info.view = v;
 
 			TextView title = (TextView) v.findViewById(R.id.time_tasks_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_tasks_item_time);
@@ -101,7 +104,7 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 
 	@Override
 	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		Log.d(TAG, "clicked on " + (holder.taskId == -1 ? "Total" : getTask(holder.taskId).getName()));
+		//Log.d(TAG, "clicked on " + (holder.taskId == -1 ? "Total" : getTask(holder.taskId).getName()));
 		if (holder.childList == null){
 			holder.childList = createChild(holder.taskId);
 			v.addView(holder.childList);
@@ -118,7 +121,7 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 			case WEEK: c = new WeekdaysList(getContext()); break;
 			case MONTH: c = new WeeksList(getContext()); break;
 		}
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks);
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
 
 		List<Timeline> timelines;
 		Task task = null;
@@ -139,11 +142,9 @@ public class TasksList extends TimeListBase<TasksList.ItemHolder> {
 	}
 
 
-	class ItemHolder implements Comparable<ItemHolder> {
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
 		public Long taskId;
 		public int timeSpent;
-
-		public TimeListBase childList;
 
 		public ItemHolder(Long taskId) {
 			this.taskId = taskId;

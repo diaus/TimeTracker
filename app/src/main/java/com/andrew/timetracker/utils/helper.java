@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.util.TypedValue;
 
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.database.Timeline;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +14,8 @@ import java.util.Date;
  * Created by andrew on 18.08.2016.
  */
 public class helper {
+
+
 	public static Calendar getToday(){
 		Calendar today = Calendar.getInstance();
 		truncateCalendar(today);
@@ -115,5 +118,10 @@ public class helper {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		cal.add(Calendar.MONTH, 1);
 		cal.add(Calendar.DAY_OF_MONTH, -1);
+	}
+
+	public static String formatTimelinePeriod(Timeline tl, boolean showSeconds, Context context) {
+		return helper.formatShortTime(tl.getStartTime(), showSeconds) + " - " +
+				  (tl.getStopTime() == null ? context.getString(R.string.timeline_now) : helper.formatShortTime(tl.getStopTime(), showSeconds));
 	}
 }

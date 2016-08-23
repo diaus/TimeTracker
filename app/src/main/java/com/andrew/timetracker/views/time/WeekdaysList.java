@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Created by andrew on 22.08.2016.
  */
-public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
+public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 
 	private static final String TAG = "tt: WeekdaysList";
 
@@ -33,7 +33,7 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 	protected void createViews() {
 		Context context = getContext();
 
-		Map<Date, ItemHolder> mapInfo = new HashMap<>();
+		mItemHolders = new HashMap<>();
 		List<ItemHolder> infos = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
 		Date day;
@@ -43,11 +43,11 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 			helper.truncateCalendar(cal);
 			day = cal.getTime();
 			ItemHolder info;
-			if (mapInfo.containsKey(day)) {
-				info = mapInfo.get(day);
+			if (mItemHolders.containsKey(day)) {
+				info = mItemHolders.get(day);
 			} else {
 				info = new ItemHolder(day);
-				mapInfo.put(day, info);
+				mItemHolders.put(day, info);
 				infos.add(info);
 			}
 			info.timeSpent += tl.getSpentSeconds();
@@ -59,6 +59,7 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_weekdays_item, info);
+			info.view = v;
 
 			TextView title = (TextView) v.findViewById(R.id.time_weekdays_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_weekdays_item_time);
@@ -85,7 +86,7 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 
 	@Override
 	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		Log.d(TAG, "clicked on " + String.format("%1$tA", holder.day));
+		//Log.d(TAG, "clicked on " + String.format("%1$tA", holder.day));
 		if (holder.childList == null){
 			holder.childList = createChild(holder.day);
 			v.addView(holder.childList);
@@ -97,7 +98,7 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 
 	private TimeListBase createChild(Date day) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new TimelinesList(getContext());
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks);
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
 
 		List<Timeline> timelines = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
@@ -118,11 +119,9 @@ public class WeekdaysList extends TimeListBase<WeekdaysList.ItemHolder> {
 		return c;
 	}
 
-	class ItemHolder implements Comparable<ItemHolder> {
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
 		public Date day;
 		public int timeSpent;
-
-		public TimeListBase childList;
 
 		public ItemHolder(Date day) {
 			this.day = day;
