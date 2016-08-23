@@ -291,9 +291,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		if (mTask == null) {
 			mCurrentTaskTextView.setText(R.string.home_tab_task_not_selected);
 		} else {
-			SpannableString content = new SpannableString(mTask.getName());
-			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-			mCurrentTaskTextView.setText(content);
+			mCurrentTaskTextView.setText(helper.underlineText(mTask.getName()));
 			mCurrentTaskTextView.setTypeface(null, Typeface.BOLD);
 
 

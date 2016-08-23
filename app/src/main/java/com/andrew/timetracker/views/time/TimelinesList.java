@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.View;
@@ -70,6 +71,14 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 							  .show();
 				}
 			});
+
+			ImageButton btnEdit = (ImageButton) view.findViewById(R.id.time_timelines_item_edit_button);
+			btnEdit.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mEventHandler.editTimeline(timeline);
+				}
+			});
 		}
 	}
 
@@ -88,6 +97,12 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 
 			time.setText(helper.formatShortSpentTime(context, tl.getSpentSeconds(), true, true));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
+
+			if (mSelectedTask == null){
+				TextView task = (TextView)v.findViewById(R.id.time_timelines_item_task);
+				task.setVisibility(VISIBLE);
+				task.setText(getTask(tl.getTaskId()).getName());
+			}
 
 			this.addView(v);
 

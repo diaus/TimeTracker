@@ -1,9 +1,12 @@
 package com.andrew.timetracker.views.time;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +34,9 @@ import java.util.List;
  */
 public class TimeFragment extends Fragment implements MainActivity.ITab {
 
+	private static final int REQUEST_EDIT_TIMELINE = 1;
+	private static final String DIALOG_EDIT_TIMELINE = "DialogTimelineEdit";
+
 	TasksList mTasksList;
 	TextView mTitle;
 	ImageButton mPrevButton;
@@ -44,6 +50,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 
 	private TaskDao taskDao;
 	private TimelineDao timelineDao;
+	TimeListBase.IEventHandler mEventHandler;
 
 	@Override
 	public void onTabSelected() {
@@ -68,8 +75,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		mCurrentDay = helper.getToday();
 		mPeriodType = TasksList.PeriodType.DAY;
 
-		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
-		mTasksList.initControl(true, taskDao, timelineDao, new TimeListBase.IEventHandler() {
+		mEventHandler = new TimeListBase.IEventHandler() {
 			@Override
 			public void invalidate() {
 				Object state = mTasksList.getOpenedState();
@@ -77,7 +83,18 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 				mTasksList.restoreOpenedState(state);
 				getHostingActivity().invalidateTimelines();
 			}
-		});
+
+			@Override
+			public void editTimeline(Timeline timeline) {
+				FragmentManager manager = getFragmentManager();
+				TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline, mTasksList.getTask(timeline.getTaskId()));
+				dialog.setTargetFragment(TimeFragment.this, REQUEST_EDIT_TIMELINE);
+				dialog.show(manager, DIALOG_EDIT_TIMELINE);
+			}
+		};
+
+		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
+		mTasksList.initControl(true, taskDao, timelineDao, mEventHandler);
 
 		mPrevButton = (ImageButton) v.findViewById(R.id.fragment_time_prev_button);
 		mNextButton = (ImageButton) v.findViewById(R.id.fragment_time_next_button);
@@ -123,6 +140,14 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		updateData();
 
 		return v;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_EDIT_TIMELINE){
+			if (resultCode != Activity.RESULT_OK) return;
+			mEventHandler.invalidate();
+		}
 	}
 
 	private void changeDate(boolean isPrev) {
