@@ -113,7 +113,7 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 		if (mSelectedTask == null){
 			((TasksList)c).setData(timelines, TasksList.PeriodType.DAY);
 		} else {
-			c.setData(timelines);
+			c.setData(timelines, mSelectedTask);
 		}
 
 		return c;
