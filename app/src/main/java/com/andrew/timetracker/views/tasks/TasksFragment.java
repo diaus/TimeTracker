@@ -244,7 +244,7 @@ public class TasksFragment extends Fragment {
 
 		new AlertDialog.Builder(getContext())
 				  .setMessage(isTimelines ? R.string.confirm_delete_task_with_timelines : R.string.confirm_delete_task)
-				  .setTitle(R.string.confirm_delete_task_title)
+				  .setTitle(R.string.confirm_dialog_title)
 				  .setIcon(R.drawable.icon_alert)
 				  .setNegativeButton(android.R.string.cancel, null)
 				  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

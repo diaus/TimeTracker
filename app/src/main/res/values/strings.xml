@@ -7,6 +7,7 @@
     <string name="minute_short">m</string>
     <string name="second_short">s</string>
     <string name="time_total">Total</string>
+    <string name="confirm_dialog_title">Really?</string>
 
     <!-- home view -->
     <string name="start_button">Start</string>
@@ -28,7 +29,6 @@
 ALL of this will be deleted forever!!!\n
 Are you sure you still want to delete task?</string>
     <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
-    <string name="confirm_delete_task_title">Really?</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
     <string name="home_tab_open_tasks_button">Open Tasks</string>
@@ -37,5 +37,7 @@ Are you sure you still want to delete task?</string>
     <string name="fragment_time_day_button">Day</string>
     <string name="fragment_time_week_button">Week</string>
     <string name="fragment_time_month_button">Month</string>
+    <string name="confirm_delete_timeline">Are you sure you want to delete time record? This cannot be undone!</string>
+    <string name="timeline_now">now</string>
 
 </resources>

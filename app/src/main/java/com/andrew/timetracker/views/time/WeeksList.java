@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Created by andrew on 22.08.2016.
  */
-public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
+public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 
 	private static final String TAG = "tt: WeeksList";
 
@@ -33,7 +33,7 @@ public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
 	protected void createViews() {
 		Context context = getContext();
 
-		Map<Date, ItemHolder> mapInfo = new HashMap<>();
+		mItemHolders = new HashMap<>();
 		List<ItemHolder> infos = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
 		Date day;
@@ -57,11 +57,11 @@ public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
 			}
 
 			ItemHolder info;
-			if (mapInfo.containsKey(day)) {
-				info = mapInfo.get(day);
+			if (mItemHolders.containsKey(day)) {
+				info = mItemHolders.get(day);
 			} else {
 				info = new ItemHolder(day);
-				mapInfo.put(day, info);
+				mItemHolders.put(day, info);
 				infos.add(info);
 			}
 			info.timeSpent += tl.getSpentSeconds();
@@ -73,6 +73,7 @@ public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_weeks_item, info);
+			info.view = v;
 
 			TextView title = (TextView) v.findViewById(R.id.time_weeks_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_weeks_item_time);
@@ -116,7 +117,7 @@ public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
 
 	private TimeListBase createChild(Date day) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new WeekdaysList(getContext());
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks);
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
 
 		Date weekFrom = day;
 		Calendar cal = Calendar.getInstance();
@@ -143,11 +144,9 @@ public class WeeksList extends TimeListBase<WeeksList.ItemHolder> {
 		return c;
 	}
 
-	class ItemHolder implements Comparable<ItemHolder> {
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
 		public Date day;
 		public int timeSpent;
-
-		public TimeListBase childList;
 
 		public ItemHolder(Date day) {
 			this.day = day;
