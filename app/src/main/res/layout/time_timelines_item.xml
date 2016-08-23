@@ -1,70 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <View
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="5dp"
         android:background="#CCCCCC"
         />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:id="@+id/time_timelines_item_container"
-        >
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:background="@null"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:contentDescription="Delete"
-            tools:ignore="HardcodedText"
-            android:src="@drawable/delete_button"
-            android:id="@+id/time_timelines_item_delete_button"
-            />
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/time_timelines_item_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:text="13:00 - 15:15"
-            android:id="@+id/time_timelines_item_period"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:text="2h 15m"
-            android:id="@+id/time_timelines_item_time"/>
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@null"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:contentDescription="Edit"
-            tools:ignore="HardcodedText"
-            android:src="@drawable/edit_button"
-            android:id="@+id/time_timelines_item_edit_button"/>
+            tools:text="Task name"
+            tools:visibility="visible"/>
+
+        <LinearLayout
+            android:id="@+id/time_timelines_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ImageButton
+                android:id="@+id/time_timelines_item_delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:contentDescription="Delete"
+                android:src="@drawable/delete_button"
+                android:visibility="gone"
+                tools:ignore="HardcodedText"
+                tools:visibility="visible"
+                />
+
+            <TextView
+                android:id="@+id/time_timelines_item_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="13:00 - 15:15"/>
+
+            <TextView
+                android:id="@+id/time_timelines_item_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="2h 15m"/>
+
+            <ImageButton
+                android:id="@+id/time_timelines_item_edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:background="@null"
+                android:contentDescription="Edit"
+                android:src="@drawable/edit_button"
+                android:visibility="gone"
+                tools:ignore="HardcodedText"
+                tools:visibility="visible"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -8,6 +8,8 @@
     <string name="second_short">s</string>
     <string name="time_total">Total</string>
     <string name="confirm_dialog_title">Really?</string>
+    <string name="error_dialog_title">Error!</string>
+    <string name="timeline_now">now</string>
 
     <!-- home view -->
     <string name="start_button">Start</string>
@@ -38,6 +40,14 @@ Are you sure you still want to delete task?</string>
     <string name="fragment_time_week_button">Week</string>
     <string name="fragment_time_month_button">Month</string>
     <string name="confirm_delete_timeline">Are you sure you want to delete time record? This cannot be undone!</string>
-    <string name="timeline_now">now</string>
+
+    <!-- edit timeline -->
+    <string name="timeline_edit_dialog_title">Changing time record</string>
+    <string name="timeline_edit_dialog_ok_button">Save</string>
+    <string name="timeline_edit_dialog_Task"><b>Task:</b></string>
+    <string name="timeline_edit_dialog_From"><b>From:</b></string>
+    <string name="timeline_edit_dialog_To"><b>To:</b></string>
+    <string name="timeline_edit_dialog_time_spent">Time spent:</string>
+    <string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
 
 </resources>

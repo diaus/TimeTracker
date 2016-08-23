@@ -30,6 +30,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 
 	public interface IEventHandler {
 		void invalidate();
+		void editTimeline(Timeline timeline);
 	}
 
 	protected Map<TItemHolderKey, TItemHolder> mItemHolders;
@@ -155,7 +156,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
-	protected Task getTask(Long taskId) {
+	public Task getTask(Long taskId) {
 		if (mTasks.containsKey(taskId)) {
 			return mTasks.get(taskId);
 		} else {
