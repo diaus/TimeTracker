@@ -17,7 +17,7 @@
     <string name="home_tab_spent_time_today">Spent today: %1$d hrs %2$d min</string>
     <string name="home_tab_start_working">Start working at %1$tH : %1$tM</string>
     <string name="home_tab_inactive_total">Total inactivity: %1$d hrs %2$d min</string>
-    <string name="home_tab_inactive_current">Inactive for: %1$d hrs %2$d min</string>
+    <string name="home_tab_inactive_current">Inactive for %1$d hrs %2$d min</string>
     <string name="home_tab_task_not_selected"><i>task not selected</i></string>
     <string name="home_tab_task_time_today">Today: %1$d hrs %2$d min</string>
     <string name="home_tab_task_time_current">Current: %1$d hrs %2$d min %3$d sec</string>
@@ -33,13 +33,13 @@ Are you sure you still want to delete task?</string>
     <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
-    <string name="home_tab_open_tasks_button">Open Tasks</string>
+    <string name="home_tab_open_tasks_button">Open tasks list</string>
 
     <!-- spent time view -->
     <string name="fragment_time_day_button">Day</string>
     <string name="fragment_time_week_button">Week</string>
     <string name="fragment_time_month_button">Month</string>
-    <string name="confirm_delete_timeline">Are you sure you want to delete time record? This cannot be undone!</string>
+    <string name="confirm_delete_timeline">Are you sure you want to delete time record? </string>
     <string name="fragment_time_activity_info"><i>started on %1$s, inactive for %2$s</i></string>
 
     <!-- edit timeline -->
