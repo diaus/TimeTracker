@@ -31,6 +31,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 	public interface IEventHandler {
 		void invalidate();
 		void editTimeline(Timeline timeline);
+		boolean isAutoOpenMode();
 	}
 
 	protected abstract void createViews();
@@ -88,12 +89,29 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 
 	public void restoreOpenedState(Object state) {
 		if (state == null || mItemHolders == null) return; // for sure
-		List<ItemState> tasksState = (List<ItemState>) state;
-		for (ItemState itemState : tasksState){
+		List<ItemState> states = (List<ItemState>) state;
+		Map<TItemHolderKey, Object> opened = new HashMap<>();
+		// open
+		for (ItemState itemState : states){
+			opened.put(itemState.key, null);
 			TItemHolder holder = mItemHolders.get(itemState.key);
-			if (holder != null && holder.view != null && holder.childList == null){
-				onClick(holder.view);
-				holder.childList.restoreOpenedState(itemState.childState);
+			if (holder != null) {
+				if (holder.view != null && holder.childList == null){
+					onClick(holder.view);
+				}
+				if (holder.childList != null){
+					holder.childList.restoreOpenedState(itemState.childState);
+				}
+			}
+		}
+		// close
+		for (Map.Entry<TItemHolderKey, TItemHolder> p : mItemHolders.entrySet()){
+			TItemHolderKey key = p.getKey();
+			TItemHolder holder = p.getValue();
+			if (holder.childList != null && !opened.containsKey(key)){
+				ViewGroup container = (ViewGroup) holder.view.findViewById(R.id.time_list_container);
+				container.removeView(holder.childList);
+				holder.childList = null;
 			}
 		}
 	}
@@ -102,6 +120,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		View v = inflate(getContext(), itemLayouId, null);
 		v.setTag(holder);
 		v.setOnClickListener(this);
+		holder.view = v;
 		return v;
 	}
 
@@ -135,7 +154,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		mSelectedTask = selectedTask;
 
 		this.removeAllViews();
-		mItemHolders = null;
+		mItemHolders = new HashMap<>();
 
 		createViews();
 	}

@@ -39,6 +39,13 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 	{
 		mPeriodType = periodType;
 		setData(timelines);
+		// open automatically
+		if (mEventHandler.isAutoOpenMode() && (periodType != PeriodType.DAY || mIsTop)){
+			ItemHolder holder = mItemHolders.get(mSelectedTask != null ? mSelectedTask.getId() : -1);
+			if (holder != null && holder.childList == null){
+				onClick(holder.view);
+			}
+		}
 	}
 
 	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
@@ -65,9 +72,7 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 	protected void createViews() {
 		Context context = getContext();
 
-		mItemHolders = new HashMap<>();
 		List<ItemHolder> infos = new ArrayList<>();
-
 		int timeSpentTotal = 0;
 
 		for (Timeline tl : mTimelines) {
@@ -84,16 +89,20 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 			info.timeSpent += tl.getSpentSeconds();
 		}
 
-		Collections.sort(infos, Collections.reverseOrder());
-		ItemHolder totalHolder = new ItemHolder((long) -1, timeSpentTotal);
-		infos.add(0, totalHolder);
-		mItemHolders.put((long) -1, totalHolder);
+		boolean mIsTheOnlyTask = infos.size() == 1;
+		if (mIsTheOnlyTask){
+			mSelectedTask = getTask(infos.get(0).taskId);
+		} else {
+			Collections.sort(infos, Collections.reverseOrder());
+			ItemHolder totalHolder = new ItemHolder((long) -1, timeSpentTotal);
+			infos.add(0, totalHolder);
+			mItemHolders.put((long) -1, totalHolder);
+		}
 
 		List<View> titles = new ArrayList<>();
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_tasks_item, info);
-			info.view = v;
 
 			TextView title = (TextView) v.findViewById(R.id.time_tasks_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_tasks_item_time);
@@ -103,6 +112,9 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 				title.setTypeface(null, Typeface.BOLD);
 			} else {
 				title.setText(getTask(info.taskId).getName());
+				if (mIsTheOnlyTask){
+					title.setTypeface(null, Typeface.BOLD);
+				}
 			}
 
 			time.setText(helper.formatShortSpentTime(context, info.timeSpent, true, false));

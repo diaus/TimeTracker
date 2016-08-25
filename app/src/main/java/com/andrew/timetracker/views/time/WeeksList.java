@@ -46,7 +46,6 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	protected void createViews() {
 		Context context = getContext();
 
-		mItemHolders = new HashMap<>();
 		List<ItemHolder> infos = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
 		Date day;
@@ -86,7 +85,6 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_weeks_item, info);
-			info.view = v;
 
 			TextView title = (TextView) v.findViewById(R.id.time_weeks_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_weeks_item_time);

@@ -26,19 +26,21 @@ import java.util.List;
 /**
  * Created by andrew on 20.08.2016.
  */
-public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder> {
+public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> {
 
 	ItemHolder mSelectedItemHolder = null;
 
 
 	@Override
 	public Object getOpenedState() {
-		return null;
+		return mSelectedItemHolder == null ? null : mSelectedItemHolder.timeline.getId();
 	}
 
 	@Override
 	public void restoreOpenedState(Object state) {
-		// nothing to do
+		if (state == null) return;
+		mSelectedItemHolder = mItemHolders.get(state);
+		updateHolder(mSelectedItemHolder);
 	}
 
 	@Override
@@ -93,7 +95,7 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 		for (Timeline tl : mTimelines){
 			ItemHolder holder = new ItemHolder(tl);
 			View v = inflateItem(R.layout.time_timelines_item, holder);
-			holder.view = v;
+			mItemHolders.put(tl.getId(), holder);
 
 			TextView period = (TextView) v.findViewById(R.id.time_timelines_item_period);
 			TextView time = (TextView) v.findViewById(R.id.time_timelines_item_time);
@@ -128,6 +130,7 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 	}
 
 	private void updateHolder(ItemHolder holder) {
+		if (holder == null) return;
 		boolean isSelected = holder == mSelectedItemHolder;
 		View mContainer = holder.view.findViewById(R.id.time_timelines_item_container);
 		mContainer.setBackgroundResource(isSelected ? R.drawable.timeline_selected_bg : 0);
