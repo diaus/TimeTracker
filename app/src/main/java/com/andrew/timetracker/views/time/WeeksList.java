@@ -26,8 +26,21 @@ import java.util.Map;
  * Created by andrew on 22.08.2016.
  */
 public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
-
 	private static final String TAG = "tt: WeeksList";
+
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
+		public Date day;
+		public int timeSpent;
+
+		public ItemHolder(Date day) {
+			this.day = day;
+		}
+
+		@Override
+		public int compareTo(ItemHolder another) {
+			return day.compareTo(another.day);
+		}
+	}
 
 	@Override
 	protected void createViews() {
@@ -105,23 +118,13 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	}
 
 	@Override
-	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		if (holder.childList == null){
-			holder.childList = createChild(holder.day);
-			v.addView(holder.childList);
-		} else {
-			v.removeView(holder.childList);
-			holder.childList = null;
-		}
-	}
-
-	private TimeListBase createChild(Date day) {
+	protected TimeListBase createChild(ItemHolder holder) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new WeekdaysList(getContext());
 		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
 
-		Date weekFrom = day;
+		Date weekFrom = holder.day;
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(day);
+		cal.setTime(weekFrom);
 		cal.add(Calendar.WEEK_OF_MONTH, 1);
 		Date weekTo = cal.getTime();
 		Date d;
@@ -142,20 +145,6 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 		}
 
 		return c;
-	}
-
-	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
-		public Date day;
-		public int timeSpent;
-
-		public ItemHolder(Date day) {
-			this.day = day;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return day.compareTo(another.day);
-		}
 	}
 
 	public WeeksList(Context context) {

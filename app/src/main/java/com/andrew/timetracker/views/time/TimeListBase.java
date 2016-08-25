@@ -33,14 +33,37 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		void editTimeline(Timeline timeline);
 	}
 
+	protected abstract void createViews();
+	protected abstract TimeListBase createChild(TItemHolder holder);
+
 	protected Map<TItemHolderKey, TItemHolder> mItemHolders;
+	protected List<Timeline> mTimelines;
+	protected Task mSelectedTask;
+
+	protected boolean mIsTop;
+	protected TaskDao mTasksDao;
+	protected TimelineDao mTimelineDao;
+	protected Map<Long, Task> mTasks;
+
+	@Override
+	public void onClick(View v) {
+		ViewGroup container = (ViewGroup) v.findViewById(R.id.time_list_container);
+		TItemHolder holder = (TItemHolder) v.getTag();
+		if (holder.childList == null){
+			holder.childList = createChild(holder);
+			container.addView(holder.childList);
+		} else {
+			container.removeView(holder.childList);
+			holder.childList = null;
+		}
+	}
 
 	protected class ItemHolder {
 		public View view;
 		public TimeListBase childList;
 	}
 
-	private class ItemState {
+	protected class ItemState {
 		public TItemHolderKey key;
 		public Object childState;
 
@@ -68,28 +91,11 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		List<ItemState> tasksState = (List<ItemState>) state;
 		for (ItemState itemState : tasksState){
 			TItemHolder holder = mItemHolders.get(itemState.key);
-			if (holder != null && holder.childList == null){
-				onItemClick((ViewGroup) holder.view.findViewById(R.id.time_list_container), holder);
+			if (holder != null && holder.view != null && holder.childList == null){
+				onClick(holder.view);
 				holder.childList.restoreOpenedState(itemState.childState);
 			}
 		}
-	}
-
-	protected boolean mIsTop;
-	protected TaskDao mTasksDao;
-	protected TimelineDao mTimelineDao;
-	protected Map<Long, Task> mTasks;
-
-	protected List<Timeline> mTimelines;
-	protected Task mSelectedTask;
-
-	protected abstract void createViews();
-
-	protected abstract void onItemClick(ViewGroup v, TItemHolder holder);
-
-	@Override
-	public void onClick(View v) {
-		onItemClick((ViewGroup) v.findViewById(R.id.time_list_container), (TItemHolder) v.getTag());
 	}
 
 	protected View inflateItem(int itemLayouId, TItemHolder holder) {
