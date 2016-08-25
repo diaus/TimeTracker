@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Записник часу</string>
+    <string name="alert_task_name_exists">Завдання з таким ім\'ям вже існує!</string>
+    <string name="alert_task_name_exists_title">Помилка</string>
+    <string name="confirm_delete_task">Ви впевнені, що хочете видалити завдання?</string>
+    <string name="confirm_delete_task_with_timelines">У вас є записи часу з цим завданням!\n
+Всі вони будуть ВИДАЛЕНІ НАЗАВЖДИ!!!\n
+Ви ще досі впевнені, що хочете видалити завдання?</string>
+    <string name="confirm_delete_timeline">Ви впевнені, що хочете видалити цей запис часу? </string>
+    <string name="confirm_dialog_title">Впевнені?</string>
+    <string name="day_short">д</string>
+    <string name="enter_task_title_edit_text">введіть назву завдання</string>
+    <string name="error_dialog_title">Помилка!</string>
+    <string name="fragment_time_activity_info"><i>початок о %1$s,  відпочинок між завданнями %2$s</i></string>
+    <string name="fragment_time_day_button">День</string>
+    <string name="fragment_time_month_button">Місяць</string>
+    <string name="fragment_time_week_button">Тиждень</string>
+    <string name="home_tab_inactive_current">Відпочиваємо вже %1$d год %2$d хв</string>
+    <string name="home_tab_inactive_total">Загалом відпочили: %1$d год %2$d хв</string>
+    <string name="home_tab_open_tasks_button">Відкрити список завдань</string>
+    <string name="home_tab_spent_time_today">Напрацювали сьогодні: %1$d год %2$d хв</string>
+    <string name="home_tab_start_working">Почали працювати в %1$tH : %1$tM</string>
+    <string name="home_tab_task_not_selected"><i>завдання не вибрано</i></string>
+    <string name="home_tab_task_time_current">Працюємо вже %1$d год %2$d хв %3$d сек</string>
+    <string name="home_tab_task_time_today">Сьогодні: %1$d год %2$d хв</string>
+    <string name="hour_short">г</string>
+    <string name="menu_tab_tasks_cancel">Відхилити</string>
+    <string name="menu_tab_tasks_create_task">Створити завдання</string>
+    <string name="minute_short">хв</string>
+    <string name="second_short">с</string>
+    <string name="start_button">Почати</string>
+    <string name="stop_button">Зупинитись</string>
+    <string name="time_total">Загалом</string>
+    <string name="timeline_edit_dialog_From"><b>Початок роботи:</b></string>
+    <string name="timeline_edit_dialog_Task"><b>Завдання:</b></string>
+    <string name="timeline_edit_dialog_To"><b>Кінець роботи:</b></string>
+    <string name="timeline_edit_dialog_error_intercept_timelines">Існує інший запис часу, що перетинається з вказаним.</string>
+    <string name="timeline_edit_dialog_ok_button">Зберегти</string>
+    <string name="timeline_edit_dialog_time_spent">Напрацьовано:</string>
+    <string name="timeline_edit_dialog_title">Редагування запису часу</string>
+    <string name="timeline_now">зараз</string>
+    <string name="toast_task_deleted_params_name">Завдання \'%1$s\' було видалене</string>
+</resources>
