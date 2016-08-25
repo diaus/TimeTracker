@@ -50,5 +50,6 @@ Are you sure you still want to delete task?</string>
     <string name="timeline_edit_dialog_To"><b>To:</b></string>
     <string name="timeline_edit_dialog_time_spent">Time spent:</string>
     <string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
+    <string name="fragment_home_recent_tasks"><b>Recent tasks:</b></string>
 
 </resources>

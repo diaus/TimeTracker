@@ -181,6 +181,16 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		setData(timelines, null);
 	}
 
+	public Task getTask(Long taskId) {
+		if (mTasks.containsKey(taskId)) {
+			return mTasks.get(taskId);
+		} else {
+			Task task = mTasksDao.load(taskId);
+			mTasks.put(taskId, task);
+			return task;
+		}
+	}
+
 	public TimeListBase(Context context) {
 		super(context);
 	}
@@ -197,15 +207,4 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 	public TimeListBase(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
-
-	public Task getTask(Long taskId) {
-		if (mTasks.containsKey(taskId)) {
-			return mTasks.get(taskId);
-		} else {
-			Task task = mTasksDao.load(taskId);
-			mTasks.put(taskId, task);
-			return task;
-		}
-	}
-
 }

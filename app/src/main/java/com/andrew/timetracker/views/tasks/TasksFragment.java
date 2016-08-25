@@ -350,9 +350,9 @@ public class TasksFragment extends Fragment {
 			int visibilityStartButton = showStartButton ? View.VISIBLE : View.GONE;
 			if (mStartButton.getVisibility() != visibilityStartButton){
 				mStartButton.setVisibility(visibilityStartButton);
-				mContainer.setOnTouchListener(!showStartButton ? null : new OnDoubleTouchListener(getContext()) {
+				mContainer.setOnTouchListener(!showStartButton ? null : new OnDoubleTouchListener(getContext(), true) {
 					@Override
-					protected boolean onDoubleTab() {
+					protected boolean onDoubleTap() {
 						startSelectedTask();
 						return true;
 					}
