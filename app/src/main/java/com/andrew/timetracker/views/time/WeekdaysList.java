@@ -29,6 +29,20 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 
 	private static final String TAG = "tt: WeekdaysList";
 
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
+		public Date day;
+		public int timeSpent;
+
+		public ItemHolder(Date day) {
+			this.day = day;
+		}
+
+		@Override
+		public int compareTo(ItemHolder another) {
+			return day.compareTo(another.day);
+		}
+	}
+
 	@Override
 	protected void createViews() {
 		Context context = getContext();
@@ -85,18 +99,7 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 	}
 
 	@Override
-	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		//Log.d(TAG, "clicked on " + String.format("%1$tA", holder.day));
-		if (holder.childList == null){
-			holder.childList = createChild(holder.day);
-			v.addView(holder.childList);
-		} else {
-			v.removeView(holder.childList);
-			holder.childList = null;
-		}
-	}
-
-	private TimeListBase createChild(Date day) {
+	protected TimeListBase createChild(ItemHolder holder) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new TimelinesList(getContext());
 		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
 
@@ -105,7 +108,7 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 		for (Timeline tl : mTimelines){
 			cal.setTime(tl.getStartTime());
 			helper.truncateCalendar(cal);
-			if (day.equals(cal.getTime())){
+			if (holder.day.equals(cal.getTime())){
 				timelines.add(tl);
 			}
 		}
@@ -117,20 +120,6 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 		}
 
 		return c;
-	}
-
-	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
-		public Date day;
-		public int timeSpent;
-
-		public ItemHolder(Date day) {
-			this.day = day;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return day.compareTo(another.day);
-		}
 	}
 
 	public WeekdaysList(Context context) {

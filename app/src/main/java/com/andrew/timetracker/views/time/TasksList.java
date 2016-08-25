@@ -41,6 +41,26 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 		setData(timelines);
 	}
 
+	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
+		public Long taskId;
+		public int timeSpent;
+
+		public ItemHolder(Long taskId) {
+			this.taskId = taskId;
+			timeSpent = 0;
+		}
+
+		public ItemHolder(Long taskId, int timeSpent) {
+			this.taskId = taskId;
+			this.timeSpent = timeSpent;
+		}
+
+		@Override
+		public int compareTo(ItemHolder another) {
+			return timeSpent > another.timeSpent ? 1 : (timeSpent < another.timeSpent ? -1 : 0);
+		}
+	}
+
 	@Override
 	protected void createViews() {
 		Context context = getContext();
@@ -103,18 +123,7 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 	}
 
 	@Override
-	protected void onItemClick(ViewGroup v, ItemHolder holder) {
-		//Log.d(TAG, "clicked on " + (holder.taskId == -1 ? "Total" : getTask(holder.taskId).getName()));
-		if (holder.childList == null){
-			holder.childList = createChild(holder.taskId);
-			v.addView(holder.childList);
-		} else {
-			v.removeView(holder.childList);
-			holder.childList = null;
-		}
-	}
-
-	private TimeListBase createChild(Long taskId) {
+	protected TimeListBase createChild(ItemHolder holder) {
 		TimeListBase c = null;
 		switch (mPeriodType){
 			case DAY: c = new TimelinesList(getContext()); break;
@@ -125,6 +134,7 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 
 		List<Timeline> timelines;
 		Task task = null;
+		Long taskId = holder.taskId;
 		if (taskId == -1){
 			timelines = mTimelines;
 		} else {
@@ -139,27 +149,6 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 		c.setData(timelines, task);
 
 		return c;
-	}
-
-
-	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
-		public Long taskId;
-		public int timeSpent;
-
-		public ItemHolder(Long taskId) {
-			this.taskId = taskId;
-			timeSpent = 0;
-		}
-
-		public ItemHolder(Long taskId, int timeSpent) {
-			this.taskId = taskId;
-			this.timeSpent = timeSpent;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return timeSpent > another.timeSpent ? 1 : (timeSpent < another.timeSpent ? -1 : 0);
-		}
 	}
 
 	public TasksList(Context context) {

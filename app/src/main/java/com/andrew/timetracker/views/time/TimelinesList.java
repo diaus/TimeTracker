@@ -41,6 +41,11 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 		// nothing to do
 	}
 
+	@Override
+	protected TimeListBase createChild(ItemHolder holder) {
+		return null;
+	}
+
 	class ItemHolder extends TimeListBase.ItemHolder {
 		public Timeline timeline;
 
@@ -111,14 +116,15 @@ public class TimelinesList extends TimeListBase<Object, TimelinesList.ItemHolder
 	}
 
 	@Override
-	protected void onItemClick(ViewGroup v, ItemHolder itemHolder) {
-		if (itemHolder == mSelectedItemHolder) return;
+	public void onClick(View v) {
+		ItemHolder holder = (ItemHolder) v.getTag();
+		if (holder == mSelectedItemHolder) return;
 		ItemHolder prevHolder = mSelectedItemHolder;
-		mSelectedItemHolder = itemHolder;
+		mSelectedItemHolder = holder;
 		if (prevHolder != null){
 			updateHolder(prevHolder);
 		}
-		updateHolder(itemHolder);
+		updateHolder(holder);
 	}
 
 	private void updateHolder(ItemHolder holder) {
