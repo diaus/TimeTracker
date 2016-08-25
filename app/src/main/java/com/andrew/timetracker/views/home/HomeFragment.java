@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.commons.OnDoubleTouchListener;
+import com.andrew.timetracker.commons.SimpleListView;
 import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
@@ -28,8 +31,11 @@ import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
 import com.andrew.timetracker.views.tasks.TasksActivity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by andrew on 15.08.2016.
@@ -50,6 +56,8 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	int mSpentToday = 0; // seconds, without current
 	int mTaskSpentToday = 0; // seconds, without current
 	int mInactiveTotal = 0; // seconds, without current
+	List<Task> mRecentTasks = new ArrayList<>();
+	int mSelectedRecentTaskPosition = -1;
 
 	Button mStartStopButton;
 	View mStatusView;
@@ -61,6 +69,8 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	TextView mInactiveTotalTextView;
 	TextView mInactiveCurrentTextView;
 	Button mOpenTasksButton;
+	SimpleListView mRecentTasksList;
+	View mRecentsContainer;
 
 	Handler timerHandler = new Handler();
 	boolean isTimerSecondStarted = false;
@@ -114,13 +124,95 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			}
 		});
 
-		// delete invalid timelines
+		mRecentsContainer = v.findViewById(R.id.fragment_home_recents_container);
+		mRecentTasksList = (SimpleListView) v.findViewById(R.id.fragment_home_recents_list);
+		mRecentTasksList.setAdapter(new SimpleListView.IAdapter<RecentTaskViewHolder>() {
+			@Override
+			public int getItemCount() {
+				return mRecentTasks.size();
+			}
+
+			@Override
+			public void bindViewHolder(RecentTaskViewHolder holder, int position) {
+				holder.bindItem(position);
+			}
+
+			@Override
+			public RecentTaskViewHolder createViewHolder(View v) {
+				return new RecentTaskViewHolder(v);
+			}
+		}, R.layout.home_recent_task_item);
+
+		// delete timelines with invalid taskId
 //		timelineDao.queryBuilder().where(new WhereCondition.StringCondition(TimelineDao.Properties.TaskId.columnName + " NOT IN (SELECT "
 //				  + TaskDao.Properties.Id.columnName + " FROM " + TaskDao.TABLENAME + ")")).buildDelete().executeDeleteWithoutDetachingEntities();
 
 		updateData();
 
 		return v;
+	}
+
+	class RecentTaskViewHolder implements View.OnClickListener {
+		int mPosition;
+		View mView;
+		TextView mTaskTitle;
+		ImageButton mStartButton;
+
+		public RecentTaskViewHolder(View v) {
+			mView = v;
+			mTaskTitle = (TextView) v.findViewById(R.id.home_recent_task_item_title);
+			v.setOnClickListener(this);
+			mStartButton = (ImageButton) v.findViewById(R.id.home_recent_task_item_start_button);
+			mStartButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					startRecentTask();
+				}
+			});
+			v.setOnTouchListener(new OnDoubleTouchListener(getContext(), false) {
+				@Override
+				protected boolean onDoubleTap() {
+					startRecentTask();
+					return true;
+				}
+			});
+		}
+
+		private void startRecentTask(){
+			mStartButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+			if (mIsStarted) {
+				mTimeline.setStopTime(new Date());
+				mTimeline.update();
+			}
+			mTask = mRecentTasks.get(mPosition);
+			mTimeline = new Timeline(null, mTask.getId(), new Date(), null);
+			timelineDao.insert(mTimeline);
+			updateData();
+		}
+
+		public void bindItem(int position){
+			mPosition = position;
+			Task task = mRecentTasks.get(position);
+			mTaskTitle.setText(task.getName());
+			updateSelected();
+		}
+
+		public void updateSelected() {
+			boolean isSelected = mSelectedRecentTaskPosition == mPosition;
+			mView.setBackgroundResource(isSelected ? R.drawable.home_recent_task_selected_bg : 0);
+			mStartButton.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+		}
+
+		@Override
+		public void onClick(View v) {
+			if (mSelectedRecentTaskPosition == mPosition) return;
+			int prevSelected = mSelectedRecentTaskPosition;
+			mSelectedRecentTaskPosition = mPosition;
+			if (prevSelected != -1){
+				mRecentTasksList.updateItem(prevSelected);
+			}
+			updateSelected();
+		}
 	}
 
 	@Override
@@ -254,6 +346,25 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		if (mDateWorkStarted == null && mIsStarted) {
 			mDateWorkStarted = mTimeline.getStartTime();
 		}
+
+		// recent tasks
+		tt = timelineDao.queryBuilder()
+				  .where(TimelineDao.Properties.TaskId.notEq(mTask != null ? mTask.getId() : -1))
+				  .limit(100)
+				  .orderDesc(TimelineDao.Properties.StartTime).list();
+		mRecentTasks = new ArrayList<>();
+		mSelectedRecentTaskPosition = -1;
+		Map<Long, Object> mapRecents = new HashMap<>();
+		for (int i = 0; i < tt.size(); i++) {
+			Long taskId = tt.get(i).getTaskId();
+			if (!mapRecents.containsKey(taskId)){
+				mapRecents.put(taskId, null);
+				mRecentTasks.add(taskDao.load(taskId));
+				if (mRecentTasks.size() == 3) break;
+			}
+		}
+		mRecentsContainer.setVisibility(mRecentTasks.size() > 0 ? View.VISIBLE : View.GONE);
+		mRecentTasksList.updateData();
 
 		updateUI();
 

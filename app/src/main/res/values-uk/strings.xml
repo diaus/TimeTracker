@@ -41,4 +41,5 @@
     <string name="timeline_edit_dialog_title">Редагування запису часу</string>
     <string name="timeline_now">зараз</string>
     <string name="toast_task_deleted_params_name">Завдання \'%1$s\' було видалене</string>
+    <string name="fragment_home_recent_tasks"><b>Нещодавнє:</b></string>
 </resources>

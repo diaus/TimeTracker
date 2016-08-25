@@ -11,16 +11,18 @@ import android.view.View;
  */
 public abstract class OnDoubleTouchListener implements View.OnTouchListener {
 
-	protected abstract boolean onDoubleTab();
+	protected abstract boolean onDoubleTap();
 
 	private GestureDetector gestureDetector;
+	private boolean mOnTouchReturn;
 
-	public OnDoubleTouchListener(Context context) {
+	public OnDoubleTouchListener(Context context, boolean onTouchReturn) {
+		mOnTouchReturn = onTouchReturn;
 		gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
 			@Override
 			public boolean onDoubleTap(MotionEvent e) {
 				Log.d("tt: commons", "onDoubleTap");
-				return onDoubleTab() || super.onDoubleTap(e);
+				return OnDoubleTouchListener.this.onDoubleTap() || super.onDoubleTap(e);
 			}
 		});
 	}
@@ -29,6 +31,6 @@ public abstract class OnDoubleTouchListener implements View.OnTouchListener {
 	public boolean onTouch(View v, MotionEvent event) {
 		Log.d("tt: commons", "onTouch");
 		gestureDetector.onTouchEvent(event);
-		return true;
+		return mOnTouchReturn;
 	}
 }
