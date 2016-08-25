@@ -57,7 +57,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		updateData();
 	}
 
-	private IMainActivity getHostingActivity(){
+	private IMainActivity getHostingActivity() {
 		return (IMainActivity) getActivity();
 	}
 
@@ -76,11 +76,16 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		mPeriodType = TasksList.PeriodType.DAY;
 
 		mEventHandler = new TimeListBase.IEventHandler() {
+
+			boolean mIsUpdatingTimeline = false;
+
 			@Override
 			public void invalidate() {
 				Object state = mTasksList.getOpenedState();
+				mIsUpdatingTimeline = true;
 				updateData();
 				mTasksList.restoreOpenedState(state);
+				mIsUpdatingTimeline = false;
 				getHostingActivity().invalidateTimelines();
 			}
 
@@ -90,6 +95,11 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 				TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline, mTasksList.getTask(timeline.getTaskId()));
 				dialog.setTargetFragment(TimeFragment.this, REQUEST_EDIT_TIMELINE);
 				dialog.show(manager, DIALOG_EDIT_TIMELINE);
+			}
+
+			@Override
+			public boolean isAutoOpenMode() {
+				return !mIsUpdatingTimeline;
 			}
 		};
 
@@ -144,7 +154,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_EDIT_TIMELINE){
+		if (requestCode == REQUEST_EDIT_TIMELINE) {
 			if (resultCode != Activity.RESULT_OK) return;
 			mEventHandler.invalidate();
 		}
@@ -152,10 +162,16 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 
 	private void changeDate(boolean isPrev) {
 		(isPrev ? mPrevButton : mNextButton).performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-		switch (mPeriodType){
-			case DAY: mCurrentDay.add(Calendar.DAY_OF_MONTH, isPrev ? -1 : 1); break;
-			case WEEK: mCurrentDay.add(Calendar.WEEK_OF_MONTH, isPrev ? -1 : 1); break;
-			case MONTH: mCurrentDay.add(Calendar.MONTH, isPrev ? -1 : 1); break;
+		switch (mPeriodType) {
+			case DAY:
+				mCurrentDay.add(Calendar.DAY_OF_MONTH, isPrev ? -1 : 1);
+				break;
+			case WEEK:
+				mCurrentDay.add(Calendar.WEEK_OF_MONTH, isPrev ? -1 : 1);
+				break;
+			case MONTH:
+				mCurrentDay.add(Calendar.MONTH, isPrev ? -1 : 1);
+				break;
 		}
 		updateData();
 	}
@@ -185,7 +201,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		dateFrom = dateTo = mCurrentDay.getTime();
 		Calendar cal = (Calendar) mCurrentDay.clone();
 
-		switch (mPeriodType){
+		switch (mPeriodType) {
 			case DAY:
 				dateFrom = mCurrentDay.getTime();
 				cal.add(Calendar.DAY_OF_MONTH, 1);
