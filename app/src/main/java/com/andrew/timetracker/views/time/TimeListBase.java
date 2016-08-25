@@ -45,6 +45,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 	protected TaskDao mTasksDao;
 	protected TimelineDao mTimelineDao;
 	protected Map<Long, Task> mTasks;
+	ParentOptions mParentOptions;
 
 	@Override
 	public void onClick(View v) {
@@ -124,13 +125,23 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		return v;
 	}
 
-	public void initControl(boolean isTop, TaskDao taskDao, TimelineDao timelineDao, Map<Long, Task> tasks, IEventHandler eventHandler)
+	protected class ParentOptions {
+		public boolean isTheOnlyTask;
+
+		public ParentOptions(boolean isTheOnlyTask) {
+			this.isTheOnlyTask = isTheOnlyTask;
+		}
+	}
+
+
+	public void initControl(boolean isTop, TaskDao taskDao, TimelineDao timelineDao, Map<Long, Task> tasks, IEventHandler eventHandler, ParentOptions options)
 	{
 		mIsTop = isTop;
 		mTasksDao = taskDao;
 		mTimelineDao = timelineDao;
 		mTasks = tasks == null ? new HashMap<Long, Task>() : tasks;
 		mEventHandler = eventHandler;
+		mParentOptions = options;
 
 		setOrientation(VERTICAL);
 		ViewGroup.LayoutParams params = this.getLayoutParams();
@@ -143,9 +154,15 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		setLayoutParams(params);
 	}
 
+
+	public void initControl(boolean isTop, TaskDao taskDao, TimelineDao timelineDao, IEventHandler eventHandler, ParentOptions options)
+	{
+		initControl(isTop, taskDao, timelineDao, new HashMap<Long, Task>(), eventHandler, options);
+	}
+
 	public void initControl(boolean isTop, TaskDao taskDao, TimelineDao timelineDao, IEventHandler eventHandler)
 	{
-		initControl(isTop, taskDao, timelineDao, new HashMap<Long, Task>(), eventHandler);
+		initControl(isTop, taskDao, timelineDao, new HashMap<Long, Task>(), eventHandler, null);
 	}
 
 	public void setData(List<Timeline> timelines, Task selectedTask)

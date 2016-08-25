@@ -11,6 +11,7 @@ import com.andrew.timetracker.database.Timeline;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by andrew on 18.08.2016.
@@ -131,5 +132,18 @@ public class helper {
 		SpannableString content = new SpannableString(text);
 		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 		return content;
+	}
+
+	public static String getActivityText(Context context, List<Timeline> timelines) {
+		if (timelines == null || timelines.size() == 0) return null;
+		int inactiveTime = 0;
+		Date dateLast = null;
+		for (Timeline tl : timelines){
+			if (dateLast != null){
+				inactiveTime += diffDates(dateLast, tl.getStartTime());
+			}
+			dateLast = tl.getStopTime();
+		}
+		return String.format(context.getString(R.string.fragment_time_activity_info), formatShortTime(timelines.get(0).getStartTime(), false), formatShortSpentTime(context, inactiveTime, true, false));
 	}
 }
