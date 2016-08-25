@@ -40,6 +40,7 @@ Are you sure you still want to delete task?</string>
     <string name="fragment_time_week_button">Week</string>
     <string name="fragment_time_month_button">Month</string>
     <string name="confirm_delete_timeline">Are you sure you want to delete time record? This cannot be undone!</string>
+    <string name="fragment_time_activity_info"><i>started on %1$s, inactive for %2$s</i></string>
 
     <!-- edit timeline -->
     <string name="timeline_edit_dialog_title">Changing time record</string>

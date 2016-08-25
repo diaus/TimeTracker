@@ -14,6 +14,15 @@
         android:background="#CCCCCC"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="start/inactivity time"
+        android:id="@+id/time_weekdays_item_activity_info"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

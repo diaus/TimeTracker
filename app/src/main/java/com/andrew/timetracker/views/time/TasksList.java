@@ -89,10 +89,12 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 			info.timeSpent += tl.getSpentSeconds();
 		}
 
-		boolean mIsTheOnlyTask = infos.size() == 1;
-		if (mIsTheOnlyTask){
+		boolean isTheOnlyTask = infos.size() == 1;
+		if (isTheOnlyTask){
 			mSelectedTask = getTask(infos.get(0).taskId);
+			mParentOptions = new ParentOptions(true);
 		} else {
+			mParentOptions = null;
 			Collections.sort(infos, Collections.reverseOrder());
 			ItemHolder totalHolder = new ItemHolder((long) -1, timeSpentTotal);
 			infos.add(0, totalHolder);
@@ -112,13 +114,19 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 				title.setTypeface(null, Typeface.BOLD);
 			} else {
 				title.setText(getTask(info.taskId).getName());
-				if (mIsTheOnlyTask){
+				if (isTheOnlyTask){
 					title.setTypeface(null, Typeface.BOLD);
 				}
 			}
 
 			time.setText(helper.formatShortSpentTime(context, info.timeSpent, true, false));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
+
+			if (timeSpentTotal > 0 && mPeriodType == PeriodType.DAY && mIsTop && (info.taskId == -1 || isTheOnlyTask)){
+				TextView activityInfo = (TextView) v.findViewById(R.id.time_tasks_item_activity_info);
+				activityInfo.setVisibility(VISIBLE);
+				activityInfo.setText(helper.getActivityText(getContext(), mTimelines));
+			}
 
 			this.addView(v);
 
@@ -142,7 +150,7 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 			case WEEK: c = new WeekdaysList(getContext()); break;
 			case MONTH: c = new WeeksList(getContext()); break;
 		}
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler, mParentOptions);
 
 		List<Timeline> timelines;
 		Task task = null;

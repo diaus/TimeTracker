@@ -29,17 +29,13 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 
 	private static final String TAG = "tt: WeekdaysList";
 
-	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
+	class ItemHolder extends TimeListBase.ItemHolder {
 		public Date day;
 		public int timeSpent;
+		public List<Timeline> timelines = new ArrayList<>();
 
 		public ItemHolder(Date day) {
 			this.day = day;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return day.compareTo(another.day);
 		}
 	}
 
@@ -64,9 +60,8 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 				infos.add(info);
 			}
 			info.timeSpent += tl.getSpentSeconds();
+			info.timelines.add(tl);
 		}
-
-		Collections.sort(infos);
 
 		List<View> titles = new ArrayList<>();
 		int maxTitleWidth = 0;
@@ -81,6 +76,12 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 
 			time.setText(helper.formatShortSpentTime(context, info.timeSpent, true, false));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
+
+			if (mSelectedTask == null || (mParentOptions != null && mParentOptions.isTheOnlyTask)){
+				TextView activityInfo = (TextView) v.findViewById(R.id.time_weekdays_item_activity_info);
+				activityInfo.setVisibility(VISIBLE);
+				activityInfo.setText(helper.getActivityText(getContext(), info.timelines));
+			}
 
 			this.addView(v);
 
@@ -99,22 +100,12 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 	@Override
 	protected TimeListBase createChild(ItemHolder holder) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new TimelinesList(getContext());
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
-
-		List<Timeline> timelines = new ArrayList<>();
-		Calendar cal = Calendar.getInstance();
-		for (Timeline tl : mTimelines){
-			cal.setTime(tl.getStartTime());
-			helper.truncateCalendar(cal);
-			if (holder.day.equals(cal.getTime())){
-				timelines.add(tl);
-			}
-		}
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler, mParentOptions);
 
 		if (mSelectedTask == null){
-			((TasksList)c).setData(timelines, TasksList.PeriodType.DAY);
+			((TasksList)c).setData(holder.timelines, TasksList.PeriodType.DAY);
 		} else {
-			c.setData(timelines, mSelectedTask);
+			c.setData(holder.timelines, mSelectedTask);
 		}
 
 		return c;

@@ -28,17 +28,12 @@ import java.util.Map;
 public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	private static final String TAG = "tt: WeeksList";
 
-	class ItemHolder extends TimeListBase.ItemHolder implements Comparable<ItemHolder> {
+	class ItemHolder extends TimeListBase.ItemHolder {
 		public Date day;
 		public int timeSpent;
 
 		public ItemHolder(Date day) {
 			this.day = day;
-		}
-
-		@Override
-		public int compareTo(ItemHolder another) {
-			return day.compareTo(another.day);
 		}
 	}
 
@@ -79,8 +74,6 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 			info.timeSpent += tl.getSpentSeconds();
 		}
 
-		Collections.sort(infos);
-
 		List<View> titles = new ArrayList<>();
 		int maxTitleWidth = 0;
 		for (ItemHolder info : infos) {
@@ -118,7 +111,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	@Override
 	protected TimeListBase createChild(ItemHolder holder) {
 		TimeListBase c = mSelectedTask == null ? new TasksList(getContext()) : new WeekdaysList(getContext());
-		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler);
+		c.initControl(false, mTasksDao, mTimelineDao, mTasks, mEventHandler, mParentOptions);
 
 		Date weekFrom = holder.day;
 		Calendar cal = Calendar.getInstance();
