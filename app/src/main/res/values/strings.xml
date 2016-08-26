@@ -1,26 +1,25 @@
 <resources>
-    <string name="app_name">Time Tracker</string>
-
     <!-- common -->
-    <string name="day_short">d</string>
+    <string name="app_name">Time Tracker</string>
     <string name="hour_short">h</string>
     <string name="minute_short">m</string>
     <string name="second_short">s</string>
-    <string name="time_total">Total</string>
     <string name="confirm_dialog_title">Really?</string>
     <string name="error_dialog_title">Error!</string>
     <string name="timeline_now">now</string>
 
     <!-- home view -->
-    <string name="start_button">Start</string>
-    <string name="stop_button">Stop</string>
-    <string name="home_tab_spent_time_today">Spent today: %1$d hrs %2$d min</string>
-    <string name="home_tab_start_working">Start working at %1$tH : %1$tM</string>
-    <string name="home_tab_inactive_total">Total inactivity: %1$d hrs %2$d min</string>
-    <string name="home_tab_inactive_current">Inactive for %1$d hrs %2$d min</string>
+    <string name="home_tab_start_button">Start</string>
+    <string name="home_tab_stop_button">Stop</string>
+    <string name="home_tab_spent_time_today">Spent today: %1$s</string>
+    <string name="home_tab_start_working">Start working at %1$tH:%1$tM</string>
+    <string name="home_tab_inactive_total">Total inactivity: %1$s</string>
+    <string name="home_tab_inactive_current">Inactive for %1$s</string>
     <string name="home_tab_task_not_selected"><i>task not selected</i></string>
-    <string name="home_tab_task_time_today">Today: %1$d hrs %2$d min</string>
-    <string name="home_tab_task_time_current">Current: %1$d hrs %2$d min %3$d sec</string>
+    <string name="home_tab_open_tasks_button">Open tasks list</string>
+    <string name="home_tab_task_time_today">Today: %1$s</string>
+    <string name="home_tab_task_time_current">Current: %1$s</string>
+    <string name="home_tab_recent_tasks"><b>Recent tasks:</b></string>
 
     <!-- tasks view -->
     <string name="menu_tab_tasks_create_task">Create Task</string>
@@ -33,9 +32,9 @@ Are you sure you still want to delete task?</string>
     <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
-    <string name="home_tab_open_tasks_button">Open tasks list</string>
 
     <!-- spent time view -->
+    <string name="time_total">Total</string>
     <string name="fragment_time_day_button">Day</string>
     <string name="fragment_time_week_button">Week</string>
     <string name="fragment_time_month_button">Month</string>
@@ -50,6 +49,5 @@ Are you sure you still want to delete task?</string>
     <string name="timeline_edit_dialog_To"><b>To:</b></string>
     <string name="timeline_edit_dialog_time_spent">Time spent:</string>
     <string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
-    <string name="fragment_home_recent_tasks"><b>Recent tasks:</b></string>
 
 </resources>
