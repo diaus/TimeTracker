@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by andrew on 22.08.2016.
@@ -67,7 +68,7 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 			TextView title = (TextView) v.findViewById(R.id.time_weekdays_item_title);
 			TextView time = (TextView) v.findViewById(R.id.time_weekdays_item_time);
 
-			String sTitle = String.format("%1$tA (%1$tb %1$td)", info.day);
+			String sTitle = String.format(Locale.getDefault(), "%1$tA (%1$tb %1$td)", info.day);
 			title.setText(sTitle);
 
 			time.setText(helper.formatSpentTime(context, info.timeSpent, false));

@@ -27,6 +27,7 @@ import com.andrew.timetracker.utils.helper;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by andrew on 23.08.2016.
@@ -179,10 +180,10 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	}
 
 	private void updateUI() {
-		mDateFromButton.setText(String.format("%1$tY %1$tb %1$td", mTimeline.getStartTime()));
+		mDateFromButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mTimeline.getStartTime()));
 
 		if (mTimeline.getStopTime() != null) {
-			mDateToButton.setText(String.format("%1$tY %1$tb %1$td", mTimeline.getStopTime()));
+			mDateToButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mTimeline.getStopTime()));
 		}
 
 		int spent = mTimeline.getSpentSeconds();
