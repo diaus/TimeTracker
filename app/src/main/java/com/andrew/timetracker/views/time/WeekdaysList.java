@@ -26,6 +26,11 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 
 	private static final String TAG = "tt: WeekdaysList";
 
+	@Override
+	protected Date getItemStateHolderKey(Long key) {
+		return new Date(key);
+	}
+
 	class ItemHolder extends TimeListBase.ItemHolder {
 		public Date day;
 		public int timeSpent;

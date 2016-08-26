@@ -35,6 +35,8 @@ import java.util.Locale;
 public class TimelineEditDialogFragment extends DialogFragment {
 
 	private static final String ARG_TIMELINE_ID = "id";
+	private static final java.lang.String SAVED_DATE_TO = "date_to";
+	private static final java.lang.String SAVED_DATE_FROM = "date_from";
 
 	TimelineDao mTimelineDao = null;
 	TaskDao mTaskDao = null;
@@ -42,6 +44,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	private Timeline mTimeline;
 	private Task mTask;
 	Date mDateFromInitial, mDateToInitial;
+	Calendar mDateFrom, mDateTo;
 	private int mSaveButtonColor;
 
 	Button mSaveButton;
@@ -71,7 +74,22 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			mTask = mTaskDao.load(mTimeline.getTaskId());
 		}
 		mDateFromInitial = mTimeline.getStartTime();
+		mDateFrom = Calendar.getInstance();
+		if (savedInstanceState != null){
+			mDateFrom.setTime(new Date(savedInstanceState.getLong(SAVED_DATE_FROM)));
+		} else {
+			mDateFrom.setTime(mDateFromInitial);
+		}
+
 		mDateToInitial = mTimeline.getStopTime();
+		if (mDateToInitial != null){
+			mDateTo = Calendar.getInstance();
+			if (savedInstanceState != null){
+				mDateTo.setTime(new Date(savedInstanceState.getLong(SAVED_DATE_TO)));
+			} else {
+				mDateTo.setTime(mDateToInitial);
+			}
+		}
 
 		View v = LayoutInflater.from(getActivity()).inflate(R.layout.timeline_edit_dialog, null);
 
@@ -94,14 +112,15 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		});
 
 		mTimeFromPicker = (TimePicker) v.findViewById(R.id.timeline_edit_dialog_time_from);
-		initTimePicker(mTimeFromPicker, mTimeline.getStartTime());
+		initTimePicker(mTimeFromPicker, mDateFrom.getTime());
 
+		mTimeToPicker = (TimePicker) v.findViewById(R.id.timeline_edit_dialog_time_to);
 		if (mTimeline.getStopTime() == null) {
-			v.findViewById(R.id.timeline_edit_dialog_date_to_section).setVisibility(View.GONE);
+			mDateToButton.setVisibility(View.GONE);
+			mTimeToPicker.setVisibility(View.GONE);
 			v.findViewById(R.id.timeline_edit_dialog_date_to_now).setVisibility(View.VISIBLE);
 		} else {
-			mTimeToPicker = (TimePicker) v.findViewById(R.id.timeline_edit_dialog_time_to);
-			initTimePicker(mTimeToPicker, mTimeline.getStopTime());
+			initTimePicker(mTimeToPicker, mDateTo.getTime());
 		}
 
 		mTimeSpentTextView = (TextView) v.findViewById(R.id.timeline_edit_dialog_time_spent);
@@ -131,6 +150,15 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		return alert;
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putLong(SAVED_DATE_FROM, mDateFrom.getTime().getTime());
+		if (mDateToInitial != null){
+			outState.putLong(SAVED_DATE_TO, mDateTo.getTime().getTime());
+		}
+	}
+
 	private void initTimePicker(TimePicker timePicker, Date time) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(time);
@@ -142,16 +170,10 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			@Override
 			public void onTimeChanged(TimePicker view, int hourOfDay, int minute, int seconds) {
 				boolean isFrom = view == mTimeFromPicker;
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(isFrom ? mTimeline.getStartTime() : mTimeline.getStopTime());
+				Calendar cal = isFrom ? mDateFrom : mDateTo;
 				cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
 				cal.set(Calendar.MINUTE, minute);
 				cal.set(Calendar.SECOND, seconds);
-				if (isFrom){
-					mTimeline.setStartTime(cal.getTime());
-				} else {
-					mTimeline.setStopTime(cal.getTime());
-				}
 				updateUI();
 			}
 		});
@@ -159,34 +181,27 @@ public class TimelineEditDialogFragment extends DialogFragment {
 
 
 	private void pickDate(final boolean isFrom) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(isFrom ? mTimeline.getStartTime() : mTimeline.getStopTime());
+		Calendar cal = isFrom ? mDateFrom : mDateTo;
 		new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(isFrom ? mTimeline.getStartTime() : mTimeline.getStopTime());
+				Calendar cal = isFrom ? mDateFrom : mDateTo;
 				cal.set(Calendar.YEAR, year);
 				cal.set(Calendar.MONTH, monthOfYear);
 				cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-				if (isFrom){
-					mTimeline.setStartTime(cal.getTime());
-				} else {
-					mTimeline.setStopTime(cal.getTime());
-				}
 				updateUI();
 			}
 		}, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
 	}
 
 	private void updateUI() {
-		mDateFromButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mTimeline.getStartTime()));
+		mDateFromButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mDateFrom));
 
 		if (mTimeline.getStopTime() != null) {
-			mDateToButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mTimeline.getStopTime()));
+			mDateToButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mDateTo));
 		}
 
-		int spent = mTimeline.getSpentSeconds();
+		int spent = helper.diffDates(mDateFrom, mDateTo);
 		String sSpent = helper.formatSpentTime(getContext(), Math.abs(spent), true);
 		if (spent < 0) sSpent = "-" + sSpent;
 		mTimeSpentTextView.setText(sSpent);
@@ -195,18 +210,15 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	}
 
 	private void validate() {
-		Calendar dateFrom = Calendar.getInstance();
-		dateFrom.setTime(mTimeline.getStartTime());
-		Calendar dateTo = Calendar.getInstance();
-		if (mTimeline.getStopTime() != null){
-			dateTo.setTime(mTimeline.getStopTime());
-		}
+		if (mSaveButton == null) return;
 
-		boolean isValid = dateFrom.before(dateTo)
-				  && dateFrom.get(Calendar.YEAR) == dateTo.get(Calendar.YEAR)
-				  && dateFrom.get(Calendar.MONTH) == dateTo.get(Calendar.MONTH)
-				  && dateFrom.get(Calendar.DAY_OF_MONTH) == dateTo.get(Calendar.DAY_OF_MONTH)
-				  && (!mTimeline.getStartTime().equals(mDateFromInitial) || (mDateToInitial != null && !mDateToInitial.equals(mTimeline.getStopTime())))
+		Calendar dateTo = mDateToInitial == null ? Calendar.getInstance() : mDateTo;
+
+		boolean isValid = mDateFrom.before(dateTo)
+				  && mDateFrom.get(Calendar.YEAR) == dateTo.get(Calendar.YEAR)
+				  && mDateFrom.get(Calendar.MONTH) == dateTo.get(Calendar.MONTH)
+				  && mDateFrom.get(Calendar.DAY_OF_MONTH) == dateTo.get(Calendar.DAY_OF_MONTH)
+				  && (!mDateFrom.getTime().equals(mDateFromInitial) || (mDateToInitial != null && !mDateToInitial.equals(mDateTo.getTime())))
 				  ;
 
 		mSaveButton.setEnabled(isValid);
@@ -217,8 +229,8 @@ public class TimelineEditDialogFragment extends DialogFragment {
 
 		ensureDao();
 
-		Date dateFrom = mTimeline.getStartTime();
-		Date dateTo = mTimeline.getStopTime() == null ? new Date() : mTimeline.getStopTime();
+		Date dateFrom = mDateFrom.getTime();
+		Date dateTo = mTimeline.getStopTime() == null ? new Date() : mDateTo.getTime();
 
 		// check intercepting with other timelines
 		boolean isValid = mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimeline.getId()))
@@ -255,6 +267,10 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			return;
 		}
 
+		mTimeline.setStartTime(dateFrom);
+		if (mTimeline.getStopTime() != null){
+			mTimeline.setStopTime(dateTo);
+		}
 		mTimelineDao.update(mTimeline);
 
 		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);

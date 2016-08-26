@@ -44,6 +44,11 @@ public class helper {
 		return (int) ((dateTo.getTime() - dateFrom.getTime()) / 1000);
 	}
 
+	public static int diffDates(Calendar dateFrom, Calendar dateTo) {
+		Date dt = dateTo == null ? new Date() : dateTo.getTime();
+		return (int) ((dt.getTime() - dateFrom.getTime().getTime()) / 1000);
+	}
+
 	public static String formatShortTime(Date d, boolean showSeconds) {
 		return String.format(showSeconds ? "%1$tH:%1$tM:%1$tS" : "%1$tH:%1$tM", d);
 	}
@@ -161,4 +166,5 @@ public class helper {
 		}
 		return String.format(context.getString(R.string.fragment_time_activity_info), formatShortTime(timelines.get(0).getStartTime(), false), formatSpentTime(context, inactiveTime, false));
 	}
+
 }

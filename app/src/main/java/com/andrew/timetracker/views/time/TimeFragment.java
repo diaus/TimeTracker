@@ -3,7 +3,6 @@ package com.andrew.timetracker.views.time;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.andrew.timetracker.App;
@@ -27,6 +27,8 @@ import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,11 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 	private static final int REQUEST_EDIT_TIMELINE = 1;
 	private static final String DIALOG_EDIT_TIMELINE = "DialogTimelineEdit";
 
+	private static final String SAVED_CURRENT_DATE = "current_date";
+	private static final String SAVED_PERIOD_TYPE = "period_type";
+	private static final String SAVED_OPENED_STATE = "opened_state";
+	private static final String SAVED_SCROLL_POSITION = "scroll_position";
+
 	TasksList mTasksList;
 	TextView mTitle;
 	ImageButton mPrevButton;
@@ -47,17 +54,18 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 	Button mDayButton;
 	Button mWeekButton;
 	Button mMonthButton;
+	ScrollView mScrollContainer;
 
 	Calendar mCurrentDay;
 	TasksList.PeriodType mPeriodType;
 
 	private TaskDao taskDao;
 	private TimelineDao timelineDao;
-	TimeListBase.IEventHandler mEventHandler;
+	TasksListEventHandler mEventHandler;
 
 	@Override
 	public void onTabSelected() {
-		updateData();
+		mEventHandler.invalidate();
 	}
 
 	private IMainActivity getHostingActivity() {
@@ -74,37 +82,17 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		taskDao = daoSession.getTaskDao();
 		timelineDao = daoSession.getTimelineDao();
 
+		boolean isRestoreState = savedInstanceState != null && savedInstanceState.getLong(SAVED_CURRENT_DATE, -1) != -1;
+		if (isRestoreState){
+			mCurrentDay = Calendar.getInstance();
+			mCurrentDay.setTimeInMillis(savedInstanceState.getLong(SAVED_CURRENT_DATE));
+			mPeriodType = (TasksList.PeriodType) savedInstanceState.getSerializable(SAVED_PERIOD_TYPE);
+		} else {
+			mCurrentDay = helper.getToday();
+			mPeriodType = TasksList.PeriodType.DAY;
+		}
 
-		mCurrentDay = helper.getToday();
-		mPeriodType = TasksList.PeriodType.DAY;
-
-		mEventHandler = new TimeListBase.IEventHandler() {
-
-			boolean mIsUpdatingTimeline = false;
-
-			@Override
-			public void invalidate() {
-				Object state = mTasksList.getOpenedState();
-				mIsUpdatingTimeline = true;
-				updateData();
-				mTasksList.restoreOpenedState(state);
-				mIsUpdatingTimeline = false;
-				getHostingActivity().invalidateTimelines();
-			}
-
-			@Override
-			public void editTimeline(Timeline timeline) {
-				FragmentManager manager = getFragmentManager();
-				TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline, mTasksList.getTask(timeline.getTaskId()));
-				dialog.setTargetFragment(TimeFragment.this, REQUEST_EDIT_TIMELINE);
-				dialog.show(manager, DIALOG_EDIT_TIMELINE);
-			}
-
-			@Override
-			public boolean isAutoOpenMode() {
-				return !mIsUpdatingTimeline;
-			}
-		};
+		mEventHandler = new TasksListEventHandler();
 
 		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
 		mTasksList.initControl(true, taskDao, timelineDao, mEventHandler);
@@ -150,9 +138,62 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 		mTitle = (TextView) v.findViewById(R.id.fragment_time_title);
 		mTitle.setTypeface(null, Typeface.BOLD_ITALIC);
 
-		updateData();
+		mScrollContainer = (ScrollView) v.findViewById(R.id.fragment_time_scroll_container);
+
+		if (isRestoreState){
+			List state = (List) savedInstanceState.getSerializable(SAVED_OPENED_STATE);
+			mEventHandler.restoreState(state);
+			mScrollContainer.setScrollY(savedInstanceState.getInt(SAVED_SCROLL_POSITION));
+		} else {
+			updateData();
+		}
 
 		return v;
+	}
+
+	class TasksListEventHandler implements TimeListBase.IEventHandler {
+
+		boolean mIsUpdatingTimeline = false;
+
+		public void restoreState(List state){
+			mIsUpdatingTimeline = true;
+			updateData();
+			mTasksList.restoreOpenedState(state);
+			mIsUpdatingTimeline = false;
+		}
+
+		@Override
+		public void invalidate() {
+			List state = mTasksList.getOpenedState();
+			mIsUpdatingTimeline = true;
+			updateData();
+			mTasksList.restoreOpenedState(state);
+			mIsUpdatingTimeline = false;
+			getHostingActivity().invalidateTimelines();
+		}
+
+		@Override
+		public void editTimeline(Timeline timeline) {
+			FragmentManager manager = getFragmentManager();
+			TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline, mTasksList.getTask(timeline.getTaskId()));
+			dialog.setTargetFragment(TimeFragment.this, REQUEST_EDIT_TIMELINE);
+			dialog.show(manager, DIALOG_EDIT_TIMELINE);
+		}
+
+		@Override
+		public boolean isAutoOpenMode() {
+			return !mIsUpdatingTimeline;
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putLong(SAVED_CURRENT_DATE, mCurrentDay.getTime().getTime());
+		outState.putSerializable(SAVED_PERIOD_TYPE, mPeriodType);
+		ArrayList<TimeListBaseItemState> state = (ArrayList<TimeListBaseItemState>) mTasksList.getOpenedState();
+		outState.putSerializable(SAVED_OPENED_STATE, state);
+		outState.putInt(SAVED_SCROLL_POSITION, mScrollContainer.getScrollY());
 	}
 
 	@Override

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:padding="10dp"
     >
@@ -15,17 +15,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/timeline_edit_dialog_Task"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
         <TextView
+            android:id="@+id/timeline_edit_dialog_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:text="Task name"
-            android:id="@+id/timeline_edit_dialog_task"
             />
 
     </LinearLayout>
@@ -38,16 +38,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/timeline_edit_dialog_time_spent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
         <TextView
+            android:id="@+id/timeline_edit_dialog_time_spent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/timeline_edit_dialog_time_spent"
             tools:text="1h 5m 3s"
             />
 
@@ -56,8 +56,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/timeline_edit_dialog_From"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         />
 
     <LinearLayout
@@ -67,56 +67,64 @@
 
 
         <Button
+            android:id="@+id/timeline_edit_dialog_date_from_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            tools:text="Date from"
-            android:id="@+id/timeline_edit_dialog_date_from_button"/>
+            tools:text="Date from"/>
 
         <com.andrew.timetracker.commons.TimePicker
+            android:id="@+id/timeline_edit_dialog_time_from"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/timeline_edit_dialog_time_from" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/timeline_edit_dialog_To"
-        />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/timeline_edit_dialog_date_to_section"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/timeline_edit_dialog_To"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+
+        <TextView
+            android:id="@+id/timeline_edit_dialog_date_to_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:text="@string/timeline_now"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         >
 
         <Button
+            android:id="@+id/timeline_edit_dialog_date_to_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            tools:text="Date to"
-            android:id="@+id/timeline_edit_dialog_date_to_button"/>
+            tools:text="Date to"/>
 
         <com.andrew.timetracker.commons.TimePicker
+            android:id="@+id/timeline_edit_dialog_time_to"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/timeline_edit_dialog_time_to" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/timeline_now"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/timeline_edit_dialog_date_to_now"
-        android:layout_gravity="center_horizontal"
-        />
 
 </LinearLayout>

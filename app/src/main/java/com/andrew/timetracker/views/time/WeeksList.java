@@ -26,6 +26,11 @@ import java.util.Locale;
 public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	private static final String TAG = "tt: WeeksList";
 
+	@Override
+	protected Date getItemStateHolderKey(Long key) {
+		return new Date(key);
+	}
+
 	class ItemHolder extends TimeListBase.ItemHolder {
 		public Date day;
 		public int timeSpent;

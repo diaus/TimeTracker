@@ -15,6 +15,8 @@ import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
 
+import java.io.InvalidClassException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,37 +67,41 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		public TimeListBase childList;
 	}
 
-	protected class ItemState {
-		public TItemHolderKey key;
-		public Object childState;
-
-		public ItemState(TItemHolderKey key, Object childState) {
-			this.childState = childState;
-			this.key = key;
+	protected Long getItemStateKey(TItemHolderKey key) {
+		if (key instanceof Long){
+			return (Long)key;
+		} else if (key instanceof Date){
+			return ((Date) key).getTime();
+		} else {
+			return null;
 		}
 	}
 
-	public Object getOpenedState() {
+	protected TItemHolderKey getItemStateHolderKey(Long key) {
+		return (TItemHolderKey) key;
+	}
+
+	public List<TimeListBaseItemState> getOpenedState() {
 		if (mItemHolders == null) return null; // for sure
-		List<ItemState> state = new ArrayList<>();
+		List<TimeListBaseItemState> state = new ArrayList<>();
 		for (Map.Entry<TItemHolderKey, TItemHolder> entry : mItemHolders.entrySet())
 		{
 			ItemHolder holder = entry.getValue();
 			if (holder.childList != null){
-				state.add(new ItemState(entry.getKey(), holder.childList.getOpenedState()));
+				state.add(new TimeListBaseItemState(getItemStateKey(entry.getKey()), holder.childList.getOpenedState()));
 			}
 		}
 		return state;
 	}
 
-	public void restoreOpenedState(Object state) {
+	public void restoreOpenedState(List<TimeListBaseItemState> state) {
 		if (state == null || mItemHolders == null) return; // for sure
-		List<ItemState> states = (List<ItemState>) state;
 		Map<TItemHolderKey, Object> opened = new HashMap<>();
 		// open
-		for (ItemState itemState : states){
-			opened.put(itemState.key, null);
-			TItemHolder holder = mItemHolders.get(itemState.key);
+		for (TimeListBaseItemState itemState : state){
+			TItemHolderKey holderKey = getItemStateHolderKey(itemState.key);
+			opened.put(holderKey, null);
+			TItemHolder holder = mItemHolders.get(holderKey);
 			if (holder != null) {
 				if (holder.view != null && holder.childList == null){
 					onClick(holder.view);
