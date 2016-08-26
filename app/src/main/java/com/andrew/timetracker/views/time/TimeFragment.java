@@ -3,10 +3,12 @@ package com.andrew.timetracker.views.time;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.format.DateFormat;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.andrew.timetracker.views.MainActivity;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by andrew on 19.08.2016.
@@ -206,14 +209,14 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 				dateFrom = mCurrentDay.getTime();
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				dateTo = cal.getTime();
-				mTitle.setText(String.format("%1$tb %1$td %1$ta", mCurrentDay));
+				mTitle.setText(String.format(Locale.getDefault(), "%1$tA, ", mCurrentDay) + DateFormat.getLongDateFormat(getContext()).format(dateFrom));
 				break;
 			case WEEK:
 				helper.toStartOfWeek(cal);
 				dateFrom = cal.getTime();
 				helper.toEndOfWeek(cal);
 				dateTo = cal.getTime();
-				mTitle.setText(String.format("%1$tb %1$td %1$ta - %2$tb %2$td %2$ta", dateFrom, cal));
+				mTitle.setText(String.format(Locale.getDefault(), "%1$tb %1$td %1$ta - %2$tb %2$td %2$ta", dateFrom, cal));
 				break;
 			case MONTH:
 				helper.toStartOfMonth(cal);
@@ -221,7 +224,7 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 				cal.add(Calendar.MONTH, 1);
 				dateTo = cal.getTime();
 				cal.add(Calendar.DAY_OF_MONTH, -1);
-				mTitle.setText(String.format("%1$tB (%1$td %1$ta - %2$td %2$ta)", dateFrom, cal));
+				mTitle.setText(String.format(Locale.getDefault(), "%1$td %1$ta - %2$td %2$ta %1$tB", dateFrom, cal));
 				break;
 		}
 

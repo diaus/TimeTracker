@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by andrew on 22.08.2016.
@@ -84,7 +85,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 			helper.toEndOfWeek(cal);
 			Date weekTo = cal.getTime();
 			if (weekTo.after(monthNext)) weekFrom = monthNext;
-			String sTitle = String.format("%1$ta %1$td - %2$ta %2$td", weekFrom, weekTo);
+			String sTitle = String.format(Locale.getDefault(), "%1$ta %1$td - %2$ta %2$td", weekFrom, weekTo);
 			title.setText(sTitle);
 
 			time.setText(helper.formatSpentTime(context, info.timeSpent, false));
