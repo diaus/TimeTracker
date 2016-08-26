@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.utils.helper;
 
@@ -31,6 +32,17 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 
 		public ItemHolder(Date day) {
 			this.day = day;
+		}
+	}
+
+	@Override
+	public void setData(List<Timeline> timelines, Task selectedTask) {
+		super.setData(timelines, selectedTask);
+		if (mEventHandler.isAutoOpenMode() && mItemHolders.size() == 1){
+			ItemHolder holder = mItemHolders.entrySet().iterator().next().getValue();
+			if (holder != null && holder.childList == null){
+				onClick(holder.view);
+			}
 		}
 	}
 
