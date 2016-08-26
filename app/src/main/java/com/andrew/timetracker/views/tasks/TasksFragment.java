@@ -45,6 +45,9 @@ import java.util.List;
 public class TasksFragment extends Fragment {
 
 	private static final String TAG = "tt: TasksFragment";
+	private static final String SAVED_SELECTED_TASK_ID = "selected_task_id";
+	private static final String SAVED_IS_EDITING = "is_editing";
+	private static final String SAVED_IS_CREATING = "is_creating";
 
 	private TaskDao taskDao;
 	private TimelineDao timelineDao;
@@ -140,12 +143,31 @@ public class TasksFragment extends Fragment {
 
 		updateTasks();
 
+		if (savedInstanceState != null){
+			Long selectedTaskId = savedInstanceState.getLong(SAVED_SELECTED_TASK_ID);
+			if (selectedTaskId != -1){
+				mAdapter.selectTaskById(selectedTaskId);
+			}
+			boolean isCreating = savedInstanceState.getBoolean(SAVED_IS_CREATING);
+			mIsEditing = savedInstanceState.getBoolean(SAVED_IS_EDITING);
+			mPanelAdd.setVisibility(mIsEditing || isCreating ? View.VISIBLE : View.GONE);
+			if (mSelectedTaskPosition != -1){
+				mAdapter.notifyItemChanged(mSelectedTaskPosition);
+			}
+			getActivity().invalidateOptionsMenu();
+		}
+
 		return v;
 	}
 
-//	private IMainActivity getHostingActivity(){
-//		return (IMainActivity) getActivity();
-//	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putLong(SAVED_SELECTED_TASK_ID, mSelectedTaskPosition == -1 ? -1 : mAdapter.getTask(mSelectedTaskPosition).getId());
+		outState.putBoolean(SAVED_IS_EDITING, mIsEditing);
+		boolean isCreating = mPanelAdd.getVisibility() == View.VISIBLE && !mIsEditing;
+		outState.putBoolean(SAVED_IS_CREATING, isCreating);
+	}
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {

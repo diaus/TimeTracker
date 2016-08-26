@@ -15,6 +15,9 @@ import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.utils.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by andrew on 20.08.2016.
  */
@@ -22,16 +25,20 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 
 	ItemHolder mSelectedItemHolder = null;
 
-
 	@Override
-	public Object getOpenedState() {
-		return mSelectedItemHolder == null ? null : mSelectedItemHolder.timeline.getId();
+	public List<TimeListBaseItemState> getOpenedState() {
+		if (mSelectedItemHolder == null) return null;
+		TimeListBaseItemState itemState = new TimeListBaseItemState(mSelectedItemHolder.timeline.getId(), null);
+		List<TimeListBaseItemState> state = new ArrayList<>();
+		state.add(itemState);
+		return state;
 	}
 
 	@Override
-	public void restoreOpenedState(Object state) {
-		if (state == null) return;
-		mSelectedItemHolder = mItemHolders.get(state);
+	public void restoreOpenedState(List<TimeListBaseItemState> state) {
+		if (state == null || state.size() != 1) return;
+		TimeListBaseItemState itemState = state.get(0);
+		mSelectedItemHolder = mItemHolders.get(itemState.key);
 		updateHolder(mSelectedItemHolder);
 	}
 

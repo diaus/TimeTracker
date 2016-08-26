@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_home_spent_time_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="Time spent today"
+                />
+
+            <TextView
+                android:id="@+id/fragment_home_start_work"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_home_spent_time_today"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Start working at"
+                />
+
+            <TextView
+                android:id="@+id/fragment_home_inactive_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_home_start_work"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Total inactivity"
+                />
+
+            <TextView
+                android:id="@+id/fragment_home_inactive_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_home_inactive_total"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Current inactivity"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fragment_home_recents_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/home_tab_recent_tasks"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                />
+
+            <com.andrew.timetracker.commons.SimpleListView
+                android:id="@+id/fragment_home_recents_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#CCCCCC"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/fragment_home_view_status"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/stopped_circle"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            >
+
+            <Button
+                android:id="@+id/fragment_home_open_tasks_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_tab_open_tasks_button"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            >
+
+            <Button
+                android:id="@+id/fragment_home_start_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/started_circle"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="start/stop"
+                />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_home_current_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_home_spent_time_today"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="Current task title"
+                />
+
+            <TextView
+                android:id="@+id/fragment_home_task_time_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Task spent today"/>
+
+            <TextView
+                android:id="@+id/fragment_home_task_time_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="Task spent current"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>
