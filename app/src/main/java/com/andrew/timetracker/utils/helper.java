@@ -19,64 +19,55 @@ import java.util.List;
 public class helper {
 
 
-	public static Calendar getToday(){
+	public static Calendar getToday() {
 		Calendar today = Calendar.getInstance();
 		truncateCalendar(today);
 		return today;
 	}
 
-	public static void truncateCalendar(Calendar cal){
+	public static void truncateCalendar(Calendar cal) {
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 	}
 
-	public static Date getTruncatedDate(Date date){
+	public static Date getTruncatedDate(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		truncateCalendar(cal);
 		return cal.getTime();
 	}
 
-	public static int diffDates(Date dateFrom, Date dateTo){
+	public static int diffDates(Date dateFrom, Date dateTo) {
 		if (dateTo == null) dateTo = new Date();
-		return (int) ((dateTo.getTime() - dateFrom.getTime())/1000);
+		return (int) ((dateTo.getTime() - dateFrom.getTime()) / 1000);
 	}
 
 	public static String formatShortTime(Date d, boolean showSeconds) {
 		return String.format(showSeconds ? "%1$tH:%1$tM:%1$tS" : "%1$tH:%1$tM", d);
 	}
 
-	public static String formatShortSpentTime(Context context, int seconds, boolean showMinutes, boolean showSeconds) {
+	public static String formatSpentTime(Context context, int seconds, boolean showSeconds) {
 		int minutes = seconds / 60;
 		seconds %= 60;
+		if (!showSeconds && seconds >= 30) minutes += 1;
 		int hours = minutes / 60;
 		minutes %= 60;
-		int days = hours / 24;
-		hours %= 24;
 
 		String s = "";
-		if (days > 0){
-			s += days + context.getString(R.string.day_short);
-		}
-		if (!showMinutes && minutes >= 30) hours += 1;
-		if (hours > 0){
+		if (hours > 0) {
 			if (s.length() > 0) s += " ";
 			s += hours + context.getString(R.string.hour_short);
 		}
-		if (showMinutes)
-		{
-			if (!showSeconds && seconds >= 30) minutes += 1;
-			if (minutes > 0){
+		if (minutes > 0) {
+			if (s.length() > 0) s += " ";
+			s += minutes + context.getString(R.string.minute_short);
+		}
+		if (showSeconds) {
+			if (seconds > 0) {
 				if (s.length() > 0) s += " ";
-				s += minutes + context.getString(R.string.minute_short);
-			}
-			if (showSeconds){
-				if (seconds > 0){
-					if (s.length() > 0) s += " ";
-					s += seconds + context.getString(R.string.second_short);
-				}
+				s += seconds + context.getString(R.string.second_short);
 			}
 		}
 
@@ -92,32 +83,56 @@ public class helper {
 	}
 
 	public static void toStartOfWeek(Calendar cal) {
-		switch (cal.get(Calendar.DAY_OF_WEEK)){
-			case Calendar.TUESDAY: cal.add(Calendar.DAY_OF_MONTH, -1); break;
-			case Calendar.WEDNESDAY: cal.add(Calendar.DAY_OF_MONTH, -2); break;
-			case Calendar.THURSDAY: cal.add(Calendar.DAY_OF_MONTH, -3); break;
-			case Calendar.FRIDAY: cal.add(Calendar.DAY_OF_MONTH, -4); break;
-			case Calendar.SATURDAY: cal.add(Calendar.DAY_OF_MONTH, -5); break;
-			case Calendar.SUNDAY: cal.add(Calendar.DAY_OF_MONTH, -6); break;
+		switch (cal.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.TUESDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				break;
+			case Calendar.WEDNESDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -2);
+				break;
+			case Calendar.THURSDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -3);
+				break;
+			case Calendar.FRIDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -4);
+				break;
+			case Calendar.SATURDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -5);
+				break;
+			case Calendar.SUNDAY:
+				cal.add(Calendar.DAY_OF_MONTH, -6);
+				break;
 		}
 	}
 
 	public static void toEndOfWeek(Calendar cal) {
-		switch (cal.get(Calendar.DAY_OF_WEEK)){
-			case Calendar.MONDAY: cal.add(Calendar.DAY_OF_MONTH, 6); break;
-			case Calendar.TUESDAY: cal.add(Calendar.DAY_OF_MONTH, 5); break;
-			case Calendar.WEDNESDAY: cal.add(Calendar.DAY_OF_MONTH, 4); break;
-			case Calendar.THURSDAY: cal.add(Calendar.DAY_OF_MONTH, 3); break;
-			case Calendar.FRIDAY: cal.add(Calendar.DAY_OF_MONTH, 2); break;
-			case Calendar.SATURDAY: cal.add(Calendar.DAY_OF_MONTH, 1); break;
+		switch (cal.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.MONDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 6);
+				break;
+			case Calendar.TUESDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 5);
+				break;
+			case Calendar.WEDNESDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 4);
+				break;
+			case Calendar.THURSDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 3);
+				break;
+			case Calendar.FRIDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 2);
+				break;
+			case Calendar.SATURDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				break;
 		}
 	}
 
-	public static void toStartOfMonth(Calendar cal){
+	public static void toStartOfMonth(Calendar cal) {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 	}
 
-	public static void toEndOfMonth(Calendar cal){
+	public static void toEndOfMonth(Calendar cal) {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		cal.add(Calendar.MONTH, 1);
 		cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -138,12 +153,12 @@ public class helper {
 		if (timelines == null || timelines.size() == 0) return null;
 		int inactiveTime = 0;
 		Date dateLast = null;
-		for (Timeline tl : timelines){
-			if (dateLast != null){
+		for (Timeline tl : timelines) {
+			if (dateLast != null) {
 				inactiveTime += diffDates(dateLast, tl.getStartTime());
 			}
 			dateLast = tl.getStopTime();
 		}
-		return String.format(context.getString(R.string.fragment_time_activity_info), formatShortTime(timelines.get(0).getStartTime(), false), formatShortSpentTime(context, inactiveTime, true, false));
+		return String.format(context.getString(R.string.fragment_time_activity_info), formatShortTime(timelines.get(0).getStartTime(), false), formatSpentTime(context, inactiveTime, false));
 	}
 }

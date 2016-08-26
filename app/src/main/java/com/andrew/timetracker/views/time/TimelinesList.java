@@ -5,23 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.andrew.timetracker.R;
-import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.Timeline;
-import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
-
-import java.util.List;
 
 /**
  * Created by andrew on 20.08.2016.
@@ -63,7 +55,7 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 					new AlertDialog.Builder(getContext())
 							  .setMessage(getResources().getString(R.string.confirm_delete_timeline)
 										 + "\n" + helper.formatTimelinePeriod(timeline, true, getContext())
-										 + " [ " + helper.formatShortSpentTime(getContext(), timeline.getSpentSeconds(), true, true) + " ]"
+										 + " [ " + helper.formatSpentTime(getContext(), timeline.getSpentSeconds(), true) + " ]"
 										 + "\n" + getTask(timeline.getTaskId()).getName())
 							  .setTitle(R.string.confirm_dialog_title)
 							  .setIcon(R.drawable.icon_alert)
@@ -98,11 +90,10 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 			mItemHolders.put(tl.getId(), holder);
 
 			TextView period = (TextView) v.findViewById(R.id.time_timelines_item_period);
-			TextView time = (TextView) v.findViewById(R.id.time_timelines_item_time);
-
 			period.setText(helper.formatTimelinePeriod(tl, false, getContext()));
 
-			time.setText(helper.formatShortSpentTime(context, tl.getSpentSeconds(), true, true));
+			TextView time = (TextView) v.findViewById(R.id.time_timelines_item_time);
+			time.setText(helper.formatSpentTime(context, tl.getSpentSeconds(), true));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
 			if (mSelectedTask == null){

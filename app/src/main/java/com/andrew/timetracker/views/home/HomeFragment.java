@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -178,7 +176,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			});
 		}
 
-		private void startRecentTask(){
+		private void startRecentTask() {
 			mStartButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
 			if (mIsStarted) {
 				mTimeline.setStopTime(new Date());
@@ -190,7 +188,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			updateData();
 		}
 
-		public void bindItem(int position){
+		public void bindItem(int position) {
 			mPosition = position;
 			Task task = mRecentTasks.get(position);
 			mTaskTitle.setText(task.getName());
@@ -208,7 +206,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			if (mSelectedRecentTaskPosition == mPosition) return;
 			int prevSelected = mSelectedRecentTaskPosition;
 			mSelectedRecentTaskPosition = mPosition;
-			if (prevSelected != -1){
+			if (prevSelected != -1) {
 				mRecentTasksList.updateItem(prevSelected);
 			}
 			updateSelected();
@@ -241,15 +239,15 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == REQUEST_TASKS){
+		if (requestCode == REQUEST_TASKS) {
 			updateData();
 		}
 
 		//super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private void ensureTimer(){
-		if (mIsStarted){
+	private void ensureTimer() {
+		if (mIsStarted) {
 			startTimer();
 		} else {
 			stopTimer();
@@ -257,14 +255,14 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 	}
 
 	private void startTimer() {
-		if (!isTimerSecondStarted){
+		if (!isTimerSecondStarted) {
 			timerHandler.postDelayed(timerSecond, 1000);
 			isTimerSecondStarted = true;
 		}
 	}
 
 	private void stopTimer() {
-		if (isTimerSecondStarted){
+		if (isTimerSecondStarted) {
 			timerHandler.removeCallbacks(timerSecond);
 			isTimerSecondStarted = false;
 		}
@@ -283,12 +281,12 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 			mSpentToday += time;
 			mTaskSpentToday += time;
 		} else {
-			if (mTimeline != null && mTimeline.getStopTime().after(helper.getToday().getTime())){
+			if (mTimeline != null && mTimeline.getStopTime().after(helper.getToday().getTime())) {
 				mInactiveTotal += helper.diffDates(mTimeline.getStopTime(), null);
 			}
 			mTimeline = new Timeline(null, mTask.getId(), new Date(), null);
 			timelineDao.insert(mTimeline);
-			if (mDateWorkStarted == null){
+			if (mDateWorkStarted == null) {
 				mDateWorkStarted = mTimeline.getStartTime();
 			}
 		}
@@ -357,7 +355,7 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		Map<Long, Object> mapRecents = new HashMap<>();
 		for (int i = 0; i < tt.size(); i++) {
 			Long taskId = tt.get(i).getTaskId();
-			if (!mapRecents.containsKey(taskId)){
+			if (!mapRecents.containsKey(taskId)) {
 				mapRecents.put(taskId, null);
 				mRecentTasks.add(taskDao.load(taskId));
 				if (mRecentTasks.size() == 3) break;
@@ -377,26 +375,27 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 
 		mStatusView.setBackgroundResource(mIsStarted ? R.drawable.started_circle : R.drawable.stopped_circle);
 
-		mStartStopButton.setText(mIsStarted ? R.string.stop_button : R.string.start_button);
+		mStartStopButton.setText(mIsStarted ? R.string.home_tab_stop_button : R.string.home_tab_start_button);
 		mStartStopButton.setBackgroundResource(mTask == null ? R.drawable.inactive_circle : (mIsStarted ? R.drawable.stopped_circle : R.drawable.started_circle));
 
-		int time = (mSpentToday + getStartedTaskTime()) / 60;
-		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today), time / 60, time % 60));
+		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today),
+				  helper.formatSpentTime(getContext(), mSpentToday + getStartedTaskTime(), false)));
 
 		int inactiveCurrent = mIsStarted || mTimeline == null || mTimeline.getStopTime().before(helper.getToday().getTime())
-				  ? 0 : helper.diffDates(mTimeline.getStopTime(), null) / 60;
+				  ? 0 : helper.diffDates(mTimeline.getStopTime(), null);
 
-		time = (mInactiveTotal / 60); // + inactiveCurrent;
-		mInactiveTotalTextView.setVisibility(time == 0 ? View.GONE : View.VISIBLE);
-		mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total), time / 60, time % 60));
+		mInactiveTotalTextView.setVisibility((mInactiveTotal / 60) == 0 ? View.GONE : View.VISIBLE);
+		mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total),
+				  helper.formatSpentTime(getContext(), mInactiveTotal, false)));
 
 		mStartWorkingTextView.setVisibility(mDateWorkStarted == null ? View.GONE : View.VISIBLE);
-		if (mDateWorkStarted != null){
+		if (mDateWorkStarted != null) {
 			mStartWorkingTextView.setText(String.format(getString(R.string.home_tab_start_working), mDateWorkStarted));
 		}
 
-		mInactiveCurrentTextView.setVisibility(inactiveCurrent == 0 ? View.GONE : View.VISIBLE);
-		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current), inactiveCurrent / 60, inactiveCurrent % 60));
+		mInactiveCurrentTextView.setVisibility((inactiveCurrent / 60) == 0 ? View.GONE : View.VISIBLE);
+		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current),
+				  helper.formatSpentTime(getContext(), inactiveCurrent, false)));
 
 		mCurrentTaskTimeTodayTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
 		if (mTask == null) {
@@ -404,11 +403,8 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		} else {
 			mCurrentTaskTextView.setText(helper.underlineText(mTask.getName()));
 			mCurrentTaskTextView.setTypeface(null, Typeface.BOLD);
-
-
-			int today = (mTaskSpentToday + getStartedTaskTime()) / 60;
 			mCurrentTaskTimeTodayTextView.setText(String.format(getString(R.string.home_tab_task_time_today),
-					  today / 60, today % 60));
+					  helper.formatSpentTime(getContext(), mTaskSpentToday + getStartedTaskTime(), false)));
 
 		}
 
@@ -417,10 +413,9 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 
 	private void updateUI_current() {
 		mCurrentTaskTimeCurrentTextView.setVisibility(!mIsStarted ? View.GONE : View.VISIBLE);
-		if (mIsStarted){
-			int current = getStartedTaskTime();
+		if (mIsStarted) {
 			mCurrentTaskTimeCurrentTextView.setText(String.format(getString(R.string.home_tab_task_time_current),
-					  current / 3600, (current / 60) % 60, current % 60));
+					  helper.formatSpentTime(getContext(), getStartedTaskTime(), true)));
 		}
 	}
 
@@ -429,15 +424,15 @@ public class HomeFragment extends Fragment implements MainActivity.ITab {
 		return mTimeline.getSpentSeconds();
 	}
 
-	private IMainActivity getHostingActivity(){
+	private IMainActivity getHostingActivity() {
 		return (IMainActivity) getActivity();
 	}
 
 	@Override
 	public void onTabSelected() {
-		if (getHostingActivity().isInvalidatedTimelines()){
+		if (getHostingActivity().isInvalidatedTimelines()) {
 			updateData();
-		} else if (getHostingActivity().isInvalidatedTask()){
+		} else if (getHostingActivity().isInvalidatedTask()) {
 			taskDao.refresh(mTask);
 			updateUI();
 		}

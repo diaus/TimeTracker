@@ -27,7 +27,6 @@ import com.andrew.timetracker.utils.helper;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by andrew on 23.08.2016.
@@ -187,7 +186,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		}
 
 		int spent = mTimeline.getSpentSeconds();
-		String sSpent = helper.formatShortSpentTime(getContext(), Math.abs(spent), true, true);
+		String sSpent = helper.formatSpentTime(getContext(), Math.abs(spent), true);
 		if (spent < 0) sSpent = "-" + sSpent;
 		mTimeSpentTextView.setText(sSpent);
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,11 +15,8 @@ import com.andrew.timetracker.utils.helper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by andrew on 22.08.2016.
@@ -91,7 +87,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 			String sTitle = String.format("%1$ta %1$td - %2$ta %2$td", weekFrom, weekTo);
 			title.setText(sTitle);
 
-			time.setText(helper.formatShortSpentTime(context, info.timeSpent, true, false));
+			time.setText(helper.formatSpentTime(context, info.timeSpent, false));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
 			this.addView(v);
