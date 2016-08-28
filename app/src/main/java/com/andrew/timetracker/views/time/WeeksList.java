@@ -59,7 +59,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 		Calendar cal = Calendar.getInstance();
 		Date day;
 		Date monthStart = null;
-		Date monthNext = null;
+		Date monthLast = null;
 
 		for (Timeline tl : mTimelines) {
 			cal.setTime(tl.getStartTime());
@@ -74,7 +74,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 				monthStart = cal.getTime();
 				cal.add(Calendar.MONTH, 1);
 				cal.add(Calendar.DAY_OF_MONTH, -1);
-				monthNext = cal.getTime();
+				monthLast = cal.getTime();
 			}
 
 			ItemHolder info;
@@ -99,10 +99,11 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 			Date weekFrom = info.day;
 			if (weekFrom.before(monthStart)) weekFrom = monthStart;
 			cal.setTime(info.day);
-			helper.toEndOfWeek(cal);
-			Date weekTo = cal.getTime();
-			if (weekTo.after(monthNext)) weekFrom = monthNext;
-			String sTitle = String.format(Locale.getDefault(), "%1$ta %1$td - %2$ta %2$td", weekFrom, weekTo);
+			helper.toStartOfNextWeek(cal);
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			Date weekLast = cal.getTime();
+			if (weekLast.after(monthLast)) weekLast = monthLast;
+			String sTitle = String.format(Locale.getDefault(), "%1$ta %1$td - %2$ta %2$td", weekFrom, weekLast);
 			title.setText(sTitle);
 
 			time.setText(helper.formatSpentTime(context, info.timeSpent, false));
