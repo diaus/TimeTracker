@@ -255,8 +255,9 @@ public class TimeFragment extends Fragment implements MainActivity.ITab {
 			case WEEK:
 				helper.toStartOfWeek(cal);
 				dateFrom = cal.getTime();
-				helper.toEndOfWeek(cal);
+				helper.toStartOfNextWeek(cal);
 				dateTo = cal.getTime();
+				cal.add(Calendar.DAY_OF_MONTH, -1);
 				mTitle.setText(String.format(Locale.getDefault(), "%1$tb %1$td %1$ta - %2$tb %2$td %2$ta", dateFrom, cal));
 				break;
 			case MONTH:

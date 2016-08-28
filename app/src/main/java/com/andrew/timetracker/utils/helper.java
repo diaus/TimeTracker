@@ -110,24 +110,27 @@ public class helper {
 		}
 	}
 
-	public static void toEndOfWeek(Calendar cal) {
+	public static void toStartOfNextWeek(Calendar cal) {
 		switch (cal.get(Calendar.DAY_OF_WEEK)) {
 			case Calendar.MONDAY:
-				cal.add(Calendar.DAY_OF_MONTH, 6);
+				cal.add(Calendar.DAY_OF_MONTH, 7);
 				break;
 			case Calendar.TUESDAY:
-				cal.add(Calendar.DAY_OF_MONTH, 5);
+				cal.add(Calendar.DAY_OF_MONTH, 6);
 				break;
 			case Calendar.WEDNESDAY:
-				cal.add(Calendar.DAY_OF_MONTH, 4);
+				cal.add(Calendar.DAY_OF_MONTH, 5);
 				break;
 			case Calendar.THURSDAY:
-				cal.add(Calendar.DAY_OF_MONTH, 3);
+				cal.add(Calendar.DAY_OF_MONTH, 4);
 				break;
 			case Calendar.FRIDAY:
-				cal.add(Calendar.DAY_OF_MONTH, 2);
+				cal.add(Calendar.DAY_OF_MONTH, 3);
 				break;
 			case Calendar.SATURDAY:
+				cal.add(Calendar.DAY_OF_MONTH, 2);
+				break;
+			case Calendar.SUNDAY:
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				break;
 		}
