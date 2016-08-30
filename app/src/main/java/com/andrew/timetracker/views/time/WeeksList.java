@@ -64,7 +64,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 		for (Timeline tl : mTimelines) {
 			cal.setTime(tl.getStartTime());
 			helper.truncateCalendar(cal);
-			cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			helper.toStartOfWeek(cal);
 			day = cal.getTime();
 
 			if (monthStart == null){

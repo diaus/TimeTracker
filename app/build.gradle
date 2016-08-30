@@ -19,8 +19,8 @@ android {
         applicationId "com.andrew.timetracker"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 8
-        versionName "v0.1.1"
+        versionCode 9
+        versionName "v0.1.2"
     }
     buildTypes {
         release {
