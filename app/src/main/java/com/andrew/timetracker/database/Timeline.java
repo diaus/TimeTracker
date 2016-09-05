@@ -105,13 +105,6 @@ public class Timeline {
 	@Generated(hash = 100676365)
 	private transient Long task__resolvedKey;
 
-	/** called by internal mechanisms, do not call yourself. */
-	@Generated(hash = 126532443)
-	public void __setDaoSession(DaoSession daoSession) {
-		this.daoSession = daoSession;
-		myDao = daoSession != null ? daoSession.getTimelineDao() : null;
-	}
-
 	/** Used for active entity operations. */
 	@Generated(hash = 157161418)
 	private transient TimelineDao myDao;
@@ -174,5 +167,12 @@ public class Timeline {
 
 	public int getSpentSeconds() {
 		return (int) (((getStopTime() != null ? getStopTime().getTime() : new Date().getTime()) - getStartTime().getTime()) / 1000);
+	}
+
+	/** called by internal mechanisms, do not call yourself. */
+	@Generated(hash = 126532443)
+	public void __setDaoSession(DaoSession daoSession) {
+		this.daoSession = daoSession;
+		myDao = daoSession != null ? daoSession.getTimelineDao() : null;
 	}
 }

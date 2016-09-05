@@ -8,6 +8,8 @@
     <string name="confirm_dialog_title">Впевнені?</string>
     <string name="error_dialog_title">Помилка!</string>
     <string name="timeline_now"><i>зараз</i></string>
+    <string name="dialog_create_button">Створити</string>
+    <string name="dialog_save_button">Зберегти</string>
 
     <!-- home view -->
     <string name="home_tab_start_button">Старт</string>
@@ -23,8 +25,7 @@
     <string name="home_tab_recent_tasks"><b>Нещодавні завдання:</b></string>
 
     <!-- tasks view -->
-    <string name="menu_tab_tasks_cancel">Відхилити</string>
-    <string name="menu_tab_tasks_create_task">Створити завдання</string>
+    <string name="menu_tab_tasks_delete_task">Знищити завдання</string>
     <string name="enter_task_title_edit_text">введіть назву завдання</string>
     <string name="confirm_delete_task">Ви впевнені, що хочете видалити завдання?</string>
     <string name="confirm_delete_task_with_timelines">У вас є записи часу з цим завданням!\n
@@ -33,6 +34,8 @@
     <string name="toast_task_deleted_params_name">Завдання \'%1$s\' було видалене</string>
     <string name="alert_task_name_exists">Завдання з таким ім\'ям вже існує!</string>
     <string name="alert_task_name_exists_title">Помилка</string>
+    <string name="create_task_button">Створити завдання</string>
+    <string name="alert_delete_task_with_subtasks_disallowed">Ви повинні спочатку видалити всі підзавдання</string>
 
     <!-- spent time view -->
     <string name="time_total">Загалом</string>
@@ -44,11 +47,17 @@
 
     <!-- edit timeline -->
     <string name="timeline_edit_dialog_title">Редагування запису часу</string>
-    <string name="timeline_edit_dialog_ok_button">Зберегти</string>
     <string name="timeline_edit_dialog_Task"><b>Завдання:</b></string>
     <string name="timeline_edit_dialog_From"><b>Початок роботи:</b></string>
     <string name="timeline_edit_dialog_To"><b>Кінець роботи:</b></string>
     <string name="timeline_edit_dialog_time_spent">Напрацьовано:</string>
     <string name="timeline_edit_dialog_error_intercept_timelines">Існує інший запис часу, що перетинається з вказаним.</string>
+
+    <!-- edit task -->
+    <string name="task_edit_dialog_parent_task">Батьківське завдання:</string>
+    <string name="task_edit_dialog_task_name">Назва завдання:</string>
+    <string name="task_edit_dialog_parent_task_top"><i>немає</i></string>
+    <string name="select_task_up"><i>&lt;ВГОРУ&gt;</i></string>
+    <string name="menu_select_task">ВИБРАТИ</string>
 
 </resources>

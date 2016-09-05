@@ -7,6 +7,7 @@ import android.os.Build;
 
 import com.andrew.timetracker.database.DaoMaster;
 import com.andrew.timetracker.database.DaoSession;
+import com.andrew.timetracker.database.MyDatabaseOpenHelper;
 import com.andrew.timetracker.settings.Settings;
 
 import org.greenrobot.greendao.database.Database;
@@ -28,7 +29,7 @@ public class App extends Application {
 
 		setLocale();
 
-		DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, ENCRYPTED ? "timetracker-db-encrypted" : "timetracker-db");
+		MyDatabaseOpenHelper helper = new MyDatabaseOpenHelper(this, ENCRYPTED ? "timetracker-db-encrypted" : "timetracker-db");
 		Database db = ENCRYPTED ? helper.getEncryptedWritableDb("Ld3A3qNg2KJDrO6") : helper.getWritableDb();
 		daoSession = new DaoMaster(db).newSession();
 

@@ -35,8 +35,8 @@ import java.util.Locale;
 public class TimelineEditDialogFragment extends DialogFragment {
 
 	private static final String ARG_TIMELINE_ID = "id";
-	private static final java.lang.String SAVED_DATE_TO = "date_to";
-	private static final java.lang.String SAVED_DATE_FROM = "date_from";
+	private static final String SAVED_DATE_TO = "date_to";
+	private static final String SAVED_DATE_FROM = "date_from";
 
 	TimelineDao mTimelineDao = null;
 	TaskDao mTaskDao = null;
@@ -129,7 +129,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 				  .setView(v)
 				  .setTitle(R.string.timeline_edit_dialog_title)
 				  .setNegativeButton(android.R.string.cancel, null)
-				  .setPositiveButton(R.string.timeline_edit_dialog_ok_button, null)
+				  .setPositiveButton(R.string.dialog_save_button, null)
 				  .create();
 
 		alert.setOnShowListener(new DialogInterface.OnShowListener() {

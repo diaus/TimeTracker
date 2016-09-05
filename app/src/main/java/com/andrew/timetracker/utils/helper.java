@@ -2,6 +2,8 @@ package com.andrew.timetracker.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.StringRes;
+import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
@@ -170,4 +172,11 @@ public class helper {
 		return String.format(context.getString(R.string.fragment_time_activity_info), formatShortTime(timelines.get(0).getStartTime(), false), formatSpentTime(context, inactiveTime, false));
 	}
 
+	public static void alert(Context context, @StringRes int titleResourceId) {
+		new AlertDialog.Builder(context)
+				  .setTitle(titleResourceId)
+				  .setIcon(R.drawable.icon_alert)
+				  .setPositiveButton(android.R.string.ok, null)
+				  .show();
+	}
 }

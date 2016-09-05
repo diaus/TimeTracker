@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.commons.IBackPressedListener;
 
 /**
  * Created by andrew on 19.08.2016.
@@ -31,5 +32,16 @@ public class TasksActivity extends AppCompatActivity {
 
 	private Fragment createFragment() {
 		return new TasksFragment();
+	}
+
+	@Override
+	public void onBackPressed() {
+		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.single_frame_container);
+		if (fragment != null && fragment instanceof IBackPressedListener){
+			if (((IBackPressedListener)fragment).doBack()){
+				return;
+			}
+		}
+		super.onBackPressed();
 	}
 }

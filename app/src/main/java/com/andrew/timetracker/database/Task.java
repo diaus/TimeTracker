@@ -16,9 +16,10 @@ public class Task {
 	@Id(autoincrement = true)
 	private Long id;
 
-	@Unique
 	@NotNull
 	private String name;
+
+	private Long parentId;
 
 	public String getName() {
 		return this.name;
@@ -40,10 +41,19 @@ public class Task {
 		this.id = id;
 	}
 
-	@Generated(hash = 207136854)
-	public Task(Long id, @NotNull String name) {
+	public Long getParentId() {
+		return this.parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	@Generated(hash = 576039145)
+	public Task(Long id, @NotNull String name, Long parentId) {
 		this.id = id;
 		this.name = name;
+		this.parentId = parentId;
 	}
 
 	@Generated(hash = 733837707)

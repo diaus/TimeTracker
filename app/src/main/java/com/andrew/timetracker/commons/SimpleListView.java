@@ -3,6 +3,7 @@ package com.andrew.timetracker.commons;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ public class SimpleListView extends LinearLayout {
 	List<View> mViews = new ArrayList<>();
 	int mItemLayoutResourceId;
 
-	public void setAdapter(IAdapter adapter, int itemLayoutResourceId) {
+	public void setAdapter(IAdapter adapter, @LayoutRes int itemLayoutResourceId) {
 		mAdapter = adapter;
 		mItemLayoutResourceId = itemLayoutResourceId;
 		updateData();
