@@ -2,13 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_item_new_task"
-        android:icon="@drawable/ic_menu_add"
-        android:title="@string/menu_tab_tasks_create_task"
-        app:showAsAction="ifRoom|withText"/>
-    <item
-        android:id="@+id/menu_item_cancel"
-        android:icon="@drawable/ic_menu_cancel"
-        android:title="@string/menu_tab_tasks_cancel"
+        android:id="@+id/menu_item_delete_task"
+        android:icon="@drawable/delete_button"
+        android:title="@string/menu_tab_tasks_delete_task"
         app:showAsAction="ifRoom|withText"/>
 </menu>

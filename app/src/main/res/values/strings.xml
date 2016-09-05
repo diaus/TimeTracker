@@ -7,6 +7,8 @@
     <string name="confirm_dialog_title">Really?</string>
     <string name="error_dialog_title">Error!</string>
     <string name="timeline_now">now</string>
+    <string name="dialog_save_button">Save</string>
+    <string name="dialog_create_button">Create</string>
 
     <!-- home view -->
     <string name="home_tab_start_button">Start</string>
@@ -22,8 +24,7 @@
     <string name="home_tab_recent_tasks"><b>Recent tasks:</b></string>
 
     <!-- tasks view -->
-    <string name="menu_tab_tasks_create_task">Create Task</string>
-    <string name="menu_tab_tasks_cancel">Cancel</string>
+    <string name="menu_tab_tasks_delete_task">Delete Task</string>
     <string name="enter_task_title_edit_text">enter task title</string>
     <string name="confirm_delete_task">Are you sure you want to delete task?</string>
     <string name="confirm_delete_task_with_timelines">There are time spent history exists!\n
@@ -32,6 +33,8 @@ Are you sure you still want to delete task?</string>
     <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
     <string name="alert_task_name_exists">Task with this name already exists!</string>
     <string name="alert_task_name_exists_title">Error</string>
+    <string name="create_task_button">Create task</string>
+    <string name="alert_delete_task_with_subtasks_disallowed">You should delete all sub-tasks first</string>
 
     <!-- spent time view -->
     <string name="time_total">Total</string>
@@ -43,11 +46,17 @@ Are you sure you still want to delete task?</string>
 
     <!-- edit timeline -->
     <string name="timeline_edit_dialog_title">Changing time record</string>
-    <string name="timeline_edit_dialog_ok_button">Save</string>
     <string name="timeline_edit_dialog_Task"><b>Task:</b></string>
     <string name="timeline_edit_dialog_From"><b>From:</b></string>
     <string name="timeline_edit_dialog_To"><b>To:</b></string>
     <string name="timeline_edit_dialog_time_spent">Time spent:</string>
     <string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
+
+    <!-- edit task -->
+    <string name="task_edit_dialog_parent_task">Parent task:</string>
+    <string name="task_edit_dialog_task_name">Task name:</string>
+    <string name="task_edit_dialog_parent_task_top"><i>topmost</i></string>
+    <string name="select_task_up"><i>&lt;UP&gt;</i></string>
+    <string name="menu_select_task">SELECT</string>
 
 </resources>
