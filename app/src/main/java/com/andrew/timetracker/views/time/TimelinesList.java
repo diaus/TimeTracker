@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.events.DbChangesEvent;
 import com.andrew.timetracker.utils.helper;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +74,7 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 								  @Override
 								  public void onClick(DialogInterface dialog, int which) {
 									  mTimelineDao.delete(timeline);
+									  helper.postDbChange(this);
 									  mEventHandler.invalidate();
 								  }
 							  })

@@ -5,9 +5,4 @@ package com.andrew.timetracker.views;
  */
 public interface IMainActivity {
 	void switchToHomeTab();
-
-	void invalidateTask();
-	void invalidateTimelines();
-	boolean isInvalidatedTask();
-	boolean isInvalidatedTimelines();
 }

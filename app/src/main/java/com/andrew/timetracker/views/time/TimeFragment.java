@@ -66,11 +66,8 @@ public class TimeFragment extends MainActivityTabFragment {
 
 	@Override
 	public void onTabSelected() {
+		// always refresh
 		mEventHandler.invalidate();
-	}
-
-	private IMainActivity getHostingActivity() {
-		return (IMainActivity) getActivity();
 	}
 
 	@Nullable
@@ -170,7 +167,6 @@ public class TimeFragment extends MainActivityTabFragment {
 			updateData();
 			mTasksList.restoreOpenedState(state);
 			mIsUpdatingTimeline = false;
-			getHostingActivity().invalidateTimelines();
 		}
 
 		@Override
