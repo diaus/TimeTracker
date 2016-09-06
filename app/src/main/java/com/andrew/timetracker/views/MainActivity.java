@@ -1,6 +1,8 @@
 package com.andrew.timetracker.views;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 	}
 
 	private DrawerLayout mDrawerLayout;
+	private NavigationView mNavigationView;
 
 	private ViewPager mViewPager;
 	private FragmentStatePagerAdapter mAdapter;
@@ -80,6 +83,11 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 				Log.d(TAG, "tab selected " + position);
 				getTab(position).onTabSelected();
 				clearInvalidations();
+				switch (position){
+					case 0: mNavigationView.setCheckedItem(R.id.navigation_item_home); break;
+					case 1: mNavigationView.setCheckedItem(R.id.navigation_item_stats); break;
+					case 2: mNavigationView.setCheckedItem(R.id.navigation_item_tasks); break;
+				}
 			}
 		});
 		mViewPager.setAdapter(mAdapter);
@@ -87,8 +95,24 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs_layout);
 		tabLayout.setupWithViewPager(mViewPager);
 
-		Log.d(TAG, "end of onCreate in main activity");
+		mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+		mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+				int tabIndex;
+				switch (item.getItemId()){
+					case R.id.navigation_item_home: tabIndex = 0; break;
+					case R.id.navigation_item_stats: tabIndex = 1; break;
+					case R.id.navigation_item_tasks: tabIndex = 2; break;
+					default: return false;
+				}
+				mDrawerLayout.closeDrawers();
+				mViewPager.setCurrentItem(tabIndex);
+				return true;
+			}
+		});
 
+		Log.d(TAG, "end of onCreate in main activity");
 	}
 
 	@Override
@@ -106,8 +130,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		return (ITab) mAdapter.instantiateItem(mViewPager, position);
 	}
 
+	private int getCurrentTabIndex(){
+		return mViewPager.getCurrentItem();
+	}
+
 	private ITab getCurrentTab(){
-		return getTab(mViewPager.getCurrentItem());
+		return getTab(getCurrentTabIndex());
 	}
 
 	@Override
