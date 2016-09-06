@@ -272,6 +272,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			mTimeline.setStopTime(dateTo);
 		}
 		mTimelineDao.update(mTimeline);
+		helper.postDbChange(this);
 
 		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
 		dialog.dismiss();

@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 				}
 				mActionBar.setSubtitle(null);
 				getTab(position).onTabSelected();
-				clearInvalidations();
 			}
 		});
 		mViewPager.setAdapter(mAdapter);
@@ -156,34 +155,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		} else {
 			super.onBackPressed();
 		}
-	}
-
-	private boolean _isInvalidatedTask;
-	private boolean _isInvalidatedTimelines;
-
-	private void clearInvalidations(){
-		_isInvalidatedTimelines = false;
-		_isInvalidatedTask = false;
-	}
-
-	@Override
-	public void invalidateTask() {
-		_isInvalidatedTask = true;
-	}
-
-	@Override
-	public void invalidateTimelines() {
-		_isInvalidatedTimelines = true;
-	}
-
-	@Override
-	public boolean isInvalidatedTask() {
-		return _isInvalidatedTask;
-	}
-
-	@Override
-	public boolean isInvalidatedTimelines() {
-		return _isInvalidatedTimelines;
 	}
 
 }

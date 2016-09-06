@@ -21,6 +21,7 @@ import com.andrew.timetracker.commons.SimpleTextWatcher;
 import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
+import com.andrew.timetracker.utils.helper;
 
 import java.io.Serializable;
 
@@ -159,6 +160,7 @@ public class TaskEditDialogFragment extends DialogFragment {
 			task.setParentId(mParentTaskId);
 			mTaskDao.update(task);
 		}
+		helper.postDbChange(this);
 
 		Intent result = new Intent();
 		result.putExtra("result", new Result(task.getId()));

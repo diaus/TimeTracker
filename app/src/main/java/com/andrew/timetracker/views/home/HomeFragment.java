@@ -174,6 +174,7 @@ public class HomeFragment extends MainActivityTabFragment {
 			mTimeline = new Timeline(null, mTask.getId(), new Date(), null);
 			timelineDao.insert(mTimeline);
 			updateData();
+			postDbChange();
 		}
 
 		public void bindItem(int position) {
@@ -244,7 +245,6 @@ public class HomeFragment extends MainActivityTabFragment {
 	private void onStartStop() {
 		if (mTask == null) return;
 
-		//((Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
 		mStartStopButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING | HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
 
 		if (mIsStarted) {
@@ -268,6 +268,7 @@ public class HomeFragment extends MainActivityTabFragment {
 
 		updateUI();
 		ensureTimer();
+		postDbChange();
 	}
 
 	private void updateData() {
@@ -397,17 +398,16 @@ public class HomeFragment extends MainActivityTabFragment {
 		return mTimeline.getSpentSeconds();
 	}
 
-	private IMainActivity getHostingActivity() {
-		return (IMainActivity) getActivity();
+	@Override
+	public void onTabSelected() {
+		if (shouldInvalidate) {
+			shouldInvalidate = false;
+			updateData();
+		}
 	}
 
 	@Override
-	public void onTabSelected() {
-		if (getHostingActivity().isInvalidatedTimelines()) {
-			updateData();
-		} else if (getHostingActivity().isInvalidatedTask()) {
-			taskDao.refresh(mTask);
-			updateUI();
-		}
+	protected void onDbChange() {
+		Log.d(TAG, "invalidate on db changes");
 	}
 }

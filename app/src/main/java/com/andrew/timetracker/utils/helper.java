@@ -10,6 +10,10 @@ import android.util.TypedValue;
 
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.events.DbChangesEvent;
+import com.andrew.timetracker.views.tasks.TaskEditDialogFragment;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -178,5 +182,9 @@ public class helper {
 				  .setIcon(R.drawable.icon_alert)
 				  .setPositiveButton(android.R.string.ok, null)
 				  .show();
+	}
+
+	public static void postDbChange(Object sender) {
+		EventBus.getDefault().post(new DbChangesEvent(sender));
 	}
 }

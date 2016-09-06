@@ -191,6 +191,7 @@ public class TasksFragment extends MainActivityTabFragment {
 							  timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(mCurrentTaskId)).buildDelete().executeDeleteWithoutDetachingEntities();
 						  }
 						  taskDao.delete(mCurrentTask);
+						  postDbChange();
 						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), mCurrentTask.getName()), Toast.LENGTH_SHORT).show();
 						  mCurrentTaskId = mCurrentTask.getParentId();
 						  updateUI();
@@ -254,6 +255,7 @@ public class TasksFragment extends MainActivityTabFragment {
 		}
 		timeline = new Timeline(null, mCurrentTaskId, new Date(), null);
 		timelineDao.insert(timeline);
+		postDbChange();
 		onTaskStarted();
 	}
 
@@ -271,6 +273,7 @@ public class TasksFragment extends MainActivityTabFragment {
 
 	@Override
 	public void onTabSelected() {
+		// always refresh
 		updateUI();
 	}
 
