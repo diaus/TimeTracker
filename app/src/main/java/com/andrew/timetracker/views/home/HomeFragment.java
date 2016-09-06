@@ -409,5 +409,10 @@ public class HomeFragment extends MainActivityTabFragment {
 	@Override
 	protected void onDbChange() {
 		Log.d(TAG, "invalidate on db changes");
+		// TODO: hardcoded index of home tab
+		if (getActivityMain().getCurrentTabIndex() == 0){
+			shouldInvalidate = false;
+			updateData();
+		}
 	}
 }

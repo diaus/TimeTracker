@@ -18,6 +18,8 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".views.tasks.SelectTaskActivity"/>
+		<receiver android:name=".NotificationReceiver" >
+		</receiver>
 	</application>
 
 </manifest>
