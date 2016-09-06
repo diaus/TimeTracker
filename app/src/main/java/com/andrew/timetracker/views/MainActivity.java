@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
-
+	private ActionBar mActionBar;
 	private ViewPager mViewPager;
 	private FragmentStatePagerAdapter mAdapter;
 
@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar = getSupportActionBar();
+		mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -81,13 +81,14 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 			@Override
 			public void onPageSelected(int position) {
 				Log.d(TAG, "tab selected " + position);
-				getTab(position).onTabSelected();
-				clearInvalidations();
 				switch (position){
 					case 0: mNavigationView.setCheckedItem(R.id.navigation_item_home); break;
 					case 1: mNavigationView.setCheckedItem(R.id.navigation_item_stats); break;
 					case 2: mNavigationView.setCheckedItem(R.id.navigation_item_tasks); break;
 				}
+				mActionBar.setSubtitle(null);
+				getTab(position).onTabSelected();
+				clearInvalidations();
 			}
 		});
 		mViewPager.setAdapter(mAdapter);

@@ -7,4 +7,5 @@
     <color name="appTabTextColor">#c0f7f8</color>
     <color name="appTabTextSelectedColor">#40ff50</color>
     <color name="colorTaskTitleStartedInList">#00790e</color>
+    <color name="cardview_task_color">#e0fae3</color>
 </resources>
