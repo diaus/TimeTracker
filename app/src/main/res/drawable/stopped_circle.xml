@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="oval">
-    <solid android:color="#b71c1c"/>
+    <solid android:color="@color/stopped_task"/>
     <stroke
         android:width="2dp"
         android:color="#444444"/>

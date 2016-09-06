@@ -12,6 +12,8 @@
     <string name="tab_title_home">Home</string>
     <string name="tab_title_stats">Stats</string>
     <string name="tab_title_tasks">Tasks</string>
+    <string name="notification_tap_to_start"><i>tap to start</i></string>
+    <string name="notification_tap_to_stop"><i>tap to stop</i></string>
 
     <!-- home view -->
     <string name="home_tab_start_button">Start</string>

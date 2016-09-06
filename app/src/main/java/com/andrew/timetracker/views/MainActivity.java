@@ -1,5 +1,6 @@
 package com.andrew.timetracker.views;
 
+import android.app.Notification;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -7,6 +8,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -16,8 +19,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.commons.IBackPressedListener;
+import com.andrew.timetracker.database.DaoSession;
+import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.views.home.HomeFragment;
 import com.andrew.timetracker.views.tasks.TasksFragment;
 import com.andrew.timetracker.views.time.TimeFragment;
@@ -25,6 +31,8 @@ import com.andrew.timetracker.views.time.TimeFragment;
 
 public class MainActivity extends AppCompatActivity implements IMainActivity {
 	private static final String TAG = "tt: MainActivity";
+
+	//private TimelineDao timelineDao;
 
 	public interface ITab extends IBackPressedListener {
 		void onTabSelected();
@@ -41,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+//		// DATABASE
+//		DaoSession daoSession = ((App) getApplication()).getDaoSession();
+//		timelineDao = daoSession.getTimelineDao();
 
 		mActionBar = getSupportActionBar();
 		mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -130,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		return (ITab) mAdapter.instantiateItem(mViewPager, position);
 	}
 
-	private int getCurrentTabIndex(){
+	public int getCurrentTabIndex(){
 		return mViewPager.getCurrentItem();
 	}
 

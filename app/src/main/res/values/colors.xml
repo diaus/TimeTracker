@@ -8,4 +8,6 @@
     <color name="appTabTextSelectedColor">#40ff50</color>
     <color name="colorTaskTitleStartedInList">#00790e</color>
     <color name="cardview_task_color">#e0fae3</color>
+    <color name="started_task">#64dd17</color>
+    <color name="stopped_task">#b71c1c</color>
 </resources>
