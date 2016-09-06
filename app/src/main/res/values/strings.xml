@@ -9,6 +9,9 @@
     <string name="timeline_now">now</string>
     <string name="dialog_save_button">Save</string>
     <string name="dialog_create_button">Create</string>
+    <string name="tab_title_home">Home</string>
+    <string name="tab_title_stats">Stats</string>
+    <string name="tab_title_tasks">Tasks</string>
 
     <!-- home view -->
     <string name="home_tab_start_button">Start</string>

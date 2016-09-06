@@ -49,19 +49,10 @@
         android:id="@+id/fragment_home_inactive_current"
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/home_tab_open_tasks_button"
-        android:id="@+id/fragment_home_open_tasks_button"/>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragment_home_inactive_current"
-        android:layout_above="@id/fragment_home_open_tasks_button"
         >
 
         <LinearLayout

@@ -26,6 +26,7 @@ import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
+import com.andrew.timetracker.views.MainActivityTabFragment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.Locale;
 /**
  * Created by andrew on 19.08.2016.
  */
-public class TimeFragment extends Fragment implements MainActivity.ITab {
+public class TimeFragment extends MainActivityTabFragment {
 
 	private static final int REQUEST_EDIT_TIMELINE = 1;
 	private static final String DIALOG_EDIT_TIMELINE = "DialogTimelineEdit";

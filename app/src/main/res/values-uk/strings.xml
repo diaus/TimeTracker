@@ -10,6 +10,9 @@
     <string name="timeline_now"><i>зараз</i></string>
     <string name="dialog_create_button">Створити</string>
     <string name="dialog_save_button">Зберегти</string>
+    <string name="tab_title_home">Головна</string>
+    <string name="tab_title_stats">Статистика</string>
+    <string name="tab_title_tasks">Завдання</string>
 
     <!-- home view -->
     <string name="home_tab_start_button">Старт</string>

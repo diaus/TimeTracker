@@ -37,6 +37,8 @@ import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
+import com.andrew.timetracker.views.MainActivity;
+import com.andrew.timetracker.views.MainActivityTabFragment;
 import com.andrew.timetracker.views.time.TimelineEditDialogFragment;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import java.util.List;
 /**
  * Created by andrew on 15.08.2016.
  */
-public class TasksFragment extends Fragment implements IBackPressedListener {
+public class TasksFragment extends MainActivityTabFragment {
 	private static final String TAG = "tt: TasksFragment";
 
 	private static final String SAVED_CURRENT_TASK_ID = "current_task_id";
@@ -243,7 +245,7 @@ public class TasksFragment extends Fragment implements IBackPressedListener {
 		if (timeline != null){
 			// check already started
 			if (timeline.getTaskId().equals(mCurrentTaskId)){
-				getActivity().finish();
+				onTaskStarted();
 				return;
 			}
 			// stop current task
@@ -252,7 +254,12 @@ public class TasksFragment extends Fragment implements IBackPressedListener {
 		}
 		timeline = new Timeline(null, mCurrentTaskId, new Date(), null);
 		timelineDao.insert(timeline);
-		getActivity().finish();
+		onTaskStarted();
+	}
+
+	private void onTaskStarted(){
+		getActivityMain().switchToHomeTab();
+		//getActivity().finish();
 	}
 
 	@Override
@@ -260,6 +267,11 @@ public class TasksFragment extends Fragment implements IBackPressedListener {
 		if (mCurrentTaskId == null) return false;
 		setCurrentTask(mCurrentTask.getParentId());
 		return true;
+	}
+
+	@Override
+	public void onTabSelected() {
+		updateUI();
 	}
 
 	private class TaskHolder implements View.OnClickListener {
