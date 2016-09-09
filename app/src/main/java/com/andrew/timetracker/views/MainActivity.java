@@ -1,6 +1,8 @@
 package com.andrew.timetracker.views;
 
 import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
@@ -32,7 +35,17 @@ import com.andrew.timetracker.views.time.TimeFragment;
 public class MainActivity extends AppCompatActivity implements IMainActivity {
 	private static final String TAG = "tt: MainActivity";
 
-	//private TimelineDao timelineDao;
+	private static final String EXTRA_IS_FROM_NOTIFICATION = "from_notification";
+
+	private static final String ACTION_OPEN_FROM_NOTIFICATION = "open_from_notification";
+
+	public static Intent getNotificationIntent(Context context) {
+		Intent i =  new Intent(context, MainActivity.class);
+		i.putExtra(EXTRA_IS_FROM_NOTIFICATION, true);
+		i.setAction(ACTION_OPEN_FROM_NOTIFICATION);
+		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		return i;
+	}
 
 	public interface ITab extends IBackPressedListener {
 		void onTabSelected();
@@ -125,6 +138,19 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		});
 
 		Log.d(TAG, "end of onCreate in main activity");
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		Log.d(TAG, "onNewIntent");
+		boolean fromNotification = intent.getBooleanExtra(EXTRA_IS_FROM_NOTIFICATION, false);
+		if (fromNotification)
+		{
+			Log.i(TAG, "open activity from static notification");
+			mDrawerLayout.closeDrawers();
+			switchToHomeTab();
+		}
 	}
 
 	@Override
