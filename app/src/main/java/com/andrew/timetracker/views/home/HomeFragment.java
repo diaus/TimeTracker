@@ -59,8 +59,7 @@ public class HomeFragment extends MainActivityTabFragment {
 	TextView mSpentTimeTodayTextView;
 	TextView mStartWorkingTextView;
 	TextView mCurrentTaskTextView;
-	TextView mCurrentTaskTimeTodayTextView;
-	TextView mCurrentTaskTimeCurrentTextView;
+	TextView mCurrentTaskTimeTextView;
 	TextView mInactiveTotalTextView;
 	TextView mInactiveCurrentTextView;
 	SimpleListView mRecentTasksList;
@@ -97,8 +96,7 @@ public class HomeFragment extends MainActivityTabFragment {
 		mStatusView = v.findViewById(R.id.fragment_home_view_status);
 		mSpentTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_home_spent_time_today);
 		mCurrentTaskTextView = (TextView) v.findViewById(R.id.fragment_home_current_task);
-		mCurrentTaskTimeTodayTextView = (TextView) v.findViewById(R.id.fragment_home_task_time_today);
-		mCurrentTaskTimeCurrentTextView = (TextView) v.findViewById(R.id.fragment_home_task_time_current);
+		mCurrentTaskTimeTextView = (TextView) v.findViewById(R.id.fragment_home_task_time);
 		mInactiveTotalTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_total);
 		mInactiveCurrentTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_current);
 		mStartWorkingTextView = (TextView) v.findViewById(R.id.fragment_home_start_work);
@@ -371,26 +369,26 @@ public class HomeFragment extends MainActivityTabFragment {
 		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current),
 				  helper.formatSpentTime(getContext(), inactiveCurrent, false)));
 
-		mCurrentTaskTimeTodayTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
+		mCurrentTaskTimeTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
 		if (mTask == null) {
 			mCurrentTaskTextView.setText(R.string.home_tab_task_not_selected);
 		} else {
 			mCurrentTaskTextView.setText(helper.underlineText(mTask.getName()));
 			mCurrentTaskTextView.setTypeface(null, Typeface.BOLD);
-			mCurrentTaskTimeTodayTextView.setText(String.format(getString(R.string.home_tab_task_time_today),
-					  helper.formatSpentTime(getContext(), mTaskSpentToday + getStartedTaskTime(), false)));
-
 		}
 
 		updateUI_current();
 	}
 
 	private void updateUI_current() {
-		mCurrentTaskTimeCurrentTextView.setVisibility(!mIsStarted ? View.GONE : View.VISIBLE);
+		if (mTask == null) return;
+		String s = String.format(getString(R.string.home_tab_task_time_today),
+				  helper.formatSpentTime(getContext(), mTaskSpentToday + getStartedTaskTime(), false));
 		if (mIsStarted) {
-			mCurrentTaskTimeCurrentTextView.setText(String.format(getString(R.string.home_tab_task_time_current),
-					  helper.formatSpentTime(getContext(), getStartedTaskTime(), true)));
+			s += ", " + String.format(getString(R.string.home_tab_task_time_current),
+					  helper.formatSpentTime(getContext(), getStartedTaskTime(), true));
 		}
+		mCurrentTaskTimeTextView.setText(s);
 	}
 
 	private int getStartedTaskTime() {

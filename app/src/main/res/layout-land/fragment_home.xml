@@ -100,58 +100,52 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
+		android:gravity="center"
 		android:orientation="horizontal">
 
-		<LinearLayout
-			android:layout_width="0dp"
+		<android.support.v7.widget.CardView
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:layout_weight="1"
-			android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/fragment_home_current_task"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_below="@id/fragment_home_spent_time_today"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				tools:text="Current task title"
-				/>
-
-			<TextView
-				android:id="@+id/fragment_home_task_time_today"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text="Task spent today"/>
-
-			<TextView
-				android:id="@+id/fragment_home_task_time_current"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text="Task spent current"/>
-
-		</LinearLayout>
-
-		<FrameLayout
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:layout_weight="1"
 			>
 
-			<Button
-				android:id="@+id/fragment_home_start_button"
-				android:layout_width="100dp"
-				android:layout_height="100dp"
-				android:layout_gravity="center_horizontal"
-				android:background="@drawable/started_circle"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				tools:text="start/stop"
-				/>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="10dp"
+				android:paddingBottom="10dp"
+				android:paddingLeft="50dp"
+				android:paddingRight="50dp"
+				android:orientation="vertical">
 
-		</FrameLayout>
+				<TextView
+					android:id="@+id/fragment_home_current_task"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_below="@id/fragment_home_spent_time_today"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					tools:text="Current task title"
+					/>
+
+				<TextView
+					android:id="@+id/fragment_home_task_time"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					tools:text="Task spent time"/>
+
+				<Button
+					android:id="@+id/fragment_home_start_button"
+					android:layout_width="100dp"
+					android:layout_height="100dp"
+					android:layout_gravity="center"
+					android:background="@drawable/started_circle"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					tools:text="start/stop"
+					/>
+			</LinearLayout>
+
+
+		</android.support.v7.widget.CardView>
 
 	</LinearLayout>
 
