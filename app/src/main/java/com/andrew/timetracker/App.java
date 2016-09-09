@@ -22,6 +22,7 @@ import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.events.DbChangesEvent;
 import com.andrew.timetracker.settings.Settings;
 import com.andrew.timetracker.utils.helper;
+import com.andrew.timetracker.views.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,8 +35,6 @@ import java.util.Locale;
  * Created by andrew on 15.08.2016.
  */
 public class App extends Application {
-	/** A flag to show how easily you can switch from standard SQLite to the encrypted SQLCipher. */
-	public static final boolean ENCRYPTED = true;
 
 	private DaoSession daoSession;
 	private TimelineDao mTimelineDao;
@@ -48,8 +47,8 @@ public class App extends Application {
 		setLocale();
 
 		// DATABASE
-		MyDatabaseOpenHelper helper = new MyDatabaseOpenHelper(this, ENCRYPTED ? "timetracker-db-encrypted" : "timetracker-db");
-		Database db = ENCRYPTED ? helper.getEncryptedWritableDb("Ld3A3qNg2KJDrO6") : helper.getWritableDb();
+		MyDatabaseOpenHelper helper = new MyDatabaseOpenHelper(this, "timetracker-db-encrypted");
+		Database db = helper.getEncryptedWritableDb("Ld3A3qNg2KJDrO6");
 		daoSession = new DaoMaster(db).newSession();
 		mTimelineDao = daoSession.getTimelineDao();
 		mTaskDao = daoSession.getTaskDao();
@@ -57,14 +56,14 @@ public class App extends Application {
 		// init singltons
 		Settings.init(this);
 
-		updateNotification(false);
+		updateNotification();
 		EventBus.getDefault().register(this);
 	}
 
 	@Subscribe
 	public void handleDbChangeEvent(DbChangesEvent event) {
 		if (event.sender == this) return;
-		updateNotification(false);
+		updateNotification();
 	}
 
 	private void setLocale() {
@@ -88,7 +87,7 @@ public class App extends Application {
 		resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 	}
 
-	public void updateNotification(boolean onClick) {
+	public void updateNotification(/*boolean onClick*/) {
 
 		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
@@ -103,28 +102,31 @@ public class App extends Application {
 			}
 		}
 
-		if (onClick){
-			if (isStarted){
-				timeline.setStopTime(new Date());
-				mTimelineDao.update(timeline);
-			} else {
-				timeline = new Timeline(null, timeline.getTaskId(), new Date(), null);
-				mTimelineDao.insert(timeline);
-			}
-			isStarted = !isStarted;
-			helper.postDbChange(this);
-		}
+//		if (onClick){
+//			if (isStarted){
+//				timeline.setStopTime(new Date());
+//				mTimelineDao.update(timeline);
+//			} else {
+//				timeline = new Timeline(null, timeline.getTaskId(), new Date(), null);
+//				mTimelineDao.insert(timeline);
+//			}
+//			isStarted = !isStarted;
+//			helper.postDbChange(this);
+//		}
 
 		Task task = mTaskDao.load(timeline.getTaskId());
 
-		Intent intent = new Intent(this, NotificationReceiver.class);
-		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+//		Intent intent = new Intent(this, NotificationReceiver.class);
+//		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+		Intent intent = MainActivity.getNotificationIntent(this);
+		PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
 
 		Notification notification = new NotificationCompat.Builder(this)
 				  //.setTicker("test me")
 				  .setSmallIcon(getNotificationIcon(isStarted))
 				  .setContentTitle(task.getName())
-				  .setContentText(getString(isStarted ? R.string.notification_tap_to_stop : R.string.notification_tap_to_start))
+				  .setContentText(getString(isStarted ? R.string.notification_subtitle_started : R.string.notification_subtitle_stopped))
 				  .setContentIntent(pi)
 				  .setAutoCancel(false)
 				  .setDefaults(Notification.FLAG_NO_CLEAR)

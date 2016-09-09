@@ -63,5 +63,7 @@ Are you sure you still want to delete task?</string>
     <string name="task_edit_dialog_parent_task_top"><i>topmost</i></string>
     <string name="select_task_up"><i>&lt;UP&gt;</i></string>
     <string name="menu_select_task">SELECT</string>
+    <string name="notification_subtitle_started">started</string>
+    <string name="notification_subtitle_stopped">stopped</string>
 
 </resources>
