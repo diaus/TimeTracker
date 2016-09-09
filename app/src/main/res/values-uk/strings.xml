@@ -25,7 +25,7 @@
     <string name="home_tab_inactive_current">Відпочиваємо вже %1$s</string>
     <string name="home_tab_task_not_selected"><i>завдання не вибрано</i></string>
     <string name="home_tab_open_tasks_button">Відкрити список завдань</string>
-    <string name="home_tab_task_time_current">Працюємо вже %1$s</string>
+    <string name="home_tab_task_time_current">Поточне: %1$s</string>
     <string name="home_tab_task_time_today">Сьогодні: %1$s</string>
     <string name="home_tab_recent_tasks"><b>Нещодавні завдання:</b></string>
 
