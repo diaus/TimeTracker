@@ -51,6 +51,8 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 		}
 	}
 
+	int mMaxWidth1, mMaxWidth2;
+
 	@Override
 	protected void createViews() {
 		Context context = getContext();
@@ -88,8 +90,7 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 			info.timeSpent += tl.getSpentSeconds();
 		}
 
-		List<View> titles = new ArrayList<>();
-		int maxTitleWidth = 0;
+		mMaxWidth1 = mMaxWidth2 = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_weeks_item, info);
 
@@ -111,16 +112,14 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 
 			this.addView(v);
 
+			time.measure(0, 0);
+			int w = time.getMeasuredWidth();
+			if (w > mMaxWidth1) mMaxWidth1 = w;
 			title.measure(0, 0);
-			titles.add(title);
-			int w = title.getMeasuredWidth();
-			if (w > maxTitleWidth) maxTitleWidth = w;
+			w = title.getMeasuredWidth();
+			if (w > mMaxWidth2) mMaxWidth2 = w;
 		}
-		for (View titleView : titles) {
-			ViewGroup.LayoutParams params = titleView.getLayoutParams();
-			params.width = maxTitleWidth;
-			titleView.setLayoutParams(params);
-		}
+
 	}
 
 	@Override
@@ -168,5 +167,10 @@ public class WeeksList extends TimeListBase<Date, WeeksList.ItemHolder> {
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	public WeeksList(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
+	}
+
+	@Override
+	protected boolean fixLayout() {
+		return fixLayoutCommon(mMaxWidth2, mMaxWidth1 + 10, R.id.time_weeks_item_title, R.id.time_weeks_item_time);
 	}
 }
