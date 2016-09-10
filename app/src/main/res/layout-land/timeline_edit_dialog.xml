@@ -19,14 +19,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
-        <TextView
-            android:id="@+id/timeline_edit_dialog_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Task name"
-            />
+        <Button
+           android:id="@+id/timeline_edit_dialog_task"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="15dp"
+           android:paddingLeft="20dp"
+           android:paddingRight="20dp"
+           tools:text="Task name"/>
 
     </LinearLayout>
 

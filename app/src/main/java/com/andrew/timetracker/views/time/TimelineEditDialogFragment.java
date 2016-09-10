@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
+import com.andrew.timetracker.views.tasks.SelectTaskActivity;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,16 +37,24 @@ import java.util.Locale;
 public class TimelineEditDialogFragment extends DialogFragment {
 
 	private static final String ARG_TIMELINE_ID = "id";
+
 	private static final String SAVED_DATE_TO = "date_to";
 	private static final String SAVED_DATE_FROM = "date_from";
+	private static final String SAVED_TASK_ID = "task_id";
+
+	private static final int REQUEST_SELECT_TASK = 1;
 
 	TimelineDao mTimelineDao = null;
 	TaskDao mTaskDao = null;
 
-	private Timeline mTimeline;
-	private Task mTask;
+	long mTimelineId;
+	long mTaskId;
+
 	Date mDateFromInitial, mDateToInitial;
+	long mTaskIdInitial;
+	boolean isStarted;
 	Calendar mDateFrom, mDateTo;
+
 	private int mSaveButtonColor;
 
 	Button mSaveButton;
@@ -53,14 +63,13 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	TimePicker mTimeFromPicker;
 	TimePicker mTimeToPicker;
 	TextView mTimeSpentTextView;
+	Button btnTask;
 
-	public static TimelineEditDialogFragment newInstance(Timeline timeline, Task task) {
+	public static TimelineEditDialogFragment newInstance(long timelineId) {
 		Bundle args = new Bundle();
-		args.putLong(ARG_TIMELINE_ID, timeline.getId());
+		args.putLong(ARG_TIMELINE_ID, timelineId);
 		TimelineEditDialogFragment fragment = new TimelineEditDialogFragment();
 		fragment.setArguments(args);
-		fragment.mTimeline = new Timeline(timeline.getId(), timeline.getTaskId(), timeline.getStartTime(), timeline.getStopTime());
-		fragment.mTask = task;
 		return fragment;
 	}
 
@@ -68,32 +77,43 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		if (mTimeline == null) {
-			ensureDao();
-			mTimeline = mTimelineDao.load(getArguments().getLong(ARG_TIMELINE_ID));
-			mTask = mTaskDao.load(mTimeline.getTaskId());
-		}
-		mDateFromInitial = mTimeline.getStartTime();
-		mDateFrom = Calendar.getInstance();
-		if (savedInstanceState != null){
-			mDateFrom.setTime(new Date(savedInstanceState.getLong(SAVED_DATE_FROM)));
-		} else {
-			mDateFrom.setTime(mDateFromInitial);
-		}
+		ensureDao();
+		mTimelineId = getArguments().getLong(ARG_TIMELINE_ID);
+		Timeline timeline = mTimelineDao.load(mTimelineId);
 
-		mDateToInitial = mTimeline.getStopTime();
-		if (mDateToInitial != null){
-			mDateTo = Calendar.getInstance();
-			if (savedInstanceState != null){
+		mTaskIdInitial = timeline.getTaskId();
+		mDateFromInitial = timeline.getStartTime();
+		mDateToInitial = timeline.getStopTime();
+		isStarted = mDateToInitial == null;
+
+		mDateFrom = Calendar.getInstance();
+		mDateTo = mDateToInitial != null ? Calendar.getInstance() : null;
+
+		if (savedInstanceState != null){
+			// first call
+			mTaskId = savedInstanceState.getLong(SAVED_TASK_ID);
+			mDateFrom.setTime(new Date(savedInstanceState.getLong(SAVED_DATE_FROM)));
+			if (!isStarted){
 				mDateTo.setTime(new Date(savedInstanceState.getLong(SAVED_DATE_TO)));
-			} else {
+			}
+		} else {
+			mTaskId = timeline.getTaskId();
+			mDateFrom.setTime(mDateFromInitial);
+			if (!isStarted){
 				mDateTo.setTime(mDateToInitial);
 			}
 		}
 
 		View v = LayoutInflater.from(getActivity()).inflate(R.layout.timeline_edit_dialog, null);
 
-		((TextView) v.findViewById(R.id.timeline_edit_dialog_task)).setText(helper.underlineText(mTask.getName()));
+		btnTask = (Button) v.findViewById(R.id.timeline_edit_dialog_task);
+		btnTask.setText(mTaskDao.load(mTaskId).getName());
+		btnTask.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				doSelectTask();
+			}
+		});
 
 		mDateFromButton = (Button) v.findViewById(R.id.timeline_edit_dialog_date_from_button);
 		mDateToButton = (Button) v.findViewById(R.id.timeline_edit_dialog_date_to_button);
@@ -115,7 +135,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		initTimePicker(mTimeFromPicker, mDateFrom.getTime());
 
 		mTimeToPicker = (TimePicker) v.findViewById(R.id.timeline_edit_dialog_time_to);
-		if (mTimeline.getStopTime() == null) {
+		if (isStarted) {
 			mDateToButton.setVisibility(View.GONE);
 			mTimeToPicker.setVisibility(View.GONE);
 			v.findViewById(R.id.timeline_edit_dialog_date_to_now).setVisibility(View.VISIBLE);
@@ -150,6 +170,10 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		return alert;
 	}
 
+	private void doSelectTask() {
+		startActivityForResult(SelectTaskActivity.newIntent(getContext(), null, null), REQUEST_SELECT_TASK);
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -157,6 +181,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		if (mDateToInitial != null){
 			outState.putLong(SAVED_DATE_TO, mDateTo.getTime().getTime());
 		}
+		outState.putLong(SAVED_TASK_ID, mTaskId);
 	}
 
 	private void initTimePicker(TimePicker timePicker, Date time) {
@@ -197,7 +222,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	private void updateUI() {
 		mDateFromButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mDateFrom));
 
-		if (mTimeline.getStopTime() != null) {
+		if (!isStarted) {
 			mDateToButton.setText(String.format(Locale.getDefault(), "%1$tY %1$tb %1$td", mDateTo));
 		}
 
@@ -221,7 +246,7 @@ public class TimelineEditDialogFragment extends DialogFragment {
 				  && mDateFrom.get(Calendar.YEAR) == dateTo.get(Calendar.YEAR)
 				  && mDateFrom.get(Calendar.MONTH) == dateTo.get(Calendar.MONTH)
 				  && mDateFrom.get(Calendar.DAY_OF_MONTH) == dateTo.get(Calendar.DAY_OF_MONTH)
-				  && (!mDateFrom.getTime().equals(mDateFromInitial) || (mDateToInitial != null && !mDateToInitial.equals(mDateTo.getTime())))
+				  && (mTaskId != mTaskIdInitial || !mDateFrom.getTime().equals(mDateFromInitial) || (mDateToInitial != null && !mDateToInitial.equals(mDateTo.getTime())))
 				  ;
 
 		mSaveButton.setEnabled(isValid);
@@ -233,27 +258,27 @@ public class TimelineEditDialogFragment extends DialogFragment {
 		ensureDao();
 
 		Date dateFrom = mDateFrom.getTime();
-		Date dateTo = mTimeline.getStopTime() == null ? new Date() : mDateTo.getTime();
+		Date dateTo = isStarted ? new Date() : mDateTo.getTime();
 
 		// check intercepting with other timelines
-		boolean isValid = mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimeline.getId()))
+		boolean isValid = mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimelineId))
 				  .where(TimelineDao.Properties.StartTime.lt(dateTo))
 				  .where(TimelineDao.Properties.StopTime.isNull())
 				  .limit(1).unique() == null;
 
-		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimeline.getId()))
+		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimelineId))
 				  .where(TimelineDao.Properties.StartTime.lt(dateFrom))
 				  .where(TimelineDao.Properties.StopTime.isNotNull())
 				  .where(TimelineDao.Properties.StopTime.gt(dateFrom))
 				  .limit(1).unique() == null;
 
-		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimeline.getId()))
+		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimelineId))
 				  .where(TimelineDao.Properties.StartTime.lt(dateTo))
 				  .where(TimelineDao.Properties.StopTime.isNotNull())
 				  .where(TimelineDao.Properties.StopTime.gt(dateTo))
 				  .limit(1).unique() == null;
 
-		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimeline.getId()))
+		isValid = isValid && mTimelineDao.queryBuilder().where(TimelineDao.Properties.Id.notEq(mTimelineId))
 				  .where(TimelineDao.Properties.StartTime.ge(dateFrom))
 				  .where(TimelineDao.Properties.StopTime.isNotNull())
 				  .where(TimelineDao.Properties.StopTime.le(dateTo))
@@ -270,11 +295,13 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			return;
 		}
 
-		mTimeline.setStartTime(dateFrom);
-		if (mTimeline.getStopTime() != null){
-			mTimeline.setStopTime(dateTo);
+		Timeline timeline = mTimelineDao.load(mTimelineId);
+		timeline.setStartTime(dateFrom);
+		if (!isStarted){
+			timeline.setStopTime(dateTo);
 		}
-		mTimelineDao.update(mTimeline);
+		timeline.setTaskId(mTaskId);
+		mTimelineDao.update(timeline);
 		helper.postDbChange(this);
 
 		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
@@ -286,6 +313,18 @@ public class TimelineEditDialogFragment extends DialogFragment {
 			DaoSession daoSession = ((App) getActivity().getApplication()).getDaoSession();
 			mTimelineDao = daoSession.getTimelineDao();
 			mTaskDao = daoSession.getTaskDao();
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_SELECT_TASK && resultCode == Activity.RESULT_OK){
+			Long taskId = SelectTaskActivity.getSelectedTaskId(data);
+			if (taskId != null){
+				mTaskId = taskId;
+				btnTask.setText(mTaskDao.load(mTaskId).getName());
+				validate();
+			}
 		}
 	}
 }

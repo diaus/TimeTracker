@@ -165,7 +165,7 @@ public class TimeFragment extends MainActivityTabFragment {
 		@Override
 		public void editTimeline(Timeline timeline) {
 			FragmentManager manager = getFragmentManager();
-			TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline, mTasksList.getTask(timeline.getTaskId()));
+			TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(timeline.getId());
 			dialog.setTargetFragment(TimeFragment.this, REQUEST_EDIT_TIMELINE);
 			dialog.show(manager, DIALOG_EDIT_TIMELINE);
 		}
