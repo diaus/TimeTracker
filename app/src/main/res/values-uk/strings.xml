@@ -64,7 +64,11 @@
     <string name="task_edit_dialog_parent_task_top"><i>немає</i></string>
     <string name="select_task_up"><i>&lt;ВГОРУ&gt;</i></string>
     <string name="menu_select_task">ВИБРАТИ</string>
+
+    <!-- UNSORTED -->
     <string name="notification_subtitle_started">виконується</string>
     <string name="notification_subtitle_stopped">зупинено</string>
+    <string name="toast_no_recent_tabs">Нещодавніх завдань не знайдено</string>
+    <string name="button_start_recent_task">Розпочати нещодавнє завдання</string>
 
 </resources>

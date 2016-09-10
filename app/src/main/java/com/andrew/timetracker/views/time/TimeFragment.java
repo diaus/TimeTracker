@@ -60,8 +60,6 @@ public class TimeFragment extends MainActivityTabFragment {
 	Calendar mCurrentDay;
 	TasksList.PeriodType mPeriodType;
 
-	private TaskDao taskDao;
-	private TimelineDao timelineDao;
 	TasksListEventHandler mEventHandler;
 
 	@Override
@@ -74,11 +72,6 @@ public class TimeFragment extends MainActivityTabFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_time, container, false);
-
-		// DATABASE
-		DaoSession daoSession = ((App) getActivity().getApplication()).getDaoSession();
-		taskDao = daoSession.getTaskDao();
-		timelineDao = daoSession.getTimelineDao();
 
 		boolean isRestoreState = savedInstanceState != null && savedInstanceState.getLong(SAVED_CURRENT_DATE, -1) != -1;
 		if (isRestoreState){
@@ -93,7 +86,7 @@ public class TimeFragment extends MainActivityTabFragment {
 		mEventHandler = new TasksListEventHandler();
 
 		mTasksList = (TasksList) v.findViewById(R.id.fragment_time_tasks_list);
-		mTasksList.initControl(true, taskDao, timelineDao, mEventHandler);
+		mTasksList.initControl(true, taskDao(), timelineDao(), mEventHandler);
 
 		mPrevButton = (ImageButton) v.findViewById(R.id.fragment_time_prev_button);
 		mNextButton = (ImageButton) v.findViewById(R.id.fragment_time_next_button);
@@ -267,7 +260,7 @@ public class TimeFragment extends MainActivityTabFragment {
 				break;
 		}
 
-		List<Timeline> timelines = timelineDao.queryBuilder().where(TimelineDao.Properties.StartTime.ge(dateFrom))
+		List<Timeline> timelines = timelineDao().queryBuilder().where(TimelineDao.Properties.StartTime.ge(dateFrom))
 				  .where(TimelineDao.Properties.StartTime.lt(dateTo))
 				  .orderAsc(TimelineDao.Properties.StartTime)
 				  .list();

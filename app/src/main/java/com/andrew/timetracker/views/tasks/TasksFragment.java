@@ -56,9 +56,6 @@ public class TasksFragment extends MainActivityTabFragment {
 	private static final int REQUEST_EDIT_TASK = 1;
 	private static final String DIALOG_EDIT_TASK = "DialogEditTask";
 
-	private TaskDao taskDao;
-	private TimelineDao timelineDao;
-
 	private Long mCurrentTaskId;
 	private Task mCurrentTask;
 
@@ -71,11 +68,6 @@ public class TasksFragment extends MainActivityTabFragment {
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_tasks, container, false);
 		Log.d(TAG, "onCreateView");
-
-		// DATABASE
-		DaoSession daoSession = ((App) getActivity().getApplication()).getDaoSession();
-		taskDao = daoSession.getTaskDao();
-		timelineDao = daoSession.getTimelineDao();
 
 		if (savedInstanceState != null){
 			mCurrentTaskId = savedInstanceState.getLong(SAVED_CURRENT_TASK_ID, -1);
@@ -130,19 +122,19 @@ public class TasksFragment extends MainActivityTabFragment {
 		setSubtitle(null);
 		List<Task> tasks;
 		if (mCurrentTaskId != null){
-			mCurrentTask = taskDao.load(mCurrentTaskId);
+			mCurrentTask = taskDao().load(mCurrentTaskId);
 			mCurrentTaskTitle.setText(mCurrentTask.getName());
-			tasks = taskDao.queryBuilder()
+			tasks = taskDao().queryBuilder()
 					  .where(TaskDao.Properties.ParentId.isNotNull())
 					  .where(TaskDao.Properties.ParentId.eq(mCurrentTaskId))
 					  .orderAsc(TaskDao.Properties.Name)
 					  .list();
 			if (mCurrentTask.getParentId() != null){
-				setSubtitle(taskDao.load(mCurrentTask.getParentId()).getName());
+				setSubtitle(taskDao().load(mCurrentTask.getParentId()).getName());
 			}
 		} else {
 			mCurrentTask = null;
-			tasks = taskDao.queryBuilder()
+			tasks = taskDao().queryBuilder()
 					  .where(TaskDao.Properties.ParentId.isNull())
 					  .orderAsc(TaskDao.Properties.Name)
 					  .list();
@@ -168,7 +160,7 @@ public class TasksFragment extends MainActivityTabFragment {
 	}
 
 	private void deleteCurrentTask() {
-		boolean isSubtasks = taskDao.queryBuilder()
+		boolean isSubtasks = taskDao().queryBuilder()
 				  .where(TaskDao.Properties.ParentId.isNotNull())
 				  .where(TaskDao.Properties.ParentId.eq(mCurrentTaskId))
 				  .limit(1).unique() != null;
@@ -177,7 +169,7 @@ public class TasksFragment extends MainActivityTabFragment {
 			return;
 		}
 
-		final boolean isTimelines = timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(mCurrentTaskId)).limit(1).unique() != null;
+		final boolean isTimelines = timelineDao().queryBuilder().where(TimelineDao.Properties.TaskId.eq(mCurrentTaskId)).limit(1).unique() != null;
 
 		new AlertDialog.Builder(getContext())
 				  .setMessage(isTimelines ? R.string.confirm_delete_task_with_timelines : R.string.confirm_delete_task)
@@ -188,9 +180,9 @@ public class TasksFragment extends MainActivityTabFragment {
 					  @Override
 					  public void onClick(DialogInterface dialog, int which) {
 						  if (isTimelines){
-							  timelineDao.queryBuilder().where(TimelineDao.Properties.TaskId.eq(mCurrentTaskId)).buildDelete().executeDeleteWithoutDetachingEntities();
+							  timelineDao().queryBuilder().where(TimelineDao.Properties.TaskId.eq(mCurrentTaskId)).buildDelete().executeDeleteWithoutDetachingEntities();
 						  }
-						  taskDao.delete(mCurrentTask);
+						  taskDao().delete(mCurrentTask);
 						  postDbChange();
 						  Toast.makeText(getActivity(), String.format(getActivity().getString(R.string.toast_task_deleted_params_name), mCurrentTask.getName()), Toast.LENGTH_SHORT).show();
 						  mCurrentTaskId = mCurrentTask.getParentId();
@@ -242,7 +234,7 @@ public class TasksFragment extends MainActivityTabFragment {
 	}
 
 	void startCurrentTask() {
-		Timeline timeline = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		Timeline timeline = timelineDao().queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
 		if (timeline != null){
 			// check already started
 			if (timeline.getTaskId().equals(mCurrentTaskId)){
@@ -254,7 +246,7 @@ public class TasksFragment extends MainActivityTabFragment {
 			timeline.update();
 		}
 		timeline = new Timeline(null, mCurrentTaskId, new Date(), null);
-		timelineDao.insert(timeline);
+		timelineDao().insert(timeline);
 		postDbChange();
 		onTaskStarted();
 	}

@@ -58,40 +58,6 @@
 		android:orientation="vertical"
 		>
 
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:gravity="center_vertical"
-			android:orientation="vertical">
-
-			<LinearLayout
-				android:id="@+id/fragment_home_recents_container"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="5dp"
-					android:layout_marginTop="5dp"
-					android:text="@string/home_tab_recent_tasks"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					/>
-
-				<com.andrew.timetracker.commons.SimpleListView
-					android:id="@+id/fragment_home_recents_list"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"/>
-
-
-			</LinearLayout>
-
-		</LinearLayout>
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -143,6 +109,26 @@
 			</android.support.v7.widget.CardView>
 
 		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="right"
+			android:orientation="horizontal">
+			<Button
+				android:id="@+id/button_start_recent_task"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_start_recent_task"
+				/>
+			<Spinner
+				android:layout_width="1px"
+				android:layout_height="1px"
+				android:layout_gravity="bottom"
+				android:background="@null"
+				android:id="@+id/spinner_start_recent"/>
+		</LinearLayout>
+
 	</LinearLayout>
 
 </RelativeLayout>
