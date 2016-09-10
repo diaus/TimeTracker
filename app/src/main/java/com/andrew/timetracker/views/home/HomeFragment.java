@@ -174,7 +174,7 @@ public class HomeFragment extends MainActivityTabFragment {
 
 	private void doEditCurrentTimeline() {
 		FragmentManager manager = getFragmentManager();
-		TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(mTimeline, mTask);
+		TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(mTimeline.getId());
 		dialog.setTargetFragment(this, REQUEST_EDIT_TIMELINE);
 		dialog.show(manager, DIALOG_EDIT_TIMELINE);
 	}
