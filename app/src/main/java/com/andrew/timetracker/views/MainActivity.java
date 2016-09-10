@@ -26,6 +26,7 @@ import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.commons.IBackPressedListener;
 import com.andrew.timetracker.database.DaoSession;
+import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.views.home.HomeFragment;
 import com.andrew.timetracker.views.tasks.TasksFragment;
@@ -58,14 +59,18 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 	private ViewPager mViewPager;
 	private FragmentStatePagerAdapter mAdapter;
 
+	TaskDao taskDao;
+	TimelineDao timelineDao;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-//		// DATABASE
-//		DaoSession daoSession = ((App) getApplication()).getDaoSession();
-//		timelineDao = daoSession.getTimelineDao();
+		// DATABASE
+		DaoSession daoSession = ((App) getApplication()).getDaoSession();
+		timelineDao = daoSession.getTimelineDao();
+		taskDao = daoSession.getTaskDao();
 
 		mActionBar = getSupportActionBar();
 		mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -170,6 +175,16 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 
 	public int getCurrentTabIndex(){
 		return mViewPager.getCurrentItem();
+	}
+
+	@Override
+	public TaskDao getTaskDao() {
+		return taskDao;
+	}
+
+	@Override
+	public TimelineDao getTimelineDao() {
+		return timelineDao;
 	}
 
 	private ITab getCurrentTab(){

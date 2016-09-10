@@ -65,5 +65,7 @@ Are you sure you still want to delete task?</string>
     <string name="menu_select_task">SELECT</string>
     <string name="notification_subtitle_started">started</string>
     <string name="notification_subtitle_stopped">stopped</string>
+    <string name="toast_no_recent_tabs">You have no recent tasks</string>
+    <string name="button_start_recent_task">Start Recent Task</string>
 
 </resources>
