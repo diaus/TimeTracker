@@ -212,9 +212,12 @@ public class TimelineEditDialogFragment extends DialogFragment {
 	private void validate() {
 		if (mSaveButton == null) return;
 
-		Calendar dateTo = mDateToInitial == null ? Calendar.getInstance() : mDateTo;
+		Calendar dateNow = Calendar.getInstance();
+		Calendar dateTo = mDateToInitial == null ? dateNow : mDateTo;
 
-		boolean isValid = mDateFrom.before(dateTo)
+		boolean isValid =
+				  (mDateToInitial == null || mDateTo.before(dateNow))
+				  && mDateFrom.before(dateTo)
 				  && mDateFrom.get(Calendar.YEAR) == dateTo.get(Calendar.YEAR)
 				  && mDateFrom.get(Calendar.MONTH) == dateTo.get(Calendar.MONTH)
 				  && mDateFrom.get(Calendar.DAY_OF_MONTH) == dateTo.get(Calendar.DAY_OF_MONTH)

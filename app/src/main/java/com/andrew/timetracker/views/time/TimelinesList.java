@@ -12,8 +12,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.commons.ISimpleCallback;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.events.DbChangesEvent;
+import com.andrew.timetracker.utils.actionsHelper;
 import com.andrew.timetracker.utils.helper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,23 +64,13 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 			btnDelete.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					new AlertDialog.Builder(getContext())
-							  .setMessage(getResources().getString(R.string.confirm_delete_timeline)
-										 + "\n" + helper.formatTimelinePeriod(timeline, true, getContext())
-										 + " [ " + helper.formatSpentTime(getContext(), timeline.getSpentSeconds(), true) + " ]"
-										 + "\n" + getTask(timeline.getTaskId()).getName())
-							  .setTitle(R.string.confirm_dialog_title)
-							  .setIcon(R.drawable.icon_alert)
-							  .setNegativeButton(android.R.string.cancel, null)
-							  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-								  @Override
-								  public void onClick(DialogInterface dialog, int which) {
-									  mTimelineDao.delete(timeline);
-									  helper.postDbChange(this);
-									  mEventHandler.invalidate();
-								  }
-							  })
-							  .show();
+					actionsHelper.deleteTimeline(getContext(), mTimelineDao, timeline.getId(), new ISimpleCallback() {
+						@Override
+						public void onActionComplete() {
+							helper.postDbChange(this);
+							mEventHandler.invalidate();
+						}
+					});
 				}
 			});
 
