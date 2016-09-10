@@ -1,12 +1,15 @@
 package com.andrew.timetracker.views.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
+import com.andrew.timetracker.commons.ISimpleCallback;
 import com.andrew.timetracker.commons.OnDoubleTouchListener;
 import com.andrew.timetracker.commons.SimpleListView;
 import com.andrew.timetracker.database.DaoSession;
@@ -31,10 +35,12 @@ import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.database.dbHelper;
+import com.andrew.timetracker.utils.actionsHelper;
 import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.IMainActivity;
 import com.andrew.timetracker.views.MainActivity;
 import com.andrew.timetracker.views.MainActivityTabFragment;
+import com.andrew.timetracker.views.time.TimelineEditDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +55,9 @@ import java.util.Map;
 public class HomeFragment extends MainActivityTabFragment {
 
 	private static final String TAG = "tt: HomeFragment";
+
+	private static final int REQUEST_EDIT_TIMELINE = 1;
+	private static final String DIALOG_EDIT_TIMELINE = "dialog_edit_timeline";
 
 	boolean mIsStarted;
 	Task mTask;
@@ -71,6 +80,10 @@ public class HomeFragment extends MainActivityTabFragment {
 	boolean isSpinnerRecentTasksReady;
 	RecentTasksAdapter adapterRecentTasks;
 	Button btnStartRecentTask;
+
+	View containerLastTimeline;
+	ImageButton btnLastTimelineEdit, btnLastTimelineDelete;
+	TextView txtLastTimeline;
 
 	Handler timerHandler = new Handler();
 	boolean isTimerSecondStarted = false;
@@ -102,6 +115,11 @@ public class HomeFragment extends MainActivityTabFragment {
 		mInactiveTotalTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_total);
 		mInactiveCurrentTextView = (TextView) v.findViewById(R.id.fragment_home_inactive_current);
 		mStartWorkingTextView = (TextView) v.findViewById(R.id.fragment_home_start_work);
+
+		containerLastTimeline = v.findViewById(R.id.last_timeline_container);
+		btnLastTimelineEdit = (ImageButton) v.findViewById(R.id.button_edit_last_timeline);
+		btnLastTimelineDelete = (ImageButton) v.findViewById(R.id.button_delete_last_timeline);
+		txtLastTimeline = (TextView) v.findViewById(R.id.last_timeline_text);
 
 		mStartStopButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -136,9 +154,38 @@ public class HomeFragment extends MainActivityTabFragment {
 			}
 		});
 
+		btnLastTimelineDelete.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				doDeleteCurrentTimeline();
+			}
+		});
+		btnLastTimelineEdit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				doEditCurrentTimeline();
+			}
+		});
+
 		updateData();
 
 		return v;
+	}
+
+	private void doEditCurrentTimeline() {
+		FragmentManager manager = getFragmentManager();
+		TimelineEditDialogFragment dialog = TimelineEditDialogFragment.newInstance(mTimeline, mTask);
+		dialog.setTargetFragment(this, REQUEST_EDIT_TIMELINE);
+		dialog.show(manager, DIALOG_EDIT_TIMELINE);
+	}
+
+	private void doDeleteCurrentTimeline() {
+		actionsHelper.deleteTimeline(getContext(), timelineDao(), mTimeline.getId(), new ISimpleCallback() {
+			@Override
+			public void onActionComplete() {
+				updateData();
+			}
+		});
 	}
 
 	private void startTask(Task task) {
@@ -325,6 +372,13 @@ public class HomeFragment extends MainActivityTabFragment {
 			mCurrentTaskTextView.setTypeface(null, Typeface.BOLD);
 		}
 
+		containerLastTimeline.setVisibility(mTimeline != null ? View.VISIBLE : View.GONE);
+		if (mTimeline != null) {
+			String timelineText = helper.formatTimelinePeriod(mTimeline, false, getContext())
+					  + " [ " + helper.formatSpentTime(getContext(), mTimeline.getSpentSeconds(), false) + " ]";
+			txtLastTimeline.setText(timelineText);
+		}
+
 		updateUI_current();
 	}
 
@@ -409,5 +463,13 @@ public class HomeFragment extends MainActivityTabFragment {
 			return v;
 		}
 
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_EDIT_TIMELINE) {
+			if (resultCode != Activity.RESULT_OK) return;
+			updateData();
+		}
 	}
 }

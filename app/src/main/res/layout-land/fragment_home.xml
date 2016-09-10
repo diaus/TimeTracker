@@ -81,27 +81,87 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:paddingTop="10dp"
+				android:orientation="vertical"
 				android:paddingBottom="10dp"
 				android:paddingLeft="50dp"
 				android:paddingRight="50dp"
-				android:orientation="vertical">
+				android:paddingTop="10dp">
 
-				<TextView
-					android:id="@+id/fragment_home_current_task"
+				<LinearLayout
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_below="@id/fragment_home_spent_time_today"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					tools:text="Current task title"
-					/>
+					android:orientation="horizontal">
+					<TextView
+						android:id="@+id/fragment_home_current_task"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_below="@id/fragment_home_spent_time_today"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						tools:text="Current task title"
+						/>
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:text=" - "/>
+					<TextView
+						android:id="@+id/fragment_home_task_time"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						tools:text="Task spent time"/>
 
-				<TextView
-					android:id="@+id/fragment_home_task_time"
+				</LinearLayout>
+
+				<LinearLayout
+					android:id="@+id/last_timeline_container"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					tools:text="Task spent time"/>
+					android:orientation="horizontal"
+					android:layout_gravity="center_horizontal"
+					>
+
+					<ImageButton
+						android:id="@+id/button_delete_last_timeline"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:layout_marginLeft="5dp"
+						android:layout_marginRight="10dp"
+						android:background="@null"
+						android:contentDescription="Delete"
+						android:src="@drawable/delete_button"
+						tools:ignore="HardcodedText"
+						tools:visibility="visible"
+						/>
+
+					<TextView
+						android:id="@+id/last_timeline_text"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						tools:text="13:00 - 15:15"/>
+
+					<Space
+						android:layout_width="10dp"
+						android:layout_height="match_parent"
+						android:layout_weight="1"/>
+
+					<ImageButton
+						android:id="@+id/button_edit_last_timeline"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:layout_marginRight="5dp"
+						android:background="@null"
+						android:contentDescription="Edit"
+						android:src="@drawable/edit_button"
+						tools:ignore="HardcodedText"
+						tools:visibility="visible"/>
+
+				</LinearLayout>
+
 
 				<Button
 					android:id="@+id/fragment_home_start_button"
@@ -122,18 +182,20 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
 			android:orientation="horizontal">
+
 			<Button
 				android:id="@+id/button_start_recent_task"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/button_start_recent_task"
 				/>
+
 			<Spinner
+				android:id="@+id/spinner_start_recent"
 				android:layout_width="1px"
 				android:layout_height="1px"
 				android:layout_gravity="bottom"
-				android:background="@null"
-				android:id="@+id/spinner_start_recent"/>
+				android:background="@null"/>
 		</LinearLayout>
 
 	</LinearLayout>
