@@ -36,6 +36,7 @@ import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
+import com.andrew.timetracker.database.dbHelper;
 import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.MainActivity;
 import com.andrew.timetracker.views.MainActivityTabFragment;
@@ -120,26 +121,17 @@ public class TasksFragment extends MainActivityTabFragment {
 		mCurrentTaskView.setVisibility(mCurrentTaskId != null ? View.VISIBLE : View.GONE);
 
 		setSubtitle(null);
-		List<Task> tasks;
 		if (mCurrentTaskId != null){
 			mCurrentTask = taskDao().load(mCurrentTaskId);
 			mCurrentTaskTitle.setText(mCurrentTask.getName());
-			tasks = taskDao().queryBuilder()
-					  .where(TaskDao.Properties.ParentId.isNotNull())
-					  .where(TaskDao.Properties.ParentId.eq(mCurrentTaskId))
-					  .orderAsc(TaskDao.Properties.Name)
-					  .list();
 			if (mCurrentTask.getParentId() != null){
 				setSubtitle(taskDao().load(mCurrentTask.getParentId()).getName());
 			}
 		} else {
 			mCurrentTask = null;
-			tasks = taskDao().queryBuilder()
-					  .where(TaskDao.Properties.ParentId.isNull())
-					  .orderAsc(TaskDao.Properties.Name)
-					  .list();
 		}
 
+		List<Task> tasks = dbHelper.getTasks(taskDao(), mCurrentTaskId);
 		mTasksList.setAdapter(new TasksAdapter(tasks), R.layout.fragment_tasks_item);
 
 		getActivity().invalidateOptionsMenu();

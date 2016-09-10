@@ -15,6 +15,7 @@ import com.andrew.timetracker.views.tasks.TaskEditDialogFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.Collator;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class helper {
 
+	public static Collator collator = Collator.getInstance();
 
 	public static Calendar getToday() {
 		Calendar today = Calendar.getInstance();
@@ -187,4 +189,5 @@ public class helper {
 	public static void postDbChange(Object sender) {
 		EventBus.getDefault().post(new DbChangesEvent(sender));
 	}
+
 }

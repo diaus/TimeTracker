@@ -1,8 +1,13 @@
 package com.andrew.timetracker.database;
 
+import com.andrew.timetracker.utils.helper;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,5 +45,22 @@ public class dbHelper {
 		timelineDao.queryBuilder().where(new WhereCondition.StringCondition(TimelineDao.Properties.TaskId.columnName + " NOT IN (SELECT "
 				  + TaskDao.Properties.Id.columnName + " FROM " + TaskDao.TABLENAME + ")")).buildDelete().executeDeleteWithoutDetachingEntities();
 
+	}
+
+	public static List<Task> getTasks(TaskDao taskDao, Long parentTaskId) {
+		QueryBuilder<Task> qb = taskDao.queryBuilder();
+		if (parentTaskId != null) {
+			qb.where(TaskDao.Properties.ParentId.isNotNull()).where(TaskDao.Properties.ParentId.eq(parentTaskId));
+		} else {
+			qb.where(TaskDao.Properties.ParentId.isNull());
+		}
+		List<Task> tasks = qb.list();
+		Collections.sort(tasks, new Comparator<Task>() {
+			@Override
+			public int compare(Task t1, Task t2) {
+				return helper.collator.compare(t1.getName(), t2.getName());
+			}
+		});
+		return tasks;
 	}
 }
