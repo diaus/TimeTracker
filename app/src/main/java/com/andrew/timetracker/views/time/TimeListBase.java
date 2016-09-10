@@ -3,10 +3,13 @@ package com.andrew.timetracker.views.time;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Task;
@@ -15,13 +18,12 @@ import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.utils.helper;
 
-import java.io.InvalidClassException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by andrew on 20.08.2016.
@@ -180,6 +182,7 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 		mItemHolders = new HashMap<>();
 
 		createViews();
+		shouldFixLayout = true;
 	}
 
 	public void setData(List<Timeline> timelines)
@@ -199,18 +202,66 @@ public abstract class TimeListBase<TItemHolderKey, TItemHolder extends TimeListB
 
 	public TimeListBase(Context context) {
 		super(context);
+		init();
 	}
 
 	public TimeListBase(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		init();
 	}
 
 	public TimeListBase(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		init();
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	public TimeListBase(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
+		init();
+	}
+
+	private void init(){
+		getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				if (shouldFixLayout){
+					shouldFixLayout = !fixLayout();;
+				}
+			}
+		});
+	}
+
+	protected boolean shouldFixLayout;
+
+	protected abstract boolean fixLayout();
+
+	protected boolean fixLayoutCommon(int maxWidth1, int maxWidth2, @IdRes int viewId1, @IdRes int viewId2) {
+		Set<Map.Entry<TItemHolderKey, TItemHolder>> set = mItemHolders.entrySet();
+		int parentWidth = -1, w1 = maxWidth1, w2 = maxWidth2;
+		ViewGroup.LayoutParams params;
+		for (Map.Entry<TItemHolderKey, TItemHolder> entry : set){
+			ItemHolder holder = entry.getValue();
+			View v = holder.view;
+			TextView view1 = (TextView) v.findViewById(viewId1);
+			TextView view2 = (TextView) v.findViewById(viewId2);
+			if (parentWidth == -1){
+				View parent = (View)view1.getParent();
+				parentWidth = parent.getWidth();
+				if (parentWidth == 0) {
+					return false;
+				}
+				if (w1 + w2 > parentWidth){
+					w1 = parentWidth - w2;
+				}
+			}
+			params = view1.getLayoutParams();
+			params.width = w1;
+			view1.setLayoutParams(params);
+			params = view2.getLayoutParams();
+			params.width = w2;
+			view2.setLayoutParams(params);
+		}
+		return true;
 	}
 }

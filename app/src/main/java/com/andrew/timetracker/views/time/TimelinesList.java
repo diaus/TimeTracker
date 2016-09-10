@@ -149,4 +149,9 @@ public class TimelinesList extends TimeListBase<Long, TimelinesList.ItemHolder> 
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
+	@Override
+	protected boolean fixLayout() {
+		return true;
+	}
+
 }

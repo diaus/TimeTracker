@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andrew.timetracker.R;
@@ -64,6 +63,8 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 		}
 	}
 
+	int mMaxWidth1, mMaxWidth2;
+
 	@Override
 	protected void createViews() {
 		Context context = getContext();
@@ -97,8 +98,7 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 			mItemHolders.put((long) -1, totalHolder);
 		}
 
-		List<View> titles = new ArrayList<>();
-		int maxTitleWidth = 0;
+		mMaxWidth1 = mMaxWidth2 = 0;
 		for (ItemHolder info : infos) {
 			View v = inflateItem(R.layout.time_tasks_item, info);
 
@@ -126,15 +126,13 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 
 			this.addView(v);
 
+			time.measure(0, 0);
+			int w = time.getMeasuredWidth();
+			if (w > mMaxWidth1) mMaxWidth1 = w;
 			title.measure(0, 0);
-			titles.add(title);
-			int w = title.getMeasuredWidth();
-			if (w > maxTitleWidth) maxTitleWidth = w;
-		}
-		for (View titleView : titles) {
-			ViewGroup.LayoutParams params = titleView.getLayoutParams();
-			params.width = maxTitleWidth;
-			titleView.setLayoutParams(params);
+			w = title.getMeasuredWidth();
+			if (w > mMaxWidth2) mMaxWidth2 = w;
+
 		}
 	}
 
@@ -183,4 +181,10 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 	public TasksList(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
+
+	@Override
+	protected boolean fixLayout() {
+		return fixLayoutCommon(mMaxWidth2, mMaxWidth1 + 10, R.id.time_tasks_item_title, R.id.time_tasks_item_time);
+	}
+
 }
