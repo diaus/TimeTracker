@@ -69,6 +69,6 @@
     <string name="notification_subtitle_started">виконується</string>
     <string name="notification_subtitle_stopped">зупинено</string>
     <string name="toast_no_recent_tabs">Нещодавніх завдань не знайдено</string>
-    <string name="button_start_recent_task">Розпочати нещодавнє завдання</string>
+    <string name="button_start_recent_task">нещодавні</string>
 
 </resources>
