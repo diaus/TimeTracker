@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 		timelineDao = daoSession.getTimelineDao();
 		taskDao = daoSession.getTaskDao();
 
+		// SHOW STATIC NOTIFICATION
+		((App) getApplication()).updateNotification();
+
 		mActionBar = getSupportActionBar();
 		mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
 		mActionBar.setDisplayHomeAsUpEnabled(true);

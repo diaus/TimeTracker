@@ -56,7 +56,6 @@ public class App extends Application {
 		// init singltons
 		Settings.init(this);
 
-		updateNotification();
 		EventBus.getDefault().register(this);
 	}
 
@@ -87,7 +86,7 @@ public class App extends Application {
 		resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 	}
 
-	public void updateNotification(/*boolean onClick*/) {
+	public void updateNotification() {
 
 		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
@@ -101,18 +100,6 @@ public class App extends Application {
 				return;
 			}
 		}
-
-//		if (onClick){
-//			if (isStarted){
-//				timeline.setStopTime(new Date());
-//				mTimelineDao.update(timeline);
-//			} else {
-//				timeline = new Timeline(null, timeline.getTaskId(), new Date(), null);
-//				mTimelineDao.insert(timeline);
-//			}
-//			isStarted = !isStarted;
-//			helper.postDbChange(this);
-//		}
 
 		Task task = mTaskDao.load(timeline.getTaskId());
 
@@ -130,7 +117,7 @@ public class App extends Application {
 				  .setContentIntent(pi)
 				  .setAutoCancel(false)
 				  .setDefaults(Notification.FLAG_NO_CLEAR)
-				  .setOngoing(true)
+				  //.setOngoing(true)
 				  //.setColor(ContextCompat.getColor(this, isStarted ? R.color.started_task : R.color.stopped_task))
 				  .build();
 
