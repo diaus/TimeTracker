@@ -27,6 +27,7 @@ import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.database.dbHelper;
+import com.andrew.timetracker.settings.Settings;
 import com.andrew.timetracker.utils.actionsHelper;
 import com.andrew.timetracker.utils.helper;
 import com.andrew.timetracker.views.MainActivityTabFragment;
@@ -342,21 +343,26 @@ public class HomeFragment extends MainActivityTabFragment {
 		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today),
 				  helper.formatSpentTime(getContext(), mSpentToday + getStartedTaskTime(), false)));
 
-		int inactiveCurrent = mIsStarted || mTimeline == null || mTimeline.getStopTime().before(helper.getToday().getTime())
-				  ? 0 : helper.diffDates(mTimeline.getStopTime(), null);
+		if (Settings.getShowDayStartAndInactive()) {
+			int inactiveCurrent = mIsStarted || mTimeline == null || mTimeline.getStopTime().before(helper.getToday().getTime())
+					  ? 0 : helper.diffDates(mTimeline.getStopTime(), null);
+			mInactiveTotalTextView.setVisibility((mInactiveTotal / 60) == 0 ? View.GONE : View.VISIBLE);
+			mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total),
+					  helper.formatSpentTime(getContext(), mInactiveTotal, false)));
 
-		mInactiveTotalTextView.setVisibility((mInactiveTotal / 60) == 0 ? View.GONE : View.VISIBLE);
-		mInactiveTotalTextView.setText(String.format(getString(R.string.home_tab_inactive_total),
-				  helper.formatSpentTime(getContext(), mInactiveTotal, false)));
+			mStartWorkingTextView.setVisibility(mDateWorkStarted == null ? View.GONE : View.VISIBLE);
+			if (mDateWorkStarted != null) {
+				mStartWorkingTextView.setText(String.format(getString(R.string.home_tab_start_working), mDateWorkStarted));
+			}
 
-		mStartWorkingTextView.setVisibility(mDateWorkStarted == null ? View.GONE : View.VISIBLE);
-		if (mDateWorkStarted != null) {
-			mStartWorkingTextView.setText(String.format(getString(R.string.home_tab_start_working), mDateWorkStarted));
+			mInactiveCurrentTextView.setVisibility((inactiveCurrent / 60) == 0 ? View.GONE : View.VISIBLE);
+			mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current),
+					  helper.formatSpentTime(getContext(), inactiveCurrent, false)));
+		} else {
+			mInactiveTotalTextView.setVisibility(View.GONE);
+			mStartWorkingTextView.setVisibility(View.GONE);
+			mInactiveCurrentTextView.setVisibility(View.GONE);
 		}
-
-		mInactiveCurrentTextView.setVisibility((inactiveCurrent / 60) == 0 ? View.GONE : View.VISIBLE);
-		mInactiveCurrentTextView.setText(String.format(getString(R.string.home_tab_inactive_current),
-				  helper.formatSpentTime(getContext(), inactiveCurrent, false)));
 
 		mCurrentTaskTimeTextView.setVisibility(mTask == null ? View.GONE : View.VISIBLE);
 		if (mTask == null) {
