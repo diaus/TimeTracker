@@ -18,6 +18,7 @@ import com.andrew.timetracker.commons.SimpleListView;
 import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
+import com.andrew.timetracker.database.dbHelper;
 
 import java.util.List;
 
@@ -67,21 +68,12 @@ public class SelectTaskActivity extends AppCompatActivity {
 	}
 
 	private void updateUI() {
-		List<Task> tasks;
+		List<Task> tasks = dbHelper.getTasks(taskDao, mParentTaskId);
 		if (mParentTaskId == null){
-			tasks = taskDao.queryBuilder()
-					  .where(TaskDao.Properties.ParentId.isNull())
-					  .list();
 			getSupportActionBar().setTitle(R.string.task_edit_dialog_parent_task_top);
 		} else {
-			tasks = taskDao.queryBuilder()
-					  .where(TaskDao.Properties.ParentId.isNotNull())
-					  .where(TaskDao.Properties.ParentId.eq(mParentTaskId))
-					  .list();
-			Task task = taskDao.load(mParentTaskId);
-			getSupportActionBar().setTitle(task.getName());
+			getSupportActionBar().setTitle(taskDao.load(mParentTaskId).getName());
 		}
-
 		mTasksList.setAdapter(new TasksAdapter(tasks), R.layout.fragment_tasks_item);
 	}
 
