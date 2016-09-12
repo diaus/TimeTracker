@@ -32,7 +32,7 @@ public class dbHelper {
 			Long taskId = tt.get(i).getTaskId();
 			if (!mapRecents.containsKey(taskId)) {
 				mapRecents.put(taskId, null);
-				tasks.add(0, taskDao.load(taskId));
+				tasks.add(taskDao.load(taskId));
 				count++;
 				if (count == maxCount) break;
 			}

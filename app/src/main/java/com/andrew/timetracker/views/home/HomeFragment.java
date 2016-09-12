@@ -208,7 +208,7 @@ public class HomeFragment extends MainActivityTabFragment {
 
 	private void doStartRecentTask() {
 		isSpinnerRecentTasksReady = false;
-		List<Task> tasks = mTask == null ? null : dbHelper.getRecentTasks(timelineDao(), taskDao(), mTask.getId(), 20);
+		List<Task> tasks = mTask == null ? null : dbHelper.getRecentTasks(timelineDao(), taskDao(), mTask.getId(), 10);
 		if (mTask != null && tasks.size() > 0 ){
 			adapterRecentTasks.setData(tasks);
 			int tasksCount = tasks.size();
