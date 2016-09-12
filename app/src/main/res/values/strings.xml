@@ -1,71 +1,75 @@
 <resources>
-    <!-- common -->
-    <string name="app_name">Time Tracker</string>
-    <string name="hour_short">h</string>
-    <string name="minute_short">m</string>
-    <string name="second_short">s</string>
-    <string name="confirm_dialog_title">Really?</string>
-    <string name="error_dialog_title">Error!</string>
-    <string name="timeline_now">now</string>
-    <string name="dialog_save_button">Save</string>
-    <string name="dialog_create_button">Create</string>
-    <string name="tab_title_home">Home</string>
-    <string name="tab_title_stats">Stats</string>
-    <string name="tab_title_tasks">Tasks</string>
-    <string name="notification_tap_to_start"><i>tap to start</i></string>
-    <string name="notification_tap_to_stop"><i>tap to stop</i></string>
+	<!-- common -->
+	<string name="app_name">Time Tracker</string>
+	<string name="hour_short">h</string>
+	<string name="minute_short">m</string>
+	<string name="second_short">s</string>
+	<string name="confirm_dialog_title">Really?</string>
+	<string name="error_dialog_title">Error!</string>
+	<string name="timeline_now">now</string>
+	<string name="dialog_save_button">Save</string>
+	<string name="dialog_create_button">Create</string>
+	<string name="tab_title_home">Home</string>
+	<string name="tab_title_stats">Stats</string>
+	<string name="tab_title_tasks">Tasks</string>
+	<string name="notification_tap_to_start"><i>tap to start</i></string>
+	<string name="notification_tap_to_stop"><i>tap to stop</i></string>
 
-    <!-- home view -->
-    <string name="home_tab_start_button">Start</string>
-    <string name="home_tab_stop_button">Stop</string>
-    <string name="home_tab_spent_time_today">Spent today: %1$s</string>
-    <string name="home_tab_start_working">Start working at %1$tH:%1$tM</string>
-    <string name="home_tab_inactive_total">Total inactivity: %1$s</string>
-    <string name="home_tab_inactive_current">Inactive for %1$s</string>
-    <string name="home_tab_task_not_selected"><i>task not selected</i></string>
-    <string name="home_tab_open_tasks_button">Open tasks list</string>
-    <string name="home_tab_task_time_today">Today: %1$s</string>
-    <string name="home_tab_task_time_current">Current: %1$s</string>
-    <string name="home_tab_recent_tasks"><b>Recent tasks:</b></string>
+	<!-- home view -->
+	<string name="home_tab_start_button">Start</string>
+	<string name="home_tab_stop_button">Stop</string>
+	<string name="home_tab_spent_time_today">Spent today: %1$s</string>
+	<string name="home_tab_start_working">Start working at %1$tH:%1$tM</string>
+	<string name="home_tab_inactive_total">Total inactivity: %1$s</string>
+	<string name="home_tab_inactive_current">Inactive for %1$s</string>
+	<string name="home_tab_task_not_selected"><i>task not selected</i></string>
+	<string name="home_tab_open_tasks_button">Open tasks list</string>
+	<string name="home_tab_task_time_today">Today: %1$s</string>
+	<string name="home_tab_task_time_current">Current: %1$s</string>
+	<string name="home_tab_recent_tasks"><b>Recent tasks:</b></string>
 
-    <!-- tasks view -->
-    <string name="menu_tab_tasks_delete_task">Delete Task</string>
-    <string name="enter_task_title_edit_text">enter task title</string>
-    <string name="confirm_delete_task">Are you sure you want to delete task?</string>
+	<!-- tasks view -->
+	<string name="menu_tab_tasks_delete_task">Delete Task</string>
+	<string name="enter_task_title_edit_text">enter task title</string>
+	<string name="confirm_delete_task">Are you sure you want to delete task?</string>
     <string name="confirm_delete_task_with_timelines">There are time spent history exists!\n
 ALL of this will be deleted forever!!!\n
 Are you sure you still want to delete task?</string>
-    <string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
-    <string name="alert_task_name_exists">Task with this name already exists!</string>
-    <string name="alert_task_name_exists_title">Error</string>
-    <string name="create_task_button">Create task</string>
-    <string name="alert_delete_task_with_subtasks_disallowed">You should delete all sub-tasks first</string>
+	<string name="toast_task_deleted_params_name">Task \'%1$s\' was deleted</string>
+	<string name="alert_task_name_exists">Task with this name already exists!</string>
+	<string name="alert_task_name_exists_title">Error</string>
+	<string name="create_task_button">Create task</string>
+	<string name="create_subtask_button">Create sub-task</string>
+	<string name="alert_delete_task_with_subtasks_disallowed">You should delete all sub-tasks first</string>
 
-    <!-- spent time view -->
-    <string name="time_total">Total</string>
-    <string name="fragment_time_day_button">Day</string>
-    <string name="fragment_time_week_button">Week</string>
-    <string name="fragment_time_month_button">Month</string>
-    <string name="confirm_delete_timeline">Are you sure you want to delete time record? </string>
-    <string name="fragment_time_activity_info"><i>started on %1$s, inactive for %2$s</i></string>
+	<!-- spent time view -->
+	<string name="time_total">Total</string>
+	<string name="fragment_time_day_button">Day</string>
+	<string name="fragment_time_week_button">Week</string>
+	<string name="fragment_time_month_button">Month</string>
+	<string name="confirm_delete_timeline">Are you sure you want to delete time record? </string>
+	<string name="fragment_time_activity_info"><i>started on %1$s, inactive for %2$s</i></string>
 
-    <!-- edit timeline -->
-    <string name="timeline_edit_dialog_title">Changing time record</string>
-    <string name="timeline_edit_dialog_Task"><b>Task:</b></string>
-    <string name="timeline_edit_dialog_From"><b>From:</b></string>
-    <string name="timeline_edit_dialog_To"><b>To:</b></string>
-    <string name="timeline_edit_dialog_time_spent">Time spent:</string>
-    <string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
+	<!-- edit timeline -->
+	<string name="timeline_edit_dialog_title">Changing time record</string>
+	<string name="timeline_edit_dialog_Task"><b>Task:</b></string>
+	<string name="timeline_edit_dialog_From"><b>From:</b></string>
+	<string name="timeline_edit_dialog_To"><b>To:</b></string>
+	<string name="timeline_edit_dialog_time_spent">Time spent:</string>
+	<string name="timeline_edit_dialog_error_intercept_timelines">Other time record exists within given period.</string>
 
-    <!-- edit task -->
-    <string name="task_edit_dialog_parent_task">Parent task:</string>
-    <string name="task_edit_dialog_task_name">Task name:</string>
-    <string name="task_edit_dialog_parent_task_top"><i>topmost</i></string>
-    <string name="select_task_up"><i>&lt;UP&gt;</i></string>
-    <string name="menu_select_task">SELECT</string>
-    <string name="notification_subtitle_started">started</string>
-    <string name="notification_subtitle_stopped">stopped</string>
-    <string name="toast_no_recent_tabs">You have no recent tasks</string>
-    <string name="button_start_recent_task">recents</string>
+	<!-- edit task -->
+	<string name="task_edit_dialog_parent_task">Parent task:</string>
+	<string name="task_edit_dialog_task_name">Task name:</string>
+	<string name="task_edit_dialog_parent_task_top"><i>topmost</i></string>
+	<string name="select_task_up"><i>&lt;UP&gt;</i></string>
+	<string name="menu_select_task">SELECT</string>
+
+	<!-- UNSORTED -->
+	<string name="notification_subtitle_started">started</string>
+	<string name="notification_subtitle_stopped">stopped</string>
+	<string name="toast_no_recent_tabs">You have no recent tasks</string>
+	<string name="button_start_recent_task">recents</string>
+	<string name="fragment_tasks_subtasks_title">Sub-tasks:</string>
 
 </resources>
