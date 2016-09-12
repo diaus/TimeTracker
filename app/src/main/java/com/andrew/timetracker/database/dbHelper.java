@@ -8,6 +8,7 @@ import org.greenrobot.greendao.query.WhereCondition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,5 +63,25 @@ public class dbHelper {
 			}
 		});
 		return tasks;
+	}
+
+	public static Long getStartedTaskId(TimelineDao timelineDao) {
+		Timeline tl = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		return tl == null ? null : tl.getTaskId();
+	}
+
+	public static boolean stopCurrentTask(TimelineDao timelineDao) {
+		Timeline tl = timelineDao.queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
+		if (tl == null) return false;
+		tl.setStopTime(new Date());
+		timelineDao.update(tl);
+		return true;
+	}
+
+	public static Timeline startTask(TimelineDao timelineDao, Long taskId) {
+		stopCurrentTask(timelineDao); // ensure stop previous task
+		Timeline tl = new Timeline(null, taskId, new Date(), null);
+		timelineDao.insert(tl);
+		return tl;
 	}
 }

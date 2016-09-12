@@ -17,8 +17,8 @@
 	<string name="notification_tap_to_stop"><i>натисніть щоб зупинити</i></string>
 
 	<!-- home view -->
-	<string name="home_tab_start_button">Старт</string>
-	<string name="home_tab_stop_button">Стоп</string>
+	<string name="button_start">Старт</string>
+	<string name="button_stop">Стоп</string>
 	<string name="home_tab_spent_time_today">Сьогодні: %1$s</string>
 	<string name="home_tab_start_working">Почали працювати в %1$tH:%1$tM</string>
 	<string name="home_tab_inactive_total">Перерва: %1$s</string>

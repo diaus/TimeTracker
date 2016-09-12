@@ -2,15 +2,12 @@ package com.andrew.timetracker.views.home;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -24,30 +21,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.commons.ISimpleCallback;
-import com.andrew.timetracker.commons.OnDoubleTouchListener;
-import com.andrew.timetracker.commons.SimpleListView;
-import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
-import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.database.dbHelper;
 import com.andrew.timetracker.utils.actionsHelper;
 import com.andrew.timetracker.utils.helper;
-import com.andrew.timetracker.views.IMainActivity;
-import com.andrew.timetracker.views.MainActivity;
 import com.andrew.timetracker.views.MainActivityTabFragment;
 import com.andrew.timetracker.views.time.TimelineEditDialogFragment;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by andrew on 15.08.2016.
@@ -342,7 +329,7 @@ public class HomeFragment extends MainActivityTabFragment {
 
 		mStatusView.setBackgroundResource(mIsStarted ? R.drawable.started_circle : R.drawable.stopped_circle);
 
-		mStartStopButton.setText(mIsStarted ? R.string.home_tab_stop_button : R.string.home_tab_start_button);
+		mStartStopButton.setText(mIsStarted ? R.string.button_stop : R.string.button_start);
 		mStartStopButton.setBackgroundResource(mTask == null ? R.drawable.inactive_circle : (mIsStarted ? R.drawable.stopped_circle : R.drawable.started_circle));
 
 		mSpentTimeTodayTextView.setText(String.format(getString(R.string.home_tab_spent_time_today),
