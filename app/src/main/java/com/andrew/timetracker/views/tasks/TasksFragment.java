@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -265,6 +266,8 @@ public class TasksFragment extends MainActivityTabFragment {
 		public void bindTask(Task task){
 			mTask = task;
 			mTitleTextView.setText(task.getName());
+			mTitleTextView.setTextColor(ContextCompat.getColor(getContext(),
+					  task.getId().equals(startedTaskId) ? R.color.colorTaskTitleStartedInList : R.color.colorBlack));
 		}
 
 		@Override
