@@ -63,6 +63,8 @@ public class TasksFragment extends MainActivityTabFragment {
 	SimpleListView mTasksList;
 	View mCurrentTaskView;
 	TextView mCurrentTaskTitle;
+	TextView mSubtasksTitle;
+	Button btnCreateTask;
 
 	@Nullable
 	@Override
@@ -78,6 +80,8 @@ public class TasksFragment extends MainActivityTabFragment {
 		mCurrentTaskView = v.findViewById(R.id.fragment_tasks_task_container);
 		mTasksList = (SimpleListView) v.findViewById(R.id.fragment_tasks_list);
 		mCurrentTaskTitle = (TextView) v.findViewById(R.id.fragment_tasks_task_title);
+		mSubtasksTitle = (TextView) v.findViewById(R.id.subtasks_title);
+		btnCreateTask = (Button) v.findViewById(R.id.fragment_tasks_create_task_button);
 
 		v.findViewById(R.id.fragment_tasks_up).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -93,7 +97,7 @@ public class TasksFragment extends MainActivityTabFragment {
 			}
 		});
 
-		v.findViewById(R.id.fragment_tasks_create_task_button).setOnClickListener(new View.OnClickListener() {
+		btnCreateTask.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				createTask();
@@ -133,6 +137,9 @@ public class TasksFragment extends MainActivityTabFragment {
 
 		List<Task> tasks = dbHelper.getTasks(taskDao(), mCurrentTaskId);
 		mTasksList.setAdapter(new TasksAdapter(tasks), R.layout.fragment_tasks_item);
+
+		mSubtasksTitle.setVisibility(mCurrentTaskId != null && tasks.size() > 0 ? View.VISIBLE : View.GONE);
+		btnCreateTask.setText(mCurrentTaskId != null ? R.string.create_subtask_button : R.string.create_task_button);
 
 		getActivity().invalidateOptionsMenu();
 	}

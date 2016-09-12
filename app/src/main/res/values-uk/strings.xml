@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- common -->
-    <string name="app_name">Записник часу</string>
-    <string name="hour_short">г</string>
-    <string name="minute_short">хв</string>
-    <string name="second_short">с</string>
-    <string name="confirm_dialog_title">Впевнені?</string>
-    <string name="error_dialog_title">Помилка!</string>
-    <string name="timeline_now"><i>зараз</i></string>
-    <string name="dialog_create_button">Створити</string>
-    <string name="dialog_save_button">Зберегти</string>
-    <string name="tab_title_home">Головна</string>
-    <string name="tab_title_stats">Статистика</string>
-    <string name="tab_title_tasks">Завдання</string>
-    <string name="notification_tap_to_start"><i>натисніть щоб почати</i></string>
-    <string name="notification_tap_to_stop"><i>натисніть щоб зупинити</i></string>
+	<!-- common -->
+	<string name="app_name">Записник часу</string>
+	<string name="hour_short">г</string>
+	<string name="minute_short">хв</string>
+	<string name="second_short">с</string>
+	<string name="confirm_dialog_title">Впевнені?</string>
+	<string name="error_dialog_title">Помилка!</string>
+	<string name="timeline_now"><i>зараз</i></string>
+	<string name="dialog_create_button">Створити</string>
+	<string name="dialog_save_button">Зберегти</string>
+	<string name="tab_title_home">Головна</string>
+	<string name="tab_title_stats">Статистика</string>
+	<string name="tab_title_tasks">Завдання</string>
+	<string name="notification_tap_to_start"><i>натисніть щоб почати</i></string>
+	<string name="notification_tap_to_stop"><i>натисніть щоб зупинити</i></string>
 
-    <!-- home view -->
-    <string name="home_tab_start_button">Старт</string>
-    <string name="home_tab_stop_button">Стоп</string>
-    <string name="home_tab_spent_time_today">Сьогодні: %1$s</string>
-    <string name="home_tab_start_working">Почали працювати в %1$tH:%1$tM</string>
-    <string name="home_tab_inactive_total">Перерва: %1$s</string>
-    <string name="home_tab_inactive_current">Відпочиваємо вже %1$s</string>
-    <string name="home_tab_task_not_selected"><i>завдання не вибрано</i></string>
-    <string name="home_tab_open_tasks_button">Відкрити список завдань</string>
-    <string name="home_tab_task_time_current">Поточне: %1$s</string>
-    <string name="home_tab_task_time_today">Сьогодні: %1$s</string>
-    <string name="home_tab_recent_tasks"><b>Нещодавні завдання:</b></string>
+	<!-- home view -->
+	<string name="home_tab_start_button">Старт</string>
+	<string name="home_tab_stop_button">Стоп</string>
+	<string name="home_tab_spent_time_today">Сьогодні: %1$s</string>
+	<string name="home_tab_start_working">Почали працювати в %1$tH:%1$tM</string>
+	<string name="home_tab_inactive_total">Перерва: %1$s</string>
+	<string name="home_tab_inactive_current">Відпочиваємо вже %1$s</string>
+	<string name="home_tab_task_not_selected"><i>завдання не вибрано</i></string>
+	<string name="home_tab_open_tasks_button">Відкрити список завдань</string>
+	<string name="home_tab_task_time_current">Поточне: %1$s</string>
+	<string name="home_tab_task_time_today">Сьогодні: %1$s</string>
+	<string name="home_tab_recent_tasks"><b>Нещодавні завдання:</b></string>
 
-    <!-- tasks view -->
-    <string name="menu_tab_tasks_delete_task">Знищити завдання</string>
-    <string name="enter_task_title_edit_text">введіть назву завдання</string>
-    <string name="confirm_delete_task">Ви впевнені, що хочете видалити завдання?</string>
+	<!-- tasks view -->
+	<string name="menu_tab_tasks_delete_task">Знищити завдання</string>
+	<string name="enter_task_title_edit_text">введіть назву завдання</string>
+	<string name="confirm_delete_task">Ви впевнені, що хочете видалити завдання?</string>
     <string name="confirm_delete_task_with_timelines">У вас є записи часу з цим завданням!\n
 Всі вони будуть ВИДАЛЕНІ НАЗАВЖДИ!!!\n
 Ви ще досі впевнені, що хочете видалити завдання?</string>
-    <string name="toast_task_deleted_params_name">Завдання \'%1$s\' було видалене</string>
-    <string name="alert_task_name_exists">Завдання з таким ім\'ям вже існує!</string>
-    <string name="alert_task_name_exists_title">Помилка</string>
-    <string name="create_task_button">Створити завдання</string>
-    <string name="alert_delete_task_with_subtasks_disallowed">Ви повинні спочатку видалити всі підзавдання</string>
+	<string name="toast_task_deleted_params_name">Завдання \'%1$s\' було видалене</string>
+	<string name="alert_task_name_exists">Завдання з таким ім\'ям вже існує!</string>
+	<string name="alert_task_name_exists_title">Помилка</string>
+	<string name="create_task_button">Створити завдання</string>
+	<string name="create_subtask_button">Створити під-завдання</string>
+	<string name="alert_delete_task_with_subtasks_disallowed">Ви повинні спочатку видалити всі підзавдання</string>
 
-    <!-- spent time view -->
-    <string name="time_total">Загалом</string>
-    <string name="fragment_time_day_button">День</string>
-    <string name="fragment_time_week_button">Тиждень</string>
-    <string name="fragment_time_month_button">Місяць</string>
-    <string name="confirm_delete_timeline">Ви впевнені, що хочете видалити цей запис часу? </string>
-    <string name="fragment_time_activity_info"><i>початок - %1$s, відпочинок - %2$s</i></string>
+	<!-- spent time view -->
+	<string name="time_total">Загалом</string>
+	<string name="fragment_time_day_button">День</string>
+	<string name="fragment_time_week_button">Тиждень</string>
+	<string name="fragment_time_month_button">Місяць</string>
+	<string name="confirm_delete_timeline">Ви впевнені, що хочете видалити цей запис часу? </string>
+	<string name="fragment_time_activity_info"><i>початок - %1$s, відпочинок - %2$s</i></string>
 
-    <!-- edit timeline -->
-    <string name="timeline_edit_dialog_title">Редагування запису часу</string>
-    <string name="timeline_edit_dialog_Task"><b>Завдання:</b></string>
-    <string name="timeline_edit_dialog_From"><b>Початок роботи:</b></string>
-    <string name="timeline_edit_dialog_To"><b>Кінець роботи:</b></string>
-    <string name="timeline_edit_dialog_time_spent">Напрацьовано:</string>
-    <string name="timeline_edit_dialog_error_intercept_timelines">Існує інший запис часу, що перетинається з вказаним.</string>
+	<!-- edit timeline -->
+	<string name="timeline_edit_dialog_title">Редагування запису часу</string>
+	<string name="timeline_edit_dialog_Task"><b>Завдання:</b></string>
+	<string name="timeline_edit_dialog_From"><b>Початок роботи:</b></string>
+	<string name="timeline_edit_dialog_To"><b>Кінець роботи:</b></string>
+	<string name="timeline_edit_dialog_time_spent">Напрацьовано:</string>
+	<string name="timeline_edit_dialog_error_intercept_timelines">Існує інший запис часу, що перетинається з вказаним.</string>
 
-    <!-- edit task -->
-    <string name="task_edit_dialog_parent_task">Батьківське завдання:</string>
-    <string name="task_edit_dialog_task_name">Назва завдання:</string>
-    <string name="task_edit_dialog_parent_task_top"><i>немає</i></string>
-    <string name="select_task_up"><i>&lt;ВГОРУ&gt;</i></string>
-    <string name="menu_select_task">ВИБРАТИ</string>
+	<!-- edit task -->
+	<string name="task_edit_dialog_parent_task">Батьківське завдання:</string>
+	<string name="task_edit_dialog_task_name">Назва завдання:</string>
+	<string name="task_edit_dialog_parent_task_top"><i>немає</i></string>
+	<string name="select_task_up"><i>&lt;ВГОРУ&gt;</i></string>
+	<string name="menu_select_task">ВИБРАТИ</string>
 
-    <!-- UNSORTED -->
-    <string name="notification_subtitle_started">виконується</string>
-    <string name="notification_subtitle_stopped">зупинено</string>
-    <string name="toast_no_recent_tabs">Нещодавніх завдань не знайдено</string>
-    <string name="button_start_recent_task">нещодавні</string>
+	<!-- UNSORTED -->
+	<string name="notification_subtitle_started">виконується</string>
+	<string name="notification_subtitle_stopped">зупинено</string>
+	<string name="toast_no_recent_tabs">Нещодавніх завдань не знайдено</string>
+	<string name="button_start_recent_task">нещодавні</string>
+	<string name="fragment_tasks_subtasks_title">Під-завдання:</string>
 
 </resources>
