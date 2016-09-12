@@ -154,6 +154,13 @@ public class HomeFragment extends MainActivityTabFragment {
 			}
 		});
 
+		mCurrentTaskTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivityMain().switchToTasksTab(mTask != null ? mTask.getId() : null);
+			}
+		});
+
 		updateData();
 
 		return v;

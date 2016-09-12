@@ -44,7 +44,7 @@ public class TasksFragment extends MainActivityTabFragment {
 	private static final int REQUEST_EDIT_TASK = 1;
 	private static final String DIALOG_EDIT_TASK = "DialogEditTask";
 
-	private Long mCurrentTaskId;
+	public Long mCurrentTaskId;
 	private Task mCurrentTask;
 	private Long startedTaskId;
 

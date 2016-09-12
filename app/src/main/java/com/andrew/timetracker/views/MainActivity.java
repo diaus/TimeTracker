@@ -200,6 +200,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 	}
 
 	@Override
+	public void switchToTasksTab(Long taskId) {
+		((TasksFragment)mAdapter.instantiateItem(mViewPager, 2)).mCurrentTaskId = taskId;
+		mViewPager.setCurrentItem(2);
+	}
+
+	@Override
 	public void onBackPressed() {
 		ITab tab = getCurrentTab();
 		if (tab.doBack()){
