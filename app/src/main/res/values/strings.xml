@@ -16,8 +16,8 @@
 	<string name="notification_tap_to_stop"><i>tap to stop</i></string>
 
 	<!-- home view -->
-	<string name="home_tab_start_button">Start</string>
-	<string name="home_tab_stop_button">Stop</string>
+	<string name="button_start">Start</string>
+	<string name="button_stop">Stop</string>
 	<string name="home_tab_spent_time_today">Spent today: %1$s</string>
 	<string name="home_tab_start_working">Start working at %1$tH:%1$tM</string>
 	<string name="home_tab_inactive_total">Total inactivity: %1$s</string>

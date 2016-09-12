@@ -1,18 +1,13 @@
 package com.andrew.timetracker.views.tasks;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,29 +15,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.andrew.timetracker.App;
 import com.andrew.timetracker.R;
-import com.andrew.timetracker.commons.IBackPressedListener;
-import com.andrew.timetracker.commons.OnDoubleTouchListener;
 import com.andrew.timetracker.commons.SimpleListView;
-import com.andrew.timetracker.database.DaoSession;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.TaskDao;
 import com.andrew.timetracker.database.Timeline;
 import com.andrew.timetracker.database.TimelineDao;
 import com.andrew.timetracker.database.dbHelper;
 import com.andrew.timetracker.utils.helper;
-import com.andrew.timetracker.views.MainActivity;
 import com.andrew.timetracker.views.MainActivityTabFragment;
-import com.andrew.timetracker.views.time.TimelineEditDialogFragment;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,12 +45,14 @@ public class TasksFragment extends MainActivityTabFragment {
 
 	private Long mCurrentTaskId;
 	private Task mCurrentTask;
+	private Long startedTaskId;
 
 	SimpleListView mTasksList;
 	View mCurrentTaskView;
 	TextView mCurrentTaskTitle;
 	TextView mSubtasksTitle;
 	Button btnCreateTask;
+	Button btnStartStop;
 
 	@Nullable
 	@Override
@@ -82,6 +70,7 @@ public class TasksFragment extends MainActivityTabFragment {
 		mCurrentTaskTitle = (TextView) v.findViewById(R.id.fragment_tasks_task_title);
 		mSubtasksTitle = (TextView) v.findViewById(R.id.subtasks_title);
 		btnCreateTask = (Button) v.findViewById(R.id.fragment_tasks_create_task_button);
+		btnStartStop = (Button) v.findViewById(R.id.fragment_tasks_task_start_button);
 
 		v.findViewById(R.id.fragment_tasks_up).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -104,10 +93,10 @@ public class TasksFragment extends MainActivityTabFragment {
 			}
 		});
 
-		v.findViewById(R.id.fragment_tasks_task_start_button).setOnClickListener(new View.OnClickListener() {
+		btnStartStop.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startCurrentTask();
+				startStopCurrentTask();
 			}
 		});
 
@@ -122,15 +111,19 @@ public class TasksFragment extends MainActivityTabFragment {
 	}
 
 	private void updateUI() {
-		mCurrentTaskView.setVisibility(mCurrentTaskId != null ? View.VISIBLE : View.GONE);
+		startedTaskId = dbHelper.getStartedTaskId(timelineDao());
 
 		setSubtitle(null);
+		mCurrentTaskView.setVisibility(mCurrentTaskId != null ? View.VISIBLE : View.GONE);
 		if (mCurrentTaskId != null){
 			mCurrentTask = taskDao().load(mCurrentTaskId);
 			mCurrentTaskTitle.setText(mCurrentTask.getName());
 			if (mCurrentTask.getParentId() != null){
 				setSubtitle(taskDao().load(mCurrentTask.getParentId()).getName());
 			}
+			boolean isStarted = mCurrentTaskId.equals(startedTaskId);
+			btnStartStop.setText(isStarted ? R.string.button_stop : R.string.button_start);
+			btnStartStop.setBackgroundResource(isStarted ? R.drawable.stopped_circle : R.drawable.started_circle);
 		} else {
 			mCurrentTask = null;
 		}
@@ -232,27 +225,18 @@ public class TasksFragment extends MainActivityTabFragment {
 		updateUI();
 	}
 
-	void startCurrentTask() {
-		Timeline timeline = timelineDao().queryBuilder().where(TimelineDao.Properties.StopTime.isNull()).unique();
-		if (timeline != null){
-			// check already started
-			if (timeline.getTaskId().equals(mCurrentTaskId)){
-				onTaskStarted();
-				return;
-			}
-			// stop current task
-			timeline.setStopTime(new Date());
-			timeline.update();
+	void startStopCurrentTask() {
+		boolean doStop = mCurrentTaskId.equals(startedTaskId);
+		if (doStop){
+			dbHelper.stopCurrentTask(timelineDao());
+		} else {
+			dbHelper.startTask(timelineDao(), mCurrentTaskId);
 		}
-		timeline = new Timeline(null, mCurrentTaskId, new Date(), null);
-		timelineDao().insert(timeline);
+		updateUI();
 		postDbChange();
-		onTaskStarted();
-	}
-
-	private void onTaskStarted(){
-		getActivityMain().switchToHomeTab();
-		//getActivity().finish();
+		if (!doStop){
+			getActivityMain().switchToHomeTab();
+		}
 	}
 
 	@Override
