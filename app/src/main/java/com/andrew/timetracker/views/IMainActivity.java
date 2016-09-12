@@ -11,4 +11,5 @@ public interface IMainActivity {
 	int getCurrentTabIndex();
 	TaskDao getTaskDao();
 	TimelineDao getTimelineDao();
+	void switchToTasksTab(Long taskId);
 }
