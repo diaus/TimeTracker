@@ -11,6 +11,15 @@ public class Settings {
 	private static Settings sInstance;
 	private Context mAppContext;
 
+	public static boolean getShowDayStartAndInactive() {
+		return sInstance.getBoolean("showDayStartAndInactive", false);
+	}
+
+	public static void setShowDayStartAndInactive(boolean doShow) {
+		sInstance.setBoolean("showDayStartAndInactive", doShow);
+	}
+
+
 //	public static long getLastTaskId() {
 //		return sInstance.getLong("lastTaskId", -1);
 //	}
@@ -37,7 +46,19 @@ public class Settings {
 	private void setLong(String key, long value)
 	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-		pref.edit().putLong(key, value).commit();
+		pref.edit().putLong(key, value).apply();
+	}
+
+	private boolean getBoolean(String key, boolean defaultValue)
+	{
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+		return pref.getBoolean(key, defaultValue);
+	}
+
+	private void setBoolean(String key, boolean value)
+	{
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+		pref.edit().putBoolean(key, value).apply();
 	}
 
 }

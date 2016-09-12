@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.settings.Settings;
 import com.andrew.timetracker.utils.helper;
 
 import java.util.ArrayList;
@@ -80,10 +81,12 @@ public class WeekdaysList extends TimeListBase<Date, WeekdaysList.ItemHolder> {
 			time.setText(helper.formatSpentTime(context, info.timeSpent, false));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
-			if (mSelectedTask == null || (mParentOptions != null && mParentOptions.isTheOnlyTask)){
-				TextView activityInfo = (TextView) v.findViewById(R.id.time_weekdays_item_activity_info);
-				activityInfo.setVisibility(VISIBLE);
-				activityInfo.setText(helper.getActivityText(getContext(), info.timelines));
+			if (Settings.getShowDayStartAndInactive()){
+				if (mSelectedTask == null || (mParentOptions != null && mParentOptions.isTheOnlyTask)){
+					TextView activityInfo = (TextView) v.findViewById(R.id.time_weekdays_item_activity_info);
+					activityInfo.setVisibility(VISIBLE);
+					activityInfo.setText(helper.getActivityText(getContext(), info.timelines));
+				}
 			}
 
 			this.addView(v);

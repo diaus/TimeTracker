@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.andrew.timetracker.R;
 import com.andrew.timetracker.database.Task;
 import com.andrew.timetracker.database.Timeline;
+import com.andrew.timetracker.settings.Settings;
 import com.andrew.timetracker.utils.helper;
 
 import java.util.ArrayList;
@@ -118,10 +119,12 @@ public class TasksList extends TimeListBase<Long, TasksList.ItemHolder> {
 			time.setText(helper.formatSpentTime(context, info.timeSpent, false));
 			time.setTypeface(null, Typeface.BOLD_ITALIC);
 
-			if (timeSpentTotal > 0 && mPeriodType == PeriodType.DAY && mIsTop && (info.taskId == -1 || isTheOnlyTask)){
-				TextView activityInfo = (TextView) v.findViewById(R.id.time_tasks_item_activity_info);
-				activityInfo.setVisibility(VISIBLE);
-				activityInfo.setText(helper.getActivityText(getContext(), mTimelines));
+			if (Settings.getShowDayStartAndInactive()) {
+				if (timeSpentTotal > 0 && mPeriodType == PeriodType.DAY && mIsTop && (info.taskId == -1 || isTheOnlyTask)){
+					TextView activityInfo = (TextView) v.findViewById(R.id.time_tasks_item_activity_info);
+					activityInfo.setVisibility(VISIBLE);
+					activityInfo.setText(helper.getActivityText(getContext(), mTimelines));
+				}
 			}
 
 			this.addView(v);
